@@ -1,0 +1,16 @@
+/AbstractClassificationRule.java/1.1/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/AbstractClassifier.java/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/ClassificationException.java/1.1/Wed Aug 16 21:00:11 2006//D2006.12.04.23.00.00
+/ClassificationResult.java/1.2/Thu Aug 17 13:25:36 2006//D2006.12.04.23.00.00
+/ClassificationRule.java/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/ClassifierFactory.java/1.1/Thu Aug 17 13:25:22 2006//D2006.12.04.23.00.00
+/ComplexRule.java/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/DistanceRule.java/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/EuklidianDistanceRule.java/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/FixedValuesRule.java/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/MahalanobisDistanceRule.java/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/Messages.java/1.1/Wed Aug 16 21:00:11 2006//D2006.12.04.23.00.00
+/RangeRule.java/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+/SimpleClassifier.java/1.2/Thu Aug 17 13:25:36 2006//D2006.12.04.23.00.00
+/messages.properties/1.2/Thu Aug 17 12:20:37 2006//D2006.12.04.23.00.00
+D

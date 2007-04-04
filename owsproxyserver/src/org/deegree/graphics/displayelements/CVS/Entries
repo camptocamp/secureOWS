@@ -1,0 +1,19 @@
+/AbstractDisplayElement.java/1.7/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/CurveWalker.java/1.8/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/DisplayElement.java/1.8/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/DisplayElementFactory.java/1.20/Sat Jul 29 08:51:12 2006//D2006.12.04.23.00.00
+/GeometryDisplayElement.java/1.9/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/HorizontalLabel.java/1.9/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/IncompatibleGeometryTypeException.java/1.5/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/Label.java/1.5/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/LabelDisplayElement.java/1.10/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/LabelFactory.java/1.10/Sat Jul 29 08:51:12 2006//D2006.12.04.23.00.00
+/LineStringDisplayElement.java/1.10/Thu Sep 28 13:32:35 2006//D2006.12.04.23.00.00
+/LocalizedDisplayElement.java/1.7/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/MapDiagram.java/1.7/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/PointDisplayElement.java/1.8/Mon Nov 27 13:07:29 2006//D2006.12.04.23.00.00
+/PolygonDisplayElement.java/1.20/Thu Sep 28 13:32:35 2006//D2006.12.04.23.00.00
+/RasterDisplayElement.java/1.9/Sun Aug  6 20:13:30 2006//D2006.12.04.23.00.00
+/RotatedLabel.java/1.9/Sun Aug  6 20:16:27 2006//D2006.12.04.23.00.00
+/ScaledFeature.java/1.22/Tue Jul  4 19:09:06 2006//D2006.12.04.23.00.00
+D

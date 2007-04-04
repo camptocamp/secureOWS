@@ -1,0 +1,23 @@
+/FileHeader.java/1.9/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/HasNoDBaseFileException.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/IndexFile.java/1.12/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/IndexRecord.java/1.7/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/MainFile.java/1.12/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/OpenGISException.java/1.5/Wed Jul 12 14:46:15 2006//D2006.12.04.23.00.00
+/PartsArrayItem.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHP2WKS.java/1.11/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHPEnvelope.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHPException.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHPGeometry.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHPMultiPoint.java/1.8/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHPNullShape.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHPPoint.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHPPoint3D.java/1.1/Mon Jun  5 15:21:53 2006//D2006.12.04.23.00.00
+/SHPPolyLine.java/1.9/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/SHPPolyLine3D.java/1.1/Mon Jun  5 15:21:53 2006//D2006.12.04.23.00.00
+/SHPPolygon.java/1.11/Mon Nov 27 09:07:52 2006//D2006.12.04.23.00.00
+/SHPPolygon3D.java/1.1/Mon Jun  5 15:21:53 2006//D2006.12.04.23.00.00
+/ShapeConst.java/1.7/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/ShapeFile.java/1.41/Tue Nov 28 09:31:35 2006//D2006.12.04.23.00.00
+/ShapeUtils.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+D

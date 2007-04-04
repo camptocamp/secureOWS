@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<services>
+  
+  <!-- sample WMS servers -->
+  
+  <service
+  serviceId="gmap"
+  serviceDescription="DM Solutions WMS Demo Server"
+  serviceEndPoint="http://209.217.116.146/cgi-bin/mswms_gmap"
+  />
+
+  <service
+  serviceId="vmap"
+  serviceDescription="Metacarta vmap"
+  serviceEndPoint="http://labs.metacarta.com/wms/vmap0?"
+  />
+
+  <service
+  serviceId="germany"
+  serviceDescription="Germany"
+  serviceEndPoint="http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&amp;"
+  />
+  
+  <service
+  serviceId="geoserver"
+  serviceDescription="Geoserver on localhost"
+  serviceEndPoint="http://localhost:8080/geoserver/wms"
+  />
+
+<!-- Anyone with one of the listed roles may access this area -->
+<roles>
+<role>tomcat</role>
+<role>role1</role>
+</roles>
+    
+</services>

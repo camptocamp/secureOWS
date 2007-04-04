@@ -1,0 +1,26 @@
+/AbstractRequest.java/1.7/Mon Jun 19 15:34:04 2006//D2006.12.04.23.00.00
+/AuthenticationData.java/1.6/Wed Aug 30 11:51:50 2006//D2006.12.04.23.00.00
+/AuthenticationDocument.java/1.5/Mon Jun 19 12:47:26 2006//D2006.12.04.23.00.00
+/CloseSession.java/1.8/Wed Aug  9 14:07:50 2006//D2006.12.04.23.00.00
+/CloseSessionHandler.java/1.5/Mon Jun 26 15:02:58 2006//D2006.12.04.23.00.00
+/GetSession.java/1.7/Wed Aug  9 14:07:50 2006//D2006.12.04.23.00.00
+/GetSessionAnonymousHandler.java/1.3/Thu Aug 24 06:42:16 2006//D2006.12.04.23.00.00
+/GetSessionDispatcher.java/1.9/Tue Jun 27 13:10:47 2006//D2006.12.04.23.00.00
+/GetSessionHandler.java/1.3/Mon Jun 19 12:47:26 2006//D2006.12.04.23.00.00
+/GetSessionPasswordHandler.java/1.8/Tue Aug 29 19:14:17 2006//D2006.12.04.23.00.00
+/Messages.java/1.2/Thu Aug 24 06:42:16 2006//D2006.12.04.23.00.00
+/OWSCapabilitiesBaseDocument_1_0.java/1.10/Wed Jul 12 14:46:19 2006//D2006.12.04.23.00.00
+/OWSCapabilitiesBaseType_1_0.java/1.4/Tue Jun 27 13:10:47 2006//D2006.12.04.23.00.00
+/Operation_1_0.java/1.3/Mon Jun 19 12:47:26 2006//D2006.12.04.23.00.00
+/OperationsMetadata_1_0.java/1.3/Mon Jun 19 12:47:26 2006//D2006.12.04.23.00.00
+/SessionOperationsDocument.java/1.6/Fri Jun 23 13:53:47 2006//D2006.12.04.23.00.00
+/SupportedAuthenticationMethod.java/1.3/Mon Jun 12 12:16:24 2006//D2006.12.04.23.00.00
+/URN.java/1.4/Tue Jun 27 13:10:47 2006//D2006.12.04.23.00.00
+/WASAuthenticationMethodMD.java/1.2/Mon Jun 19 12:47:26 2006//D2006.12.04.23.00.00
+/WASCapabilitiesTemplate.xml/1.3/Fri Aug  4 07:17:43 2006//D2006.12.04.23.00.00
+/WASSSecurityManager.java/1.8/Tue Aug 29 19:14:17 2006//D2006.12.04.23.00.00
+/WASServiceFactory.java/1.6/Thu Aug 24 06:42:16 2006//D2006.12.04.23.00.00
+/WSSCapabilitiesTemplate.xml/1.3/Fri Aug  4 07:17:43 2006//D2006.12.04.23.00.00
+/XMLFactory.java/1.11/Tue Jun 27 13:10:47 2006//D2006.12.04.23.00.00
+/messages.properties/1.8/Fri Aug 11 08:59:54 2006//D2006.12.04.23.00.00
+D

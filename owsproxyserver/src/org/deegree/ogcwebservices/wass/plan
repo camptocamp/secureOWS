@@ -1,0 +1,26 @@
+The Plan:
+
+this shall be the file where plans/TODO/FIXME lists should go. This may prevent double implementations,
+search orgies and other fun stuff.
+
+What Andreas S. is up to:
+ * Added a SessionLifetime deegree parameter.
+ * Added database parameters to the capabilities.
+   Changed WASS to use the standard IODocument/JDBCConnection deegree tool classes.
+
+What Rutger is doing:  
+
+General structure:
+
+ * Maybe we should start a new trend and make a handler package?
+ * Where to put it what to put into.
+ * Well, put it in common and in wss/operation and call it handler. Put handlers in.
+
+General thoughts:
+
+ * Caching: should services be cached? I saw something about a "pool" somewhere, so maybe the static create
+   methods that call our constructors and/or the service factory classes should cache some service instances.
+ * Not jet, the services are created as new instances for the moment though in the future there will be
+   a pooling mechanism.
+
+Suggested next steps:

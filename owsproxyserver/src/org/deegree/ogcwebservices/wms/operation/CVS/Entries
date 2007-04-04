@@ -1,0 +1,17 @@
+/DescribeLayer.java/1.8/Fri Sep 15 09:18:29 2006//D2006.12.04.23.00.00
+/DescribeLayerResult.java/1.6/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/GetFeatureInfo.java/1.18/Wed Nov 22 15:38:31 2006//D2006.12.04.23.00.00
+/GetFeatureInfoResult.java/1.7/Fri Jul 28 08:01:27 2006//D2006.12.04.23.00.00
+/GetLegendGraphic.java/1.11/Tue Oct 17 20:31:18 2006//D2006.12.04.23.00.00
+/GetLegendGraphicResult.java/1.8/Fri Jul 28 08:01:27 2006//D2006.12.04.23.00.00
+/GetMap.java/1.51/Thu Nov 30 20:05:22 2006//D2006.12.04.23.00.00
+/GetMapResult.java/1.7/Fri Sep  8 08:42:02 2006//D2006.12.04.23.00.00
+/GetStyles.java/1.8/Fri Sep 15 09:18:29 2006//D2006.12.04.23.00.00
+/GetStylesResult.java/1.6/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/PutStyles.java/1.8/Fri Sep 15 09:18:29 2006//D2006.12.04.23.00.00
+/PutStylesResult.java/1.6/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/WMSGetCapabilities.java/1.9/Fri Oct 27 13:32:06 2006//D2006.12.04.23.00.00
+/WMSGetCapabilitiesResult.java/1.10/Fri Sep  8 08:42:02 2006//D2006.12.04.23.00.00
+/WMSProtocolFactory.java/1.10/Mon Nov 27 09:07:52 2006//D2006.12.04.23.00.00
+/WMSRequestBase.java/1.5/Fri Sep 15 09:18:29 2006//D2006.12.04.23.00.00
+D

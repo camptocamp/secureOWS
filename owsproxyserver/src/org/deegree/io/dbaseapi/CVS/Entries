@@ -1,0 +1,12 @@
+/DBFDataSection.java/1.13/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/DBFHeader.java/1.10/Sun Aug  6 20:55:27 2006//D2006.12.04.23.00.00
+/DBaseException.java/1.5/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/DBaseFile.java/1.41/Fri Nov 10 23:04:13 2006//D2006.12.04.23.00.00
+/DBaseIndex.java/1.5/Sun Aug  6 20:54:33 2006//D2006.12.04.23.00.00
+/DBaseIndexException.java/1.3/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/FieldDescriptor.java/1.6/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/InvalidKeyTypeException.java/1.2/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/KeyAlreadyExistException.java/1.2/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/KeyNotFoundException.java/1.2/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/KeyTooLongException.java/1.2/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+D

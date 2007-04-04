@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  ======================================================================================
+	
+	This file is part of deegree.
+	Copyright (C) 2001-2006 by:
+	EXSE, Department of Geography, University of Bonn
+	http://www.giub.uni-bonn.de/deegree/
+	lat/lon GmbH
+	http://www.lat-lon.de
+	
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+	
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
+	
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	
+	Contact:
+	
+	Andreas Poth
+	lat/lon GmbH
+	Aennchenstr. 19
+	53177 Bonn
+	Germany
+	E-Mail: poth@lat-lon.de
+	
+	Prof. Dr. Klaus Greve
+	Department of Geography
+	University of Bonn
+	Meckenheimer Allee 166
+	53115 Bonn
+	Germany
+	E-Mail: greve@giub.uni-bonn.de
+	
+	@version $Revision: 1.3 $
+	@author <a href="mailto:schmitz@lat-lon.de">Andreas Schmitz</a>
+	@author last edited by: $Author: schmitz $
+	
+	@version 1.0. $Revision: 1.3 $, $Date: 2006/11/24 15:05:35 $
+	
+	====================================================================================== -->
+<WMS_Capabilities xmlns:xlink="http://www.w3.org/1999/xlink" version=""
+	updateSequence="" xmlns="http://www.opengis.net/wms"
+	xmlns:sld="http://www.opengis.net/sld">
+	<Service>
+		<Name />
+		<Title />
+	</Service>
+	<Capability>
+		<Request></Request>
+		<Exception>
+			<Format>XML</Format>
+			<Format>INIMAGE</Format>
+			<Format>BLANK</Format>
+		</Exception>
+	</Capability>
+</WMS_Capabilities>
+<!-- ==================================================================================
+	Changes to this class. What the people have been up to:
+	$Log: WMSCapabilitiesTemplate_1_3_0.xml,v $
+	Revision 1.3  2006/11/24 15:05:35  schmitz
+	Added a bogus sld schema document to be able to validate the GetCapabilities response with a GetLegendGraphic request type.
+	
+	Revision 1.2  2006/09/08 08:42:02  schmitz
+	Updated the WMS to be 1.1.1 conformant once again.
+	Cleaned up the WMS code.
+	Added cite WMS test data.
+	
+	Revision 1.1  2006/08/23 07:10:22  schmitz
+	Renamed the owscommon_neu package to owscommon_new.
+	
+	
+	====================================================================================== -->

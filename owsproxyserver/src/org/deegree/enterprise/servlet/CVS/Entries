@@ -1,0 +1,27 @@
+/AbstractOWServiceHandler.java/1.9/Thu Aug 24 06:39:04 2006//D2006.12.04.23.00.00
+/CSWHandler.java/1.21/Tue Oct 17 20:31:18 2006//D2006.12.04.23.00.00
+/CSWHarvestingContextListener.java/1.3/Wed Jun 28 08:54:45 2006//D2006.12.04.23.00.00
+/FeatureInfoFilterDef.java/1.1/Wed May  3 13:00:06 2006//D2006.12.04.23.00.00
+/Messages.java/1.5/Tue May 23 06:54:11 2006//D2006.12.04.23.00.00
+/OGCServletController.java/1.66/Wed Nov 22 14:06:26 2006//D2006.12.04.23.00.00
+/SOAPFacadeServletFilter.java/1.8/Mon Jun 19 21:02:37 2006//D2006.12.04.23.00.00
+/SOSHandler.java/1.14/Thu Aug 24 06:39:04 2006//D2006.12.04.23.00.00
+/ServiceDispatcher.java/1.5/Wed Jul 12 14:46:15 2006//D2006.12.04.23.00.00
+/ServiceLookup.java/1.3/Wed Jul 12 14:46:15 2006//D2006.12.04.23.00.00
+/ServletRequestWrapper.java/1.6/Thu Jun 22 06:52:28 2006//D2006.12.04.23.00.00
+/ServletRequestWrapper.properties/1.4/Sun Aug  6 21:05:06 2006//D2006.12.04.23.00.00
+/ServletResponseWrapper.java/1.4/Wed Jul 12 14:46:15 2006//D2006.12.04.23.00.00
+/SimpleProxyServlet.java/1.17/Fri Nov 24 12:51:11 2006/-kk/D2006.12.04.23.00.00
+/WASSHandler.java/1.11/Tue Oct 17 20:31:18 2006//D2006.12.04.23.00.00
+/WCSHandler.java/1.35/Tue Oct 17 20:31:18 2006//D2006.12.04.23.00.00
+/WFSHandler.java/1.49/Fri Oct 20 15:35:41 2006//D2006.12.04.23.00.00
+/WFSRequestMapping.java/1.6/Tue Aug 29 19:54:14 2006/-kk/D2006.12.04.23.00.00
+/WMPSHandler.java/1.16/Fri Jul 21 14:49:01 2006//D2006.12.04.23.00.00
+/WMSHandler.java/1.50/Fri Nov 24 15:05:35 2006//D2006.12.04.23.00.00
+/WPSHandler.java/1.10/Tue Oct 17 20:31:18 2006//D2006.12.04.23.00.00
+/WPVSHandler.java/1.10/Tue Oct 17 20:31:18 2006//D2006.12.04.23.00.00
+/featureinfofilter.properties/1.3/Sun Aug  6 19:48:11 2006//D2006.12.04.23.00.00
+/messages.properties/1.5/Sun Aug  6 19:48:11 2006//D2006.12.04.23.00.00
+/package.html/1.1/Fri Feb 11 11:50:05 2005//D2006.12.04.23.00.00
+/wfsrequestmapping.properties/1.1/Fri Feb 10 08:56:54 2006/-kk/D2006.12.04.23.00.00
+D

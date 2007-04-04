@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OWSPolicy service="WMS" xmlns="http://www.deegree.org/security">
+	<Security></Security>
+	<Requests>
+		<GetMap>
+			<PreConditions>
+				<Parameter name="maxWidth" userCoupled="false">
+					<Value>1000</Value>
+				</Parameter>
+			</PreConditions>
+		</GetMap>
+		<GetCapabilities>
+			<PreConditions>
+			</PreConditions>
+			<PostConditions>
+			</PostConditions>
+		</GetCapabilities>
+	</Requests>
+</OWSPolicy>

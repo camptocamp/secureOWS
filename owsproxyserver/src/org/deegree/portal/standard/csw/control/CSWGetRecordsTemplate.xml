@@ -1,0 +1,17 @@
+<csw:GetRecords 
+ xmlns:ogc="http://www.opengis.net/ogc" 
+ xmlns:ows="http://www.opengis.net/ows" 
+ xmlns:csw="http://www.opengis.net/cat/csw" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:schemaLocation="http://www.opengis.net/cat/csw E:\ogc\schemas\catalog\csw\2.0.0\CSW-discovery.xsd" 
+ service="CSW" version="2.0.0" 
+ outputFormat="text/xml" 
+ outputSchema="$OUTPUTSCHEMA" 
+ resultType="$RESULTTYPE" 
+ startPosition="$STARTPOSITION" 
+ maxRecords="$MAXRECORDS">
+    <csw:Query typeNames="$TYPENAME">
+        <csw:ElementSetName>$ELEMENTSETNAME</csw:ElementSetName>
+        $FILTER
+    </csw:Query>
+</csw:GetRecords>

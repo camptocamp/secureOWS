@@ -1,0 +1,14 @@
+/AbstractRequestHandler.java/1.38/Wed Nov 15 18:38:18 2006//D2006.12.04.23.00.00
+/AbstractSQLDatastore.java/1.84/Wed Nov 29 16:59:54 2006//D2006.12.04.23.00.00
+/FeatureFetcher.java/1.6/Wed Nov 29 16:59:54 2006//D2006.12.04.23.00.00
+/QueryHandler.java/1.85/Mon Nov 27 09:07:53 2006//D2006.12.04.23.00.00
+/SQLDatastoreConfiguration.java/1.9/Tue Sep 19 14:54:02 2006//D2006.12.04.23.00.00
+/StatementBuffer.java/1.15/Tue Sep 26 16:45:45 2006//D2006.12.04.23.00.00
+/TableAliasGenerator.java/1.12/Thu Sep 14 00:18:33 2006//D2006.12.04.23.00.00
+/VirtualContentProvider.java/1.4/Tue Sep 26 13:03:03 2006//D2006.12.04.23.00.00
+D/generic////
+D/idgenerator////
+D/oracle////
+D/postgis////
+D/transaction////
+D/wherebuilder////

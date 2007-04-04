@@ -1,0 +1,27 @@
+/AbstractFilter.java/1.11/Wed Jul 26 16:10:40 2006//D2006.12.04.23.00.00
+/AbstractOperation.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/ArithmeticExpression.java/1.14/Thu Jun 29 07:42:39 2006//D2006.12.04.23.00.00
+/ComparisonOperation.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/ComplexFilter.java/1.9/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/Expression.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/ExpressionDefines.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/FalseFilter.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/FeatureFilter.java/1.7/Thu Nov 23 09:30:14 2006//D2006.12.04.23.00.00
+/FeatureId.java/1.8/Tue Jul 25 12:27:30 2006//D2006.12.04.23.00.00
+/Filter.java/1.6/Wed Jul 26 16:11:16 2006//D2006.12.04.23.00.00
+/FilterConstructionException.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/FilterEvaluationException.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/FilterTools.java/1.12/Thu Sep 28 09:47:02 2006//D2006.12.04.23.00.00
+/Function.java/1.9/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/Literal.java/1.9/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/LogicalOperation.java/1.10/Thu Sep 28 07:49:46 2006//D2006.12.04.23.00.00
+/Operation.java/1.5/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/OperationDefines.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/PropertyIsBetweenOperation.java/1.10/Wed Aug 30 08:37:34 2006//D2006.12.04.23.00.00
+/PropertyIsCOMPOperation.java/1.10/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/PropertyIsLikeOperation.java/1.14/Tue Nov 21 17:58:43 2006//D2006.12.04.23.00.00
+/PropertyIsNullOperation.java/1.8/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/PropertyName.java/1.23/Wed Nov 29 11:01:47 2006//D2006.12.04.23.00.00
+/SpatialOperation.java/1.26/Wed Nov 29 11:02:03 2006//D2006.12.04.23.00.00
+/XMLFactory.java/1.15/Wed Sep 20 12:57:43 2006//D2006.12.04.23.00.00
+D/capabilities////

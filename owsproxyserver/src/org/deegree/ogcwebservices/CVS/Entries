@@ -1,0 +1,37 @@
+/AbstractOGCWebServiceRequest.java/1.19/Wed Nov 29 16:01:01 2006//D2006.12.04.23.00.00
+/CurrentUpdateSequenceException.java/1.5/Fri Jul 28 08:01:27 2006//D2006.12.04.23.00.00
+/DefaultOGCWebServiceResponse.java/1.5/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/EchoRequest.java/1.5/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/ExceptionDocument.java/1.15/Mon Nov 27 09:07:53 2006//D2006.12.04.23.00.00
+/ExceptionFormat.java/1.5/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/ExceptionReport.java/1.6/Tue Apr 25 19:28:52 2006//D2006.12.04.23.00.00
+/InconsistentRequestException.java/1.5/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/InvalidParameterValueException.java/1.6/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/InvalidUpdateSequenceException.java/1.5/Fri Jul 28 08:01:27 2006//D2006.12.04.23.00.00
+/LonLatEnvelope.java/1.7/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/MetadataLink.java/1.6/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/MetadataType.java/1.4/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/MissingParameterValueException.java/1.4/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/NoApplicableCodeException.java/1.4/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/OGCRequestFactory.java/1.87/Wed Nov 29 16:19:10 2006//D2006.12.04.23.00.00
+/OGCServiceTypes.java/1.6/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/OGCWebService.java/1.9/Fri Jul 21 14:07:22 2006//D2006.12.04.23.00.00
+/OGCWebServiceException.java/1.9/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/OGCWebServiceRequest.java/1.10/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/OGCWebServiceResponse.java/1.5/Wed Jul 12 14:46:16 2006//D2006.12.04.23.00.00
+/OWSUtils.java/1.1/Tue Oct 17 20:31:19 2006//D2006.12.04.23.00.00
+/OperationNotSupportedException.java/1.4/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/SupportedFormats.java/1.5/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/SupportedSRSs.java/1.4/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+/VersionNegotiationFailedException.java/1.4/Thu Apr  6 20:25:27 2006//D2006.12.04.23.00.00
+D/csw////
+D/gazetteer////
+D/getcapabilities////
+D/sos////
+D/wass////
+D/wcs////
+D/wfs////
+D/wmps////
+D/wms////
+D/wps////
+D/wpvs////

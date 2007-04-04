@@ -1,0 +1,24 @@
+/AttributeStep.java/1.2/Thu Apr  6 20:25:22 2006//D2006.12.04.23.00.00
+/BaseURL.java/1.7/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/CommonNamespaces.java/1.35/Wed Oct 11 16:05:13 2006//D2006.12.04.23.00.00
+/ContactAddress.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/ContactInformation.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/ContactPersonPrimary.java/1.6/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/Description.java/1.2/Tue Jan 18 22:08:54 2005//D2006.12.04.23.00.00
+/DescriptionBase.java/1.2/Tue Jan 18 22:08:54 2005//D2006.12.04.23.00.00
+/ElementStep.java/1.3/Thu Jun  1 15:20:20 2006//D2006.12.04.23.00.00
+/ExceptionCode.java/1.9/Wed Nov 22 14:06:26 2006//D2006.12.04.23.00.00
+/GMLDocument.java/1.17/Mon Nov 27 09:07:53 2006//D2006.12.04.23.00.00
+/ImageURL.java/1.7/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/IndexStep.java/1.2/Thu Apr  6 20:25:22 2006//D2006.12.04.23.00.00
+/InvalidGMLException.java/1.4/Thu Apr  6 20:25:22 2006//D2006.12.04.23.00.00
+/InvalidSRSException.java/1.6/Fri Jul 28 08:01:27 2006//D2006.12.04.23.00.00
+/OGCDocument.java/1.21/Wed Jul 12 16:57:57 2006//D2006.12.04.23.00.00
+/OGCException.java/1.8/Wed Jul 12 14:46:14 2006//D2006.12.04.23.00.00
+/PropertyPath.java/1.11/Wed Aug  2 12:05:47 2006//D2006.12.04.23.00.00
+/PropertyPathFactory.java/1.4/Tue Aug 29 19:54:14 2006/-kk/D2006.12.04.23.00.00
+/PropertyPathStep.java/1.9/Thu Apr  6 20:25:22 2006//D2006.12.04.23.00.00
+/SortProperty.java/1.12/Mon Aug 14 16:47:37 2006//D2006.12.04.23.00.00
+/XMLFactory.java/1.17/Thu Jul 13 15:15:46 2006//D2006.12.04.23.00.00
+/package.html/1.1/Fri Feb 11 11:50:05 2005//D2006.12.04.23.00.00
+D

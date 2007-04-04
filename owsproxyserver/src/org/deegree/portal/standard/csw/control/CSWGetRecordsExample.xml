@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csw:GetRecords
+ xmlns:ogc="http://www.opengis.net/ogc" 
+ xmlns:ows="http://www.opengis.net/ows" 
+ xmlns:csw="http://www.opengis.net/cat/csw" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:schemaLocation="http://www.opengis.net/cat/csw E:\ogc\schemas\catalog\csw\2.0.0\CSW-discovery.xsd" 
+ service="CSW" version="2.0.0" 
+ requestId="http://www.xmlspy.com" 
+ resultType="RESULTS" 
+ outputFormat="text/xml" 
+ outputSchema="ISO19115" 
+ startPosition="0" 
+ maxRecords="10">
+	<csw:Query typeNames="dataset">
+		<csw:ElementSetName>brief</csw:ElementSetName>
+		<!--csw:Constraint>
+			<ogc:Filter>
+				<ogc:PropertyIsLike wildCard="%" singleChar="_" escape="\">
+					<ogc:PropertyName>Title</ogc:PropertyName>
+					<ogc:Literal>%sow%</ogc:Literal>
+				</ogc:PropertyIsLike>
+			</ogc:Filter>
+		</csw:Constraint-->
+	</csw:Query>
+</csw:GetRecords>

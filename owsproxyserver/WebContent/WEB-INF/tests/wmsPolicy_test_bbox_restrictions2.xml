@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OWSPolicy service="WMS" xmlns="http://www.deegree.org/security">
+	<Security></Security>
+	<Requests>
+		<GetMap>
+			<PreConditions>
+                <Parameter name="bbox" userCoupled="false">
+					<!-- IMPORTANT: order matters. First matched one is taken -->
+				   	<Role name="role1">
+				   		<Any />
+				   	</Role>
+				   	<Role name="$default$">
+						<Value>-93,25,-66,53</Value>
+					</Role>
+                </Parameter>
+			</PreConditions>
+		</GetMap>
+		<GetCapabilities>
+			<PreConditions>
+			</PreConditions>
+			<PostConditions>
+			</PostConditions>
+		</GetCapabilities>
+	</Requests>
+</OWSPolicy>

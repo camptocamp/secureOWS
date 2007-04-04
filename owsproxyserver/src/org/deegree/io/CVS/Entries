@@ -1,0 +1,20 @@
+/DBConnectionPool.java/1.12/Wed Jul 12 14:46:18 2006//D2006.12.04.23.00.00
+/DBPool.java/1.7/Wed Jul 12 14:46:18 2006//D2006.12.04.23.00.00
+/DBPoolException.java/1.6/Thu Aug 24 06:40:05 2006//D2006.12.04.23.00.00
+/GenericSQLIDGenerator.java/1.5/Wed Jul 12 14:46:18 2006//D2006.12.04.23.00.00
+/IDGeneratorFactory.java/1.6/Wed Jul 12 14:46:18 2006//D2006.12.04.23.00.00
+/IODocument.java/1.9/Tue Oct 17 20:31:17 2006//D2006.12.04.23.00.00
+/JDBCConnection.java/1.8/Thu Aug 24 06:40:05 2006//D2006.12.04.23.00.00
+D/arcinfo_raster////
+D/datastore////
+D/dbaseapi////
+D/ecwapi////
+D/geotiff////
+D/imgapi////
+D/mapinfoapi////
+D/oraclegeoraster////
+D/quadtree////
+D/rtree////
+D/sdeapi////
+D/shpapi////
+D/util////
