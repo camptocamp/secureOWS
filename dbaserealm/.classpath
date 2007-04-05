@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry sourcepath="/home/sypasche/c2c/projects/wms/tomcat/src/apache-tomcat-5.5.20-src" kind="lib" path="/home/sypasche/c2c/projects/wms/tomcat/apache-tomcat-5.5.20/server/lib/catalina.jar"/>
+	<classpathentry kind="lib" path="lib/javadbf.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
