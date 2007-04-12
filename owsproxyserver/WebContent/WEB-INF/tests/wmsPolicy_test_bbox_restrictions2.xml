@@ -4,7 +4,7 @@
 	<Requests>
 		<GetMap>
 			<PreConditions>
-                <Parameter name="bbox" userCoupled="false">
+                <Parameter name="bbox">
 					<!-- IMPORTANT: order matters. First matched one is taken -->
 				   	<Role name="role1">
 				   		<Any />

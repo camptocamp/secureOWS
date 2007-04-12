@@ -4,7 +4,7 @@
 	<Requests>
 		<GetMap>
 			<PreConditions>
-                <Parameter name="bbox" userCoupled="false">
+                <Parameter name="bbox">
 					<Value>-93,25,-66,53</Value> 
                 </Parameter>
 			</PreConditions>

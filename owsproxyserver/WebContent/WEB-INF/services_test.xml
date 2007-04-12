@@ -46,6 +46,27 @@
   serviceEndPoint="http://localhost:8081/geoserver/wms"
   />
 
+  <service
+  serviceId="test_featureinfo_featurecount"
+  directory="tests"
+  serviceDescription="test_featureinfo_featurecount"
+  serviceEndPoint="http://localhost:8081/geoserver/wms"
+  />
+
+  <service
+  serviceId="test_featureinfo_format"
+  directory="tests"
+  serviceDescription="test_featureinfo_format"
+  serviceEndPoint="http://localhost:8081/geoserver/wms"
+  />
+
+  <service
+  serviceId="test_featureinfo_layers"
+  directory="tests"
+  serviceDescription="test_featureinfo_layers"
+  serviceEndPoint="http://localhost:8081/geoserver/wms"
+  />
+
 <!-- Anyone with one of the listed roles may access this area -->
 <roles>
 <role>tomcat</role>

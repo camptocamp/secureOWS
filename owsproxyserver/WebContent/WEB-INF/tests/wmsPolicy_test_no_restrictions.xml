@@ -3,14 +3,10 @@
 	<Security></Security>
 	<Requests>
 		<GetMap>
-			<PreConditions>
-			</PreConditions>
 		</GetMap>
+		<GetFeatureInfo>
+		</GetFeatureInfo>
 		<GetCapabilities>
-			<PreConditions>
-			</PreConditions>
-			<PostConditions>
-			</PostConditions>
 		</GetCapabilities>
 	</Requests>
 </OWSPolicy>

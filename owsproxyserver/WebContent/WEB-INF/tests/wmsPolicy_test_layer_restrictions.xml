@@ -5,35 +5,17 @@
 		<GetMap>
 			<PreConditions>
 				<!-- WARNING: must match layers in GetMap and GetCapabilities -->
-				
-				<!-- TODO: remove $any$ restriction
-				it appears it is only available in the  -->
-				<Parameter name="layers" userCoupled="false">
+				<Parameter name="layers">
 					<Value>tiger:giant_polygon</Value>
 					<Value>topp:tasmania_cities</Value>
 				</Parameter>
-				<!-- TODO: per role restriction -->
-				<!-- 
-				<Parameter name="layers" userCoupled="false">
-					<Value>lakespy2|$any$</Value>
-					<Value>airports|$any$</Value>
-					<Value>ctybdpy2|$any$</Value>
-				</Parameter>
-				-->
 			</PreConditions>
 		</GetMap>
 		<GetCapabilities>
 			<PreConditions>
-				<!-- 
-				<Parameter name="layers" userCoupled="false">
-					<Value>lakespy2|$any$</Value>
-					<Value>airports|$any$</Value>
-					<Value>ctybdpy2|$any$</Value>
-				</Parameter>
-				-->
 			</PreConditions>
 			<PostConditions>
-				<Parameter name="layers" userCoupled="false">
+				<Parameter name="layers">
 					<Value>tiger:giant_polygon</Value>
 					<Value>topp:tasmania_cities</Value>
 				</Parameter>    			

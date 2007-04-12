@@ -2,15 +2,11 @@
 <OWSPolicy service="WMS" xmlns="http://www.deegree.org/security">
 	<Security></Security>
 	<Requests>
-		<GetMap>
-			<PreConditions>
-			</PreConditions>
-		</GetMap>
-		<GetCapabilities>
-			<PreConditions>
-			</PreConditions>
-			<PostConditions>
-			</PostConditions>
-		</GetCapabilities>
+        <GetMap>
+        </GetMap>
+        <GetFeatureInfo>
+        </GetFeatureInfo>
+        <GetCapabilities>
+        </GetCapabilities>
 	</Requests>
 </OWSPolicy>

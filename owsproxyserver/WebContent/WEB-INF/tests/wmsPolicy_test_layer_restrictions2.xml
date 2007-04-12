@@ -6,7 +6,7 @@
 			<PreConditions>
 				<!-- WARNING: must match layers in GetMap and GetCapabilities -->
 				<!-- per role restriction -->
-				<Parameter name="layers" userCoupled="false">
+				<Parameter name="layers">
 					<!-- IMPORTANT: order matters. First matched one is taken -->
 					<Role name="role1">
 						<Any />
@@ -22,7 +22,7 @@
 			<PreConditions>
 			</PreConditions>
 			<PostConditions>
-				<Parameter name="layers" userCoupled="false">
+				<Parameter name="layers">
 					<!-- IMPORTANT: order matters. First matched one is taken -->
 					<Role name="role1">
 						<Any />

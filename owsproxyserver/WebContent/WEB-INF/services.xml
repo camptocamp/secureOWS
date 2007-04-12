@@ -2,6 +2,11 @@
 <services>
   
   <!-- sample WMS servers -->
+  <service
+  serviceId="mistra"
+  serviceDescription="Mistra WMS (only inside Swisstopo network)"
+  serviceEndPoint="http://test4-swisstopogeodata.lt.admin.ch/wms-mistra"
+  />
   
   <service
   serviceId="gmap"

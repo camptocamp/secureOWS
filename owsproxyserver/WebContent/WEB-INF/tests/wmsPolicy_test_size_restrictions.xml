@@ -4,7 +4,7 @@
 	<Requests>
 		<GetMap>
 			<PreConditions>
-				<Parameter name="maxWidth" userCoupled="false">
+				<Parameter name="maxWidth">
 					<Value>1000</Value>
 				</Parameter>
 			</PreConditions>
