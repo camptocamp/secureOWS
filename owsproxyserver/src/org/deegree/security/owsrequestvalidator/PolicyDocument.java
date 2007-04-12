@@ -392,8 +392,11 @@ public class PolicyDocument {
         
         OperationParameter op = null;
         String name = XMLTools.getRequiredAttrValue( "name", null, element );
-        String uc = XMLTools.getRequiredAttrValue( "userCoupled", null, element );
-        boolean userCoupled = uc.equals( "true" ) || uc.equals( "1" );
+
+        // XXXsyp userCoupled is always false and ignored from document
+        //String uc = XMLTools.getRequiredAttrValue( "userCoupled", null, element );
+        //boolean userCoupled = uc.equals( "true" ) || uc.equals( "1" );
+        boolean userCoupled = false;
 
         // ********
 
