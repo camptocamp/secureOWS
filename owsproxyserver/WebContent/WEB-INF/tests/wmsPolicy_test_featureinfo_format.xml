@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OWSPolicy service="WMS" xmlns="http://www.deegree.org/security">
+	<Security></Security>
+	<Requests>
+		<GetMap>
+		</GetMap>
+
+		<GetFeatureInfo>
+			<PreConditions>			 
+				<Parameter name="infoFormat">
+					<Value>text/html</Value>
+			        <Value>text/xml</Value>
+				</Parameter>
+			</PreConditions>
+		</GetFeatureInfo>
+
+		<GetCapabilities>
+		</GetCapabilities>
+	</Requests>
+</OWSPolicy>
