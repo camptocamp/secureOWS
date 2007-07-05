@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.net.ssl.HostnameVerifier;
@@ -47,8 +49,8 @@ public class TestWMS extends TestCase {
     static final String DENIED_MESSAGE = "Access denied";
 
     // Layers for layer restriction tests
-    final static List<String> AUTHORIZED_LAYERS_SET1 = Arrays.asList(new String[] 
-                                 {"tiger:giant_polygon", "topp:tasmania_cities"});
+    final static Set<String> AUTHORIZED_LAYERS_SET1 = new HashSet<String>(Arrays.asList(new String[] 
+                             {"tiger:giant_polygon", "topp:tasmania_cities"}));
 
     // TODO: tests several versions
     private static final String VERSION = "1.1.1";
@@ -66,16 +68,24 @@ public class TestWMS extends TestCase {
     final int NUM_LAYERS = 14;
 
     // Utility variable to quickly enable/disable tests
-    //private boolean TESTS_ENABLED = true;
+    //private boolean TESTS_ENABLED = false;
     private boolean TESTS_ENABLED = true;
 
-    private String buildQueryString(Map<String, String> params,
-                                    Map<String, String> override) {
-    
-        Map<String, String> updated = (Map<String, String>)((HashMap<String, String>)params).clone();
+    private Map<String, String> overrideMap(Map<String, String> original,
+                                            Map<String, String> override) {
+
+        Map<String, String> overridden = (Map<String, String>)((HashMap<String, String>)original).clone();
         
         if (override != null)
-            updated.putAll(override);
+            overridden.putAll(override);
+
+        return overridden;
+    }
+    
+    private String buildQueryString(Map<String, String> params,
+                                    Map<String, String> override) {
+
+        Map<String, String> updated = overrideMap(params, override);
         
         String queryString = "";
         for (String p : updated.keySet()) {
@@ -116,7 +126,25 @@ public class TestWMS extends TestCase {
 
         return m;
     }
-    
+
+    private Map<String, String> getGetFeatureInfoDefaultParams() {
+        Map<String, String> m = new HashMap<String, String>();
+
+        m.put("REQUEST", "GetFeatureInfo");
+        m.put("SERVICE", "WMS");
+        m.put("VERSION", VERSION);
+
+        m.put("EXCEPTIONS", "application/vnd.ogc.se_xml");
+        m.put("X", "25");
+        m.put("Y", "311");
+        m.put("INFO_FORMAT", "text/html");
+        
+        m.put("QUERY_LAYERS", "tiger%3Agiant_polygon");
+        
+        // GetFeatureInfo is based on GetMap
+        return overrideMap(getGetMapDefaultParams(), m);
+    }
+
     public void testNoRestrictions() {
         if(!TESTS_ENABLED)return;
 
@@ -143,7 +171,7 @@ public class TestWMS extends TestCase {
         doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
     }
 
-    private List<String> getLayers(InputStream is) {
+    private Set<String> getLayers(InputStream is) {
         
         List<String> layers = new Vector<String>();
         try {
@@ -156,7 +184,6 @@ public class TestWMS extends TestCase {
             NodeList nl = document.getElementsByTagName("Layer");
             for (int i = 0; i < nl.getLength(); i++) {
                 
-                //System.out.println("Item: " + nl.item(i));
                 Node n = nl.item(i);
                 // XXX name could be elsewhere
                 String layerName = n.getFirstChild().getTextContent();
@@ -170,7 +197,7 @@ public class TestWMS extends TestCase {
             throw new AssertionFailedError("failed parsing capabilities XML");
         }
         System.out.println("Layers: " + layers);
-        return layers;
+        return new HashSet<String>(layers);
     }
     
     public void testLayerRestrictions() {
@@ -275,9 +302,68 @@ public class TestWMS extends TestCase {
         doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), ALICE_CRED, SC_OK, false);
     }
     
-    // TODO: test getFeatureInfo
+    public void testGetFeatureInfoNoRestriction() {
+        if(!TESTS_ENABLED)return;
+        
+        final String TEST = "test_no_restrictions";
+        
+        Map<String, String> override = new HashMap<String, String>();
+        
+        override.clear();
+        doTestRequest(TEST, buildQueryString(getGetFeatureInfoDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
+    }
+
+    public void testGetFeatureInfoFeaturecount() {
+        if(!TESTS_ENABLED)return;
+        
+        final String TEST = "test_featureinfo_featurecount";
+        
+        Map<String, String> override = new HashMap<String, String>();
+        
+        // no feature count is equivalent to 1 feature count -> allowed
+        override.clear();
+        doTestRequest(TEST, buildQueryString(getGetFeatureInfoDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
+
+        // 200 > 100 -> deny
+        override.clear();
+        override.put("FEATURE_COUNT", "200");
+        doTestRequest(TEST, buildQueryString(getGetFeatureInfoDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
+    }
+
+    public void testGetFeatureInfoFormat() {
+        if(!TESTS_ENABLED)return;
+        
+        final String TEST = "test_featureinfo_format";
+        
+        Map<String, String> override = new HashMap<String, String>();
+        
+        // format text/html is allowed
+        override.clear();
+        override.put("INFO_FORMAT", "text/html");
+        doTestRequest(TEST, buildQueryString(getGetFeatureInfoDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
+
+        // unauthorized format -> denied
+        override.clear();
+        override.put("INFO_FORMAT", "x-foo/x-bar");
+        doTestRequest(TEST, buildQueryString(getGetFeatureInfoDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
+    }
     
-    
+    public void testGetFeatureInfoLayers() {
+        if(!TESTS_ENABLED)return;
+        
+        final String TEST = "test_featureinfo_layers";
+        
+        Map<String, String> override = new HashMap<String, String>();
+        
+        // default layer is allowed
+        override.clear();
+        doTestRequest(TEST, buildQueryString(getGetFeatureInfoDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
+
+        // unauthorized layer -> denied
+        override.clear();
+        override.put("QUERY_LAYERS", "invalid_layer");
+        doTestRequest(TEST, buildQueryString(getGetFeatureInfoDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
+    }
     
     // TODO: Add expected content type: image / xml / ...
     private InputStream doTestRequest(String servletName, String queryString, Credentials creds,
