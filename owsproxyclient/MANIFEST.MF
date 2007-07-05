@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.6.2
+Created-By: 1.4.2_08-ea-b01 (Sun Microsystems Inc.)
+X-COMMENT: Main-Class will be added automatically by build
+Main-Class: com.camptocamp.owsproxy.OWSClient
