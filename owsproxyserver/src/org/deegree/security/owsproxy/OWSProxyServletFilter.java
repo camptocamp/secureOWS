@@ -221,6 +221,15 @@ public class OWSProxyServletFilter implements Filter {
 //        }
         OGCWebServiceRequest owsReq = null;
 
+        if (0 == request.getParameterMap().size()) {
+            response.setContentType( "text/html" );
+            OutputStream os = response.getOutputStream();
+            os.write( ("Welcome to the OwsProxyServer application. " +
+            		"Please provide GET parameters").getBytes() );
+            os.close();
+            return;
+        }
+        
         try {
             owsReq = OGCRequestFactory.create( reqWrap );
         } catch ( OGCWebServiceException e ) {
@@ -247,8 +256,6 @@ public class OWSProxyServletFilter implements Filter {
             return;
         }
         
-        // XXXsyp
-        System.out.println(Thread.currentThread());
         UsersOperationParameter.setCurrentUser(user);
         
         try {
