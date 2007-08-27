@@ -2,7 +2,8 @@
 #
 # Script to create a standalone .jar file of the project
 
-VERSION=0.2
+# WARNING: keep in sync with ~/c2c/projects/wms/project_public_files/Makefile
+VERSION=0.3
 
 [ -d dist ] && rm -rf dist
 mkdir dist
