@@ -41,6 +41,8 @@
  ---------------------------------------------------------------------------*/
 package org.deegree.security.owsrequestvalidator.wms;
 
+import java.util.HashMap;
+
 import org.deegree.ogcwebservices.InvalidParameterValueException;
 import org.deegree.ogcwebservices.OGCWebServiceRequest;
 import org.deegree.ogcwebservices.getcapabilities.GetCapabilities;
@@ -110,6 +112,8 @@ public class WMSValidator extends OWSValidator {
         }
     }
 
+    public static HashMap VendorORMapping = new HashMap();
+    
     /**
      * @see org.deegree_impl.security.OWSPolicyValidator#validateResponse(java.lang.Object,
      *      java.lang.String)
@@ -118,6 +122,11 @@ public class WMSValidator extends OWSValidator {
                                    String mime, User user) throws 
                                    InvalidParameterValueException, UnauthorizedException  {
         if ( request instanceof GetCapabilities ) {
+            // Online Resource overriding
+            String vendorOR = request.getVendorSpecificParameter("VENDOR_ONLINE_RESOURCE");
+            if (vendorOR != null)
+                VendorORMapping.put(Thread.currentThread().getId(), vendorOR);
+
             response = getCapabilitiesValidatorR.validateResponse("WMS", response, mime, user );
         } else if ( request instanceof GetMap ) { 
             response = getMapValidatorR.validateResponse("WMS", response, mime, user ); 

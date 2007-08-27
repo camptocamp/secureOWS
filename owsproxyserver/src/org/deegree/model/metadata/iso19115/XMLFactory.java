@@ -40,6 +40,7 @@ import java.util.List;
 import org.deegree.datatypes.Code;
 import org.deegree.framework.xml.XMLTools;
 import org.deegree.ogcbase.CommonNamespaces;
+import org.deegree.security.owsrequestvalidator.wms.WMSValidator;
 import org.w3c.dom.Element;
 
 /**
@@ -179,6 +180,12 @@ public class XMLFactory extends org.deegree.ogcbase.XMLFactory {
         
         // fix up URL to standard form
         String url = link.toExternalForm();
+        
+        // OnlineResource overriding
+        String vendorOR = (String)WMSValidator.VendorORMapping.get(Thread.currentThread().getId());
+        if (vendorOR != null)
+            url = vendorOR;
+        
         if( ! url.toString().endsWith( "?") ) {
             if( ! url.endsWith( "&" ) ) {
                 if( url.indexOf( "?" ) == -1 ) url = url + "?";

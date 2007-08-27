@@ -130,7 +130,7 @@ public class XMLFactory extends org.deegree.owscommon.XMLFactory {
             root.setAttribute( "updateSequence", capabilities.getUpdateSequence() );
 
             // XXXsyp added this line, but not working??
-            root.setAttribute( "xmlns:xlink", "http://www.w3.org/1999/xlink" );
+            root.setAttribute( "xmlns:xlink", "http://www.w3.org/1999/xlink/" );
 
             appendService( root, capabilities.getServiceIdentification(),
                            capabilities.getServiceProvider() );
