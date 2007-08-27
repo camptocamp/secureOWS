@@ -30,12 +30,17 @@ public class OWSProxyServlet extends HttpServlet {
     private String password;
     private ErrorReporter reporter;
     private boolean firstTime = true;
+    private String listenURL;
     
     public OWSProxyServlet(ErrorReporter reporter, String server, String username, String password) {
         this.reporter = reporter;
         this.server = server;
         this.username = username;
         this.password = password;
+    }
+    
+    public void setListenURL(String URL) {
+        this.listenURL = URL;
     }
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -52,6 +57,12 @@ public class OWSProxyServlet extends HttpServlet {
             
             HttpClient client = new HttpClient();
             if (queryString != null) {
+
+                // TODO: only send for GetCapabilities
+                if (this.listenURL != null) {
+                    queryString += "&" + "VENDOR_ONLINE_RESOURCE=" + this.listenURL;
+                }
+                
                 serviceEndPoint += "?" + queryString;
             }
             System.out.println("End point: " + serviceEndPoint);

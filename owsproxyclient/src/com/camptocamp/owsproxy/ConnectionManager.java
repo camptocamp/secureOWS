@@ -71,6 +71,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 		System.out.println("server starting thread: " + Thread.currentThread().getName());
 		
 		listeningAddress = LISTENING_HOST + port + LISTENING_URL;
+		servlet.setListenURL(listeningAddress);
 
 	    // sleep a while to give time for servlet servet to start up
 		try {
