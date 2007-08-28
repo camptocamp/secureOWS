@@ -225,7 +225,7 @@ public class OWSProxyServletFilter implements Filter {
             response.setContentType( "text/html" );
             OutputStream os = response.getOutputStream();
             os.write( ("Welcome to the OwsProxyServer application. " +
-            		"Please provide GET parameters").getBytes() );
+            		"Please provide GET parameters\n").getBytes() );
             os.close();
             return;
         }
