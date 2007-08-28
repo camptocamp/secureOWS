@@ -264,20 +264,61 @@ public class TestWMS extends TestCase {
     public void testBboxRestrictions() {
         if(!TESTS_ENABLED)return;
         
+        // Keep this in sync with the testBboxOutsideRestrictions
+        
         final String TEST = "test_bbox_restrictions";
         
         Map<String, String> override = new HashMap<String, String>();
         
-        // default bbox is outside of allowed -> deny
+        // default bbox is surrounding the allowed one -> deny
         override.clear();
-        doTestRequest("test_bbox_restrictions", buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
+        doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
 
-        // inside allowed bbox -> allow
+        // totally inside allowed bbox -> allow
         override.clear();
         override.put("BBOX", "-92.91,26.21,-67.42,52.18");
         doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
+
+        // intersects allowed bbox -> deny
+        override.clear();
+        override.put("BBOX", "-92.91,26.21,-10,52.18");
+        doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
+
+        // totally outside of allowed bbox -> deny
+        override.clear();
+        override.put("BBOX", "-92.91,80.21,-67.42,85.18");
+        doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
     }
 
+    public void testBboxOutsideRestrictions() {
+        if(!TESTS_ENABLED)return;
+        
+        // Keep this in sync with the testBboxRestrictions
+        
+        final String TEST = "test_bbox_outside_restrictions";
+        
+        Map<String, String> override = new HashMap<String, String>();
+        
+        // default bbox is surrounding the allowed one -> allow
+        override.clear();
+        doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
+        
+        // totally inside allowed bbox -> allow
+        override.clear();
+        override.put("BBOX", "-92.91,26.21,-67.42,52.18");
+        doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
+
+        // intersects allowed bbox -> allow
+        override.clear();
+        override.put("BBOX", "-92.91,26.21,-10,52.18");
+        doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
+
+        // totally outside of allowed bbox -> deny
+        override.clear();
+        override.put("BBOX", "-92.91,80.21,-67.42,85.18");
+        doTestRequest(TEST, buildQueryString(getGetMapDefaultParams(), override), TOMCAT_CRED, SC_OK, true);
+    }
+    
     public void testBboxRestrictions2() {
         if(!TESTS_ENABLED)return;
         
