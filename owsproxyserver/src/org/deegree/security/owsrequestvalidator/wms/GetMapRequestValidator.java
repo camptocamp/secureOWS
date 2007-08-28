@@ -229,20 +229,32 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
             return;
 
         String v = op.getFirstAsString();
+
+        // Look at the deny policy
+        String POLICY_DENY_COMPLETELY_OUTSIDE = "@deny_if_completely_outside";
+        boolean denyCompletelyOutside = false;
+        if (v.indexOf(POLICY_DENY_COMPLETELY_OUTSIDE) != -1) {
+            denyCompletelyOutside = true;
+            v = v.replaceAll(POLICY_DENY_COMPLETELY_OUTSIDE, "");
+        }
+
         String[] d = StringTools.toArray( v, ",", false );
         Envelope env = GeometryFactory.createEnvelope( Double.parseDouble( d[0] ), 
                         Double.parseDouble( d[1] ), Double.parseDouble( d[2] ), 
                         Double.parseDouble( d[3] ), null );
 
-        /* XXXsyp
-        try {
-            env = gt.transform( env, d[4] );
-        } catch (Exception e) {
-            throw new InvalidParameterValueException( MISSINGCRS, e );
+        if (d.length > 4) {
+            try {
+                env = gt.transform( env, d[4] );
+            } catch (Exception e) {
+                throw new InvalidParameterValueException( MISSINGCRS, e );
+            }
         }
-        */
 
-       if ( !env.contains( envelope ) ) {
+        boolean denied = denyCompletelyOutside ?
+                            !env.intersects(envelope) : !env.contains(envelope);
+        
+        if ( denied ) {
             if ( !op.isUserCoupled() ) {
                 // if not user coupled the validation has failed
                 throw new InvalidParameterValueException( INVALIDBBOX + op.getFirstAsString() );
