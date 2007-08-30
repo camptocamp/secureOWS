@@ -118,7 +118,11 @@ class GetFeatureInfoResponseValidator extends ResponseValidator {
         } else if ( mime.equals( "text/html" ) ) {
             response = validateHTML( response, mime, user );
         } else {
-            throw new InvalidParameterValueException( UNKNOWNMIMETYPE + mime );
+            // XXXsyp
+            // This should check the allowed formats declared in the Capabilities document and validate accordingly
+            // for now, skip the test for other mime types
+            
+            //throw new InvalidParameterValueException( UNKNOWNMIMETYPE + mime );
         }
 
         return response;
