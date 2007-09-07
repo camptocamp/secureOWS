@@ -41,6 +41,21 @@
 <servlet-name>test_no_restrictions</servlet-name>
 <url-pattern>/test_no_restrictions</url-pattern>
 </servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_no_restrictions</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
 <filter>
 <filter-name>OWSProxyServletFilter_test_size_restrictions</filter-name>
 <filter-class>
@@ -81,6 +96,21 @@
 <servlet-name>test_size_restrictions</servlet-name>
 <url-pattern>/test_size_restrictions</url-pattern>
 </servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_size_restrictions</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
 <filter>
 <filter-name>OWSProxyServletFilter_test_layer_restrictions</filter-name>
 <filter-class>
@@ -121,6 +151,21 @@
 <servlet-name>test_layer_restrictions</servlet-name>
 <url-pattern>/test_layer_restrictions</url-pattern>
 </servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_layer_restrictions</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
 <filter>
 <filter-name>OWSProxyServletFilter_test_layer_restrictions2</filter-name>
 <filter-class>
@@ -161,6 +206,21 @@
 <servlet-name>test_layer_restrictions2</servlet-name>
 <url-pattern>/test_layer_restrictions2</url-pattern>
 </servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_layer_restrictions2</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
 <filter>
 <filter-name>OWSProxyServletFilter_test_bbox_restrictions</filter-name>
 <filter-class>
@@ -201,6 +261,76 @@
 <servlet-name>test_bbox_restrictions</servlet-name>
 <url-pattern>/test_bbox_restrictions</url-pattern>
 </servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_bbox_restrictions</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
+<filter>
+<filter-name>OWSProxyServletFilter_test_bbox_outside_restrictions</filter-name>
+<filter-class>
+			org.deegree.security.owsproxy.OWSProxyServletFilter
+		</filter-class>
+<init-param>
+<param-name>WMS:POLICY</param-name>
+<param-value>/WEB-INF/tests/wmsPolicy_test_bbox_outside_restrictions.xml</param-value>
+</init-param>
+<init-param>
+<param-name>ALTREQUESTPAGE</param-name>
+<param-value>/accessDenied.html</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>OWSProxyServletFilter_test_bbox_outside_restrictions</filter-name>
+<servlet-name>test_bbox_outside_restrictions</servlet-name>
+</filter-mapping>
+<filter>
+<filter-name>OWSLoggerFilter_test_bbox_outside_restrictions</filter-name>
+<filter-class>com.camptocamp.owsproxy.OWSLoggerFilter</filter-class>
+</filter>
+<filter-mapping>
+<filter-name>OWSLoggerFilter_test_bbox_outside_restrictions</filter-name>
+<servlet-name>test_bbox_outside_restrictions</servlet-name>
+</filter-mapping>
+<servlet>
+<description/>
+<display-name>test_bbox_outside_restrictions</display-name>
+<servlet-name>test_bbox_outside_restrictions</servlet-name>
+<servlet-class>com.camptocamp.owsproxy.OWSProxyServlet</servlet-class>
+<init-param>
+<param-name>serviceEndPoint</param-name>
+<param-value>http://localhost:8081/geoserver/wms</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>test_bbox_outside_restrictions</servlet-name>
+<url-pattern>/test_bbox_outside_restrictions</url-pattern>
+</servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_bbox_outside_restrictions</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
 <filter>
 <filter-name>OWSProxyServletFilter_test_bbox_restrictions2</filter-name>
 <filter-class>
@@ -241,6 +371,21 @@
 <servlet-name>test_bbox_restrictions2</servlet-name>
 <url-pattern>/test_bbox_restrictions2</url-pattern>
 </servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_bbox_restrictions2</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
 <filter>
 <filter-name>OWSProxyServletFilter_test_featureinfo_featurecount</filter-name>
 <filter-class>
@@ -281,6 +426,21 @@
 <servlet-name>test_featureinfo_featurecount</servlet-name>
 <url-pattern>/test_featureinfo_featurecount</url-pattern>
 </servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_featureinfo_featurecount</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
 <filter>
 <filter-name>OWSProxyServletFilter_test_featureinfo_format</filter-name>
 <filter-class>
@@ -321,6 +481,21 @@
 <servlet-name>test_featureinfo_format</servlet-name>
 <url-pattern>/test_featureinfo_format</url-pattern>
 </servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/test_featureinfo_format</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
 <filter>
 <filter-name>OWSProxyServletFilter_test_featureinfo_layers</filter-name>
 <filter-class>
@@ -365,7 +540,7 @@
 <display-name>Ows Proxy Security Constraint</display-name>
 <web-resource-collection>
 <web-resource-name>Protected Area</web-resource-name>
-<url-pattern>/*</url-pattern>
+<url-pattern>/test_featureinfo_layers</url-pattern>
 <http-method>DELETE</http-method>
 <http-method>GET</http-method>
 <http-method>POST</http-method>

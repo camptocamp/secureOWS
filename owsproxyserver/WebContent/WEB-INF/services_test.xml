@@ -9,68 +9,119 @@
   directory="tests"
   serviceDescription="test_no_restrictions"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="test_size_restrictions"
   directory="tests"
   serviceDescription="test_size_restrictions"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="test_layer_restrictions"
   directory="tests"
   serviceDescription="test_layer_restrictions"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="test_layer_restrictions2"
   directory="tests"
   serviceDescription="test_layer_restrictions2"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="test_bbox_restrictions"
   directory="tests"
   serviceDescription="test_bbox_restrictions"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
+
+  <service
+  serviceId="test_bbox_outside_restrictions"
+  directory="tests"
+  serviceDescription="test_bbox_outside_restrictions"
+  serviceEndPoint="http://localhost:8081/geoserver/wms"
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="test_bbox_restrictions2"
   directory="tests"
   serviceDescription="test_bbox_restrictions2"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="test_featureinfo_featurecount"
   directory="tests"
   serviceDescription="test_featureinfo_featurecount"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="test_featureinfo_format"
   directory="tests"
   serviceDescription="test_featureinfo_format"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="test_featureinfo_layers"
   directory="tests"
   serviceDescription="test_featureinfo_layers"
   serviceEndPoint="http://localhost:8081/geoserver/wms"
-  />
-
-<!-- Anyone with one of the listed roles may access this area -->
-<roles>
-<role>tomcat</role>
-<role>role1</role>
-</roles>
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
 </services>

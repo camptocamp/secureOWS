@@ -6,36 +6,55 @@
   serviceId="mistra"
   serviceDescription="Mistra WMS (only inside Swisstopo network)"
   serviceEndPoint="http://test4-swisstopogeodata.lt.admin.ch/wms-mistra"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
   
   <service
   serviceId="gmap"
   serviceDescription="DM Solutions WMS Demo Server"
   serviceEndPoint="http://209.217.116.146/cgi-bin/mswms_gmap"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="vmap"
   serviceDescription="Metacarta vmap"
   serviceEndPoint="http://labs.metacarta.com/wms/vmap0?"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
 
   <service
   serviceId="germany"
   serviceDescription="Germany"
   serviceEndPoint="http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&amp;"
-  />
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
   
   <service
   serviceId="geoserver"
   serviceDescription="Geoserver on localhost"
   serviceEndPoint="http://localhost:8080/geoserver/wms"
-  />
-
-<!-- Anyone with one of the listed roles may access this area -->
-<roles>
-<role>tomcat</role>
-<role>role1</role>
-</roles>
+  >
+	<roles>
+		<role>tomcat</role>
+		<role>role1</role>
+	</roles>
+  </service>
     
 </services>

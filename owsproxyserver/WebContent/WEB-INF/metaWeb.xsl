@@ -17,28 +17,7 @@
 	  <display-name>owsproxyserver</display-name>  
   
       <xsl:apply-templates select="//service"/>
-      
-	   <security-constraint>
-	      <display-name>Ows Proxy Security Constraint</display-name>
-	
-	      <web-resource-collection>
-	         <web-resource-name>Protected Area</web-resource-name>
-	         
-	         <url-pattern>/*</url-pattern>
-	
-			 <!-- If you list http methods, only those methods are protected -->
-			 <http-method>DELETE</http-method>
-	         <http-method>GET</http-method>
-	         <http-method>POST</http-method>
-			 <http-method>PUT</http-method>
-	      </web-resource-collection>
-	
-	      <auth-constraint>
-	         <!-- Anyone with one of the listed roles may access this area -->
-			 <xsl:apply-templates select="//roles/*"/>
-	      </auth-constraint>
-	    </security-constraint>	
-	    
+
 	    <login-config>
 	      <auth-method>BASIC</auth-method>
 	      <realm-name>Ows Proxy Realm</realm-name>
@@ -101,6 +80,27 @@
 		<servlet-name><xsl:value-of select="@serviceId"/></servlet-name>
 		<url-pattern>/<xsl:value-of select="@serviceId"/></url-pattern>
 	</servlet-mapping>
+
+    <security-constraint>
+      <display-name>Ows Proxy Security Constraint</display-name>
+
+      <web-resource-collection>
+         <web-resource-name>Protected Area</web-resource-name>
+         
+         <url-pattern>/<xsl:value-of select="@serviceId"/></url-pattern>
+
+		 <!-- If you list http methods, only those methods are protected -->
+		 <http-method>DELETE</http-method>
+         <http-method>GET</http-method>
+         <http-method>POST</http-method>
+		 <http-method>PUT</http-method>
+      </web-resource-collection>
+
+      <auth-constraint>
+         <!-- Anyone with one of the listed roles may access this area -->
+		 <xsl:apply-templates select="./roles/*"/>
+      </auth-constraint>
+    </security-constraint>	
 
   </xsl:template>
 
