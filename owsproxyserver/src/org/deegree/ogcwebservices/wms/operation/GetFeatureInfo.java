@@ -159,6 +159,14 @@ public class GetFeatureInfo extends WMSRequestBase {
                                                     "VERSION-value must be set in the GetFeatureInfo request" );
         }
 
+        // Some WMS Client, like ArcMAP, only send the QUERY_LAYERS parameter without a LAYERS parameter.
+        // However, some WMS server like MapServer fail in case there is no LAYERS parameter send.
+        // Thus, we add a LAYERS parameter in case only a QUERY_LAYERS parameter is available.
+        // -> Keep this in sync with the code in com.camptocamp.owsproxy.OWSProxyServlet::doGet
+        if (model.containsKey("QUERY_LAYERS") && !model.containsKey("LAYERS")) {
+            model.put("LAYERS", model.get("QUERY_LAYERS"));
+        }
+        
         boolean is130 = ( "1.3.0".compareTo( version ) <= 0 );
 
         // ID

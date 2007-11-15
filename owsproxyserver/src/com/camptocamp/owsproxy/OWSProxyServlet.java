@@ -11,6 +11,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.deegree.ogcwebservices.wms.operation.GetFeatureInfo;
 import org.deegree.security.owsproxy.OWSProxyServletFilter;
 
 /**
@@ -50,6 +51,15 @@ public class OWSProxyServlet extends javax.servlet.http.HttpServlet implements
             HttpServletResponse response) throws ServletException, IOException {
 
         String queryString = request.getQueryString();
+        
+        
+        // Some WMS Client, like ArcMAP, only send the QUERY_LAYERS parameter without a LAYERS parameter.
+        // However, some WMS server like MapServer fail in case there is no LAYERS parameter send.
+        // Thus, we add a LAYERS parameter in case only a QUERY_LAYERS parameter is available.
+        // -> Keep this in sync with the code in org.deegree.ogcwebservices.wms.operation.GetFeatureInfo::create() 
+        if (request.getParameter("QUERY_LAYERS") != null && request.getParameter("LAYERS") == null) {
+            queryString += "&LAYERS=" + request.getParameter("QUERY_LAYERS"); 
+        }
 
         String endPoint = "" + SERVICE_END_POINT;
 
