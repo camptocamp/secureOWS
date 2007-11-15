@@ -354,6 +354,25 @@ public class TestWMS extends TestCase {
         doTestRequest(TEST, buildQueryString(getGetFeatureInfoDefaultParams(), override), TOMCAT_CRED, SC_OK, false);
     }
 
+    /** 
+     * Some WMS Client, like ArcMAP, only send the QUERY_LAYERS parameter without a LAYERS parameter.
+     *
+     * In such situation, the service should not throw an exception.
+     */
+    public void testGetFeatureInfoNoLayers() {
+        if(!TESTS_ENABLED)return;
+        
+        final String TEST = "test_no_restrictions";
+        
+        Map<String, String> override = new HashMap<String, String>();
+        override.clear();
+        
+        Map<String, String> params = getGetFeatureInfoDefaultParams();
+        params.remove("LAYERS");
+        
+        doTestRequest(TEST, buildQueryString(params, override), TOMCAT_CRED, SC_OK, false);
+    }
+    
     public void testGetFeatureInfoFeaturecount() {
         if(!TESTS_ENABLED)return;
         
