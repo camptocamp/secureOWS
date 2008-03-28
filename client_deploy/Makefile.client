@@ -1,0 +1,25 @@
+include config.mk
+
+copy:
+	cp $(ECLIPSE_HOME)/owsproxyclient/releases/owsproxyclient-$(WEBSTART_VERSION).jar webstart/owsproxyclient-$(WEBSTART_VERSION).jar
+
+sign: copy
+	if [ ! -f $(KEYSTORE) ]; then \
+		echo Error: missing Keystore file $(KEYSTORE); \
+		exit 1; \
+	fi
+	jarsigner -storepass $(KEYSTORE_PASSPHRASE) -keystore $(KEYSTORE) webstart/owsproxyclient-$(WEBSTART_VERSION).jar  myself
+
+make_jar:
+	echo "VERSION=$(WEBSTART_VERSION)" > $(ECLIPSE_HOME)/owsproxyclient/version.sh
+	(cd $(ECLIPSE_HOME)/owsproxyclient; ./make_jar.sh)
+
+update_jnlp:
+	cat owsproxyclient.jnlp.in | sed -e "s/@VERSION_JNLP@/$(WEBSTART_VERSION)/" -e "s/@VERSION@/$(WEBSTART_VERSION)/" > \
+		webstart/owsproxyclient-$(WEBSTART_VERSION).jnlp
+
+make_webstart_archive: make_jar sign update_jnlp
+
+run:
+	java -jar webstart/owsproxyclient-$(WEBSTART_VERSION).jar com.camptocamp.owsproxy.OWSClient
+
