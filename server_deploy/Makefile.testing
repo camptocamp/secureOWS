@@ -1,0 +1,62 @@
+include config.mk
+
+TOMCAT_VERSION := apache-tomcat-5.5.20
+GEOSERVER_VERSION := geoserver-1.5.0-RC1-war.zip
+REQUIREMENTS_URL = http://www.secureows.org/requirements.tar
+
+checkout_test:
+	rm -rf owsproxytest
+	svn co http://www.secureows.org/svn/secureows/trunk/owsproxytest
+
+prepare_requirements:
+	@if [ ! -d requirements ]; then \
+		echo Fetching requirements; \
+		wget -O- $(REQUIREMENTS_URL) | tar xf - ; \
+	fi
+
+prepare_geoserver: prepare_requirements
+	rm -rf geoserver
+	mkdir geoserver
+	(cd geoserver; tar zxf ../requirements/$(TOMCAT_VERSION).tar.gz)
+	rsync -av requirements/geoserver_tomcat_overrided_files/ geoserver/$(TOMCAT_VERSION)
+	(cd geoserver/$(TOMCAT_VERSION)/webapps/; unzip ../../../requirements/$(GEOSERVER_VERSION))
+
+prepare_owsproxyserver: prepare_requirements
+	rm -rf owsproxyserver
+	mkdir owsproxyserver
+	(cd owsproxyserver; tar zxf ../requirements/$(TOMCAT_VERSION).tar.gz)
+	rsync -av requirements/tomcat_overrided_files/ owsproxyserver/$(TOMCAT_VERSION)
+	cp $(TEST_WAR) owsproxyserver/$(TOMCAT_VERSION)/webapps
+	(cd owsproxyserver/$(TOMCAT_VERSION)/webapps; unzip -qd owsproxyserver owsproxyserver.war)
+	java -cp owsproxyserver/$(TOMCAT_VERSION)/webapps/owsproxyserver/WEB-INF/classes OwsAdmin owsproxyserver/$(TOMCAT_VERSION)/webapps/owsproxyserver/WEB-INF/ services_test.xml
+
+
+prepare: checkout_test prepare_geoserver prepare_owsproxyserver
+
+start_geoserver:
+	./geoserver/$(TOMCAT_VERSION)/bin/startup.sh
+stop_geoserver:
+	./geoserver/$(TOMCAT_VERSION)/bin/shutdown.sh
+
+start_tomcats:
+	./geoserver/$(TOMCAT_VERSION)/bin/startup.sh
+	./owsproxyserver/$(TOMCAT_VERSION)/bin/startup.sh
+
+stop_tomcats:
+	./geoserver/$(TOMCAT_VERSION)/bin/shutdown.sh
+	./owsproxyserver/$(TOMCAT_VERSION)/bin/shutdown.sh
+
+run_test:
+	(cd owsproxytest&& make run_tests)
+
+MAKE_SELF := $(MAKE) -f Makefile.testing
+
+test_all:
+	-$(MAKE_SELF) stop_tomcats
+	sleep 2
+	$(MAKE_SELF) prepare
+	$(MAKE_SELF) start_tomcats
+	sleep 7
+	$(MAKE_SELF) run_test
+	$(MAKE_SELF) stop_tomcats > /dev/null
+

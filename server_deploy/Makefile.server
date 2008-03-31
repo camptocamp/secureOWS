@@ -1,0 +1,38 @@
+include config.mk
+
+# for prepare_owsproxyserver target
+include Makefile.testing
+
+make_war_archive:
+	rm -rf war/$(WAR_VERSION)
+	mkdir -p war/$(WAR_VERSION)
+	cp -rl $(ECLIPSE_HOME)/$(WEBAPP_HOME) war/$(WAR_VERSION)
+	java -cp war/$(WAR_VERSION)/owsproxyserver/WEB-INF/classes OwsAdmin war/$(WAR_VERSION)/owsproxyserver/WEB-INF/
+	(cd war/$(WAR_VERSION)/owsproxyserver; zip -qr owsproxyserver.war .)
+	mv war/$(WAR_VERSION)/owsproxyserver/owsproxyserver.war war/$(WAR_VERSION)
+	rm -rf war/$(WAR_VERSION)/owsproxyserver
+
+OWSPROXYSERVER_DIR := owsproxyserver_$(WAR_VERSION)
+prepare_owsproxyserver_archive: prepare_owsproxyserver
+	rm -rf $(OWSPROXYSERVER_DIR)
+	mv owsproxyserver $(OWSPROXYSERVER_DIR)
+	java -cp $(OWSPROXYSERVER_DIR)/$(TOMCAT_VERSION)/webapps/owsproxyserver/WEB-INF/classes OwsAdmin $(OWSPROXYSERVER_DIR)/$(TOMCAT_VERSION)/webapps/owsproxyserver/WEB-INF/ services.xml
+	# Copy geoserver
+	(cd $(OWSPROXYSERVER_DIR)/$(TOMCAT_VERSION)/webapps/; unzip ../../../requirements/$(GEOSERVER_VERSION))
+	-mkdir owsproxyserver_archives
+	-rm owsproxyserver_archives/$(OWSPROXYSERVER_DIR).tar.gz
+	tar zcf owsproxyserver_archives/$(OWSPROXYSERVER_DIR).tar.gz $(OWSPROXYSERVER_DIR)
+	# Comment this if you want to keep an extracted copy
+	rm -rf $(OWSPROXYSERVER_DIR)
+
+build_archives: make_war_archive prepare_owsproxyserver_archive
+
+clean:
+	-rm -rf geoserver
+	-rm -rf owsproxyserver
+	-rm -rf owsproxyserver_$(WAR_VERSION)
+	-rm -rf owsproxyserver_archives
+	-rm -rf owsproxytest
+	-rm -rf requirements
+	-rm -rf war
+
