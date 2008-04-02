@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>WMS tests geoserver</title>
+    <style type="text/css">
+        body {
+            font-family: verdana, sans-serif;
+            font-size: small;
+        }
+        #test_urls > div {
+            padding-bottom: 2em;
+            border-top: 3px solid #aaa;
+            border-left: 3px solid #aaa;
+        }
+        #test_urls > div > div {
+            padding-left: 2em;
+            border-top: 1px groove #eee;
+        }
+    </style>
+    <script type="text/javascript">
+
+    if (!window.console || !console.firebug)
+    {
+        var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
+        "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+
+        window.console = {};
+        for (var i = 0; i < names.length; ++i)
+            window.console[names[i]] = function() {}
+    }
+
+    // Change here configuration for tests
+    var BASE_URL = "http://localhost:8080/owsproxyserver/";
+
+    var services = {
+     // List of tests
+     "owsproxyserver_test_no_restrictions": BASE_URL + "test_no_restrictions?",
+     "owsproxyserver_test_size_restrictions": BASE_URL + "test_size_restrictions?",
+     "owsproxyserver_test_layer_restrictions": BASE_URL + "test_layer_restrictions?",
+     "owsproxyserver_test_layer_restrictions2": BASE_URL + "test_layer_restrictions2?",
+     "owsproxyserver_test_bbox_restrictions": BASE_URL + "test_bbox_restrictions?",
+     "owsproxyserver_test_bbox_outside_restrictions": BASE_URL + "test_bbox_outside_restrictions?",
+     "owsproxyserver_test_bbox_restrictions2": BASE_URL + "test_bbox_restrictions2?",
+
+     "owsproxyserver_test_featureinfo_featurecount": BASE_URL + "test_featureinfo_featurecount?",
+     "owsproxyserver_test_featureinfo_format": BASE_URL + "test_featureinfo_format?",
+     "owsproxyserver_test_featureinfo_layers": BASE_URL + "test_featureinfo_layers?",
+
+     "TODO test: broken wms proxy": BASE_URL + "test_ms_getcapa?",
+     "TODO test: broken wms direct": "http://ab.swisstopogeodata.ch/wms-test?",
+
+    };
+
+    function addLink(args, argsOverride) {
+        var li = document.createElement("div");
+
+        for (var a in argsOverride) {
+            args[a.toUpperCase()] = argsOverride[a];
+        }
+
+        var query = [];
+        for (a in args) {
+            query.push(a + "=" + args[a]);
+        }
+        query = query.join("&");
+
+        function makeLink(label, base, query) {
+            var div = document.createElement("div");
+            var link = document.createElement("a");
+            div.appendChild(link);
+
+            var url =  base + query;
+            link.setAttribute("href", url);
+            var txt = document.createTextNode(label + " " + url);
+            link.appendChild(txt);
+            return div;
+        }
+
+        for(var s in services) {
+                li.appendChild(makeLink(s, services[s], query));
+
+                //li.appendChild(makeLink("owsproxyserver", owsproxyserver, query));
+                //li.appendChild(makeLink("direct", direct, query));
+                //li.appendChild(makeLink("geoserver", geoserver, query));
+        }
+        return li.innerHTML;
+
+    }
+
+    function writeLink(override) {
+
+/*
+/geoserver/wms?
+REQUEST=GetMap&
+SERVICE=WMS&
+VERSION=1.1.1&
+WIDTH=1060&
+HEIGHT=844&
+LAYERS=nurc%3AImg_Sample
+TRANSPARENT=TRUE&
+FORMAT=image/png&
+BBOX=-124.03360055308917,11.369819320219221,-68.14723524226983,55.86801962430556
+SRS=EPSG:4326
+STYLES= 
+*/
+        var args_geoserver = {"REQUEST": "GetMap", "SERVICE": "WMS", "VERSION": "1.1.1",
+            "WIDTH": "684","HEIGHT": "497",
+            "LAYERS": "nurc%3AImg_Sample",
+            "TRANSPARENT": "TRUE",
+            "FORMAT": "image/png",
+            "BBOX": "-124.03360055308917,11.369819320219221,-68.14723524226983,55.86801962430556",
+            "SRS": "EPSG:4326",
+            "STYLES": "",
+         };
+
+        var args = args_geoserver;
+
+        document.write(addLink(args, override));
+    }
+
+    function writeLink2(args, override) {
+        document.write(addLink(args, override));
+    }
+    
+    function init() {
+        addLink("normal image");
+        addLink("large image", {"width": 2000, "height": 900});
+        
+    }
+
+    </script>
+</head>
+<body>
+    <div id="test_urls">
+        test url's
+        <div>
+            no_restrictions
+            test 1: standard: pass
+            <script>writeLink({})</script>
+        </div>
+        <div>
+            size_restriction: denied
+            test 2: image too large: denied
+              <!--      
+        <Parameter name="maxWidth" userCoupled="false">
+            <Value>1000</Value>
+        </Parameter>
+           -->
+
+            <script>writeLink({"width": 2000, "height": 900})</script>
+        </div>
+        <div>
+            test_layer_restrictions
+            test 4: layer not allowed: denied
+            <!--
+                <Parameter name="layers" userCoupled="false">
+                    <Value>lakespy2|$any$</Value>
+                    <Value>airports|$any$</Value>
+                    <Value>ctybdpy2|$any$</Value>
+                </Parameter>            
+            -->
+            <script>writeLink({})</script>
+        </div>
+        <div>
+            test_layer_restrictions
+            test 5: layers allowed: pass
+            <!--
+                <Parameter name="layers" userCoupled="false">
+                    
+                    <Value>lakespy2|$any$</Value>
+                    <Value>airports|$any$</Value>
+                    <Value>ctybdpy2|$any$</Value>
+                    
+                </Parameter>            
+            -->
+            <script>writeLink({"layers": "tiger:giant_polygon,topp:tasmania_cities"})</script>
+        </div>
+
+
+        <div>
+            test_layer_restrictions2
+            Only Alice should see
+            <script>writeLink({})</script>
+        </div>
+        <div>
+            test_layer_restrictions2
+            Anyone can see
+            <script>writeLink({"layers": "tiger:giant_polygon,topp:tasmania_cities"})</script>
+        </div>
+        <div>
+        test_bbox_restrictions
+            bbox totally inside restriction -> allowed.
+            <!--
+                <Parameter name="bbox" userCoupled="false">
+                        <Value>-93,25,-66,53</Value> 
+                </Parameter>
+            -->
+
+            <script>writeLink({"bbox": "-92.91,26.21,-67.42,52.18"})</script>
+            <!-- <script>writeLink({"bbox": "458041.81,5042189.81,511112.99,5451687.44"})</script> -->
+        </div>
+        <div>
+        test_bbox_outside_restrictions
+            bbox totally inside restriction -> allowed.
+            <!--
+                <Parameter name="bbox" userCoupled="false">
+                        <Value>-93,25,-66,53</Value> 
+                </Parameter>
+            -->
+
+            <script>writeLink({"bbox": "-92.91,26.21,-67.42,52.18"})</script>
+            <!-- <script>writeLink({"bbox": "458041.81,5042189.81,511112.99,5451687.44"})</script> -->
+        </div>
+        <div>
+        test_bbox_restrictions2
+            bbox inside restriction -> allowed only for alice.
+            <!--
+                <Parameter name="bbox" userCoupled="false">
+                        <Value>-93,25,-66,53</Value> 
+                </Parameter>
+            -->
+
+            <script>writeLink({"bbox": "-92.91,26.21,-67.42,52.18"})</script>
+            <!-- <script>writeLink({"bbox": "458041.81,5042189.81,511112.99,5451687.44"})</script> -->
+        </div>
+        <div>
+            test 6: by role layer not allowed: for role tomcat->restrict(airports|ITASCA), other roles->allow
+            <!-- 
+                  <Parameter name="layers" userCoupled="false">
+                           <Role name="tomcat">
+                                
+                             <Value>airports|$any$</Value>
+                     <Value>ITASCA|$any$</Value>
+                    
+                   </Role>
+                   <Role name="$default$">
+                    <Any />
+                   </Role>
+                                     
+            </Parameter>         
+            -->
+            <script>writeLink({"layers": "lakespy2,airports,ctybdpy2"})</script>
+        </div>
+
+        <div>
+            test 7: get capa
+            <!-- 
+            -->
+            <script>writeLink2({"SERVICE":"WMS","VERSION":"1.1.1","REQUEST":"GetCapabilities"}, {})</script>
+        </div>
+    </div>
+
+</body>
+</html>
