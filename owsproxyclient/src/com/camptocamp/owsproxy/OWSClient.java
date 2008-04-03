@@ -15,16 +15,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
 
 import javax.swing.JComponent;
+
+import com.camptocamp.owsproxy.logging.OWSLogger;
+import com.camptocamp.owsproxy.parameters.ConnectionParameters;
 
 public class OWSClient implements Observer {
 
 	ConnectionManager connManager;
 	private owsproxyclient.OWSClientGUI client;
     Color textColor;
-    private static final boolean DEBUG = false;
-    
+
 	public OWSClient() {
 		
 		connManager = new ConnectionManager();
@@ -54,7 +57,7 @@ public class OWSClient implements Observer {
 			return;
 		ConnectionEvent connEvent = (ConnectionEvent)arg;
 		
-        System.out.println("Got event: " + connEvent);
+		OWSLogger.DEV.finer("Got event: " + connEvent);
         
 		client.proxyURL.setText("");
         client.connectButton.setEnabled(connEvent.status == 
@@ -113,8 +116,8 @@ public class OWSClient implements Observer {
 			throw new RuntimeException("Should not happen");
 		}
 		
-		System.out.println("Event " + arg);
-        if (DEBUG)
+        OWSLogger.DEV.info("Event " + arg);
+        if (OWSLogger.DEV.isLoggable(Level.FINER))
             client.errorDetail.setText(arg.toString());
 	}
 	
@@ -122,9 +125,9 @@ public class OWSClient implements Observer {
 		
         client = new owsproxyclient.OWSClientGUI();
 		client.setVisible(true);
-        client.errorDetail.setVisible(DEBUG);
+        client.errorDetail.setVisible(OWSLogger.DEV.isLoggable(Level.FINER));
         
-        if (DEBUG) {
+        if (OWSLogger.DEV.isLoggable(Level.FINER)) {
             client.serviceURL.setText("http://localhost");
             client.usernameField.setText("tomcat");
             client.passwordField.setText("tomcat");
@@ -140,7 +143,7 @@ public class OWSClient implements Observer {
                         String username = client.usernameField.getText();
 						String password = new String(client.passwordField.getPassword());
 						
-						connManager.connect(host, username, password);
+						connManager.connect(new ConnectionParameters(host, username, password, null, -1, null, null));
 					}
                 }).start();
 			}

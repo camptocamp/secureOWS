@@ -7,4 +7,5 @@ interface ErrorReporter {
 	void reportError(ConnectionStatus status, String error);
 
     void connected();
+
 }

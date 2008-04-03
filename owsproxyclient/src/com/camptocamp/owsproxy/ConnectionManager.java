@@ -11,6 +11,8 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
 import com.camptocamp.owsproxy.ConnectionEvent.ConnectionStatus;
+import com.camptocamp.owsproxy.logging.OWSLogger;
+import com.camptocamp.owsproxy.parameters.ConnectionParameters;
 
 
 public class ConnectionManager extends Observable implements ErrorReporter {
@@ -24,9 +26,9 @@ public class ConnectionManager extends Observable implements ErrorReporter {
     // This is only used to test the credentials.
     static final String LISTENING_HOST = "http://localhost:"; 
     
-	void connect(String host, String username, String password) {
+	void connect(ConnectionParameters connectionParams) {
 		
-        OWSProxyServlet servlet = new OWSProxyServlet(this, host, username, password);
+        OWSProxyServlet servlet = new OWSProxyServlet(this, connectionParams.copy());
 
 		if (server != null) {
 			disconnect();
@@ -44,7 +46,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 					server.start();
 					break;
 		    	} catch (BindException be) {
-					System.out.println("Port " + port + " already bound, trying next");
+					OWSLogger.DEV.info("Port " + port + " already bound, trying next");
 					port += 1;
 					server = new Server(port);
 				}
@@ -57,7 +59,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
         Context context = new Context(server, LISTENING_URL, Context.SESSIONS);
         context.addServlet(new ServletHolder(servlet), "/*");
         
-        System.out.println("port is " + port);
+        OWSLogger.DEV.info("port is " + port);
 	    new Thread(new Runnable() {
 			public void run() {
 		    	try {
@@ -68,7 +70,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 			}
 	    }).start();
 	    
-		System.out.println("server starting thread: " + Thread.currentThread().getName());
+	    OWSLogger.DEV.finer("server starting thread: " + Thread.currentThread().getName());
 		
 		listeningAddress = LISTENING_HOST + port + LISTENING_URL;
 		servlet.setListenURL(listeningAddress);
@@ -83,7 +85,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
         GetMethod get = new GetMethod(listeningAddress);
 	    try {
             int statusCode = client.executeMethod(get);
-            System.out.println("status: " + statusCode);
+            OWSLogger.DEV.finer("status: " + statusCode);
             
 	    } catch (IOException e) {
 			error(e);
