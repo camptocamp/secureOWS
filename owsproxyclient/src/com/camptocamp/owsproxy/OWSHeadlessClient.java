@@ -36,7 +36,8 @@ public class OWSHeadlessClient implements Observer {
 			new HelpParameter(), new ProxyUserParameter() };
 
 	ConnectionManager connManager;
-	ConnectionParameters params = new ConnectionParameters(null,null,null,null,-1,"","");
+	ConnectionParameters params = new ConnectionParameters(null, null, null,
+			null, -1, "", "");
 
 	public OWSHeadlessClient() {
 		connManager = new ConnectionManager();
@@ -55,19 +56,35 @@ public class OWSHeadlessClient implements Observer {
 		if (!(arg instanceof ConnectionEvent))
 			return;
 		ConnectionEvent connEvent = (ConnectionEvent) arg;
-
+		ResourceBundle bundle = java.util.ResourceBundle
+		.getBundle("owsproxyclient/translations");
 		switch (connEvent.status) {
-		case ERROR:
-//			System.exit(0);
+		case ERROR: {
+			String pattern = "Warning: An error just occurred verify that operation is continuing correctly.  Error Message: {0}";
+			OWSLogger.USER.warning(MessageFormat.format(pattern,
+					connEvent.message));
+
 			break;
-
-		default:
-
+		}
+		case UNAUTHORIZED: {
+			OWSLogger.USER
+					.severe(bundle.getString("Unauthorized"));
+			System.exit(0);
+			break;
+		}
+		case PROXY_AUTH_REQUIRED: {
+			OWSLogger.USER
+					.severe("Unauthorized: Verify the username and password");
+			System.exit(0);
+			break;
+		}
+		default: {
 			String pattern = ResourceBundle.getBundle(
 					"owsproxyclient/translations").getString("headlessStatus");
 			String message = MessageFormat.format(pattern, connEvent.status);
 			OWSLogger.USER.info(message);
 			break;
+		}
 		}
 	}
 
@@ -103,8 +120,7 @@ public class OWSHeadlessClient implements Observer {
 							iter.previous();
 						}
 					} else {
-						param.performAction("",
-								client);
+						param.performAction("", client);
 					}
 				}
 			}
@@ -115,15 +131,16 @@ public class OWSHeadlessClient implements Observer {
 					"Two or three arguments are required");
 		}
 		String usernamePassword = args.get(0);
-		client.getParams().username = ProxyUserParameter.parseUsername(usernamePassword);
-		client.getParams().password = ProxyUserParameter.parsePassword(usernamePassword);
+		client.getParams().username = ProxyUserParameter
+				.parseUsername(usernamePassword);
+		client.getParams().password = ProxyUserParameter
+				.parsePassword(usernamePassword);
 
 		client.getParams().server = args.get(1);
 		client.params.checkConfiguration();
 		return client;
 	}
 
-	
 	private static void usage(String error) {
 		String usage = ResourceBundle.getBundle("owsproxyclient/translations")
 				.getString("usage");

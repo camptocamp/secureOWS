@@ -3,6 +3,7 @@ package com.camptocamp.owsproxy;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -102,14 +103,7 @@ public class OWSProxyServlet extends HttpServlet {
 			}
 
 			if (statusCode != HttpStatus.SC_OK) {
-				System.err.println("Method failed: " + method.getStatusLine());
-				write(responseBody);
-				if (statusCode == HttpStatus.SC_UNAUTHORIZED)
-					reporter.reportError(ConnectionStatus.UNAUTHORIZED,
-							"Unauthorized: " + method.getStatusLine());
-				else
-					reporter.reportError(ConnectionStatus.ERROR,
-							"Method failed: " + method.getStatusLine());
+				handleError(method, statusCode, responseBody);
 				return;
 			}
 
@@ -124,17 +118,42 @@ public class OWSProxyServlet extends HttpServlet {
 		}
 	}
 
-	private void write(byte[] responseBody) throws IOException {
-		InputStreamReader inputStreamReader = new InputStreamReader(
-				new ByteArrayInputStream(responseBody));
-		int c = inputStreamReader.read();
-		StringBuilder builder = new StringBuilder();
-		while (c != -1) {
-			builder.append(c);
-			c = inputStreamReader.read();
+	private void handleError(HttpMethod method, int statusCode,
+			byte[] responseBody) throws IOException {
+		System.err.println("Method failed: " + method.getStatusLine());
+		write(responseBody);
+
+		switch (statusCode) {
+		case HttpStatus.SC_UNAUTHORIZED:
+			reporter.reportError(ConnectionStatus.UNAUTHORIZED,
+					"Unauthorized: " + method.getStatusLine());
+			break;
+		case  HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED:
+			reporter.reportError(ConnectionStatus.PROXY_AUTH_REQUIRED,
+					"Proxy Authentication Failed: " + method.getStatusLine());
+			break;
+			
+		default:
+			reporter.reportError(ConnectionStatus.ERROR, "Method failed: "
+					+ method.getStatusLine());
+			break;
 		}
-		OWSLogger.DEV.severe("Response from server for the error is:  \n\n"
-				+ builder);
+			
+	}
+
+	private void write(byte[] responseBody) throws IOException {
+		if (OWSLogger.DEV.isLoggable(Level.FINEST)) {
+			InputStreamReader inputStreamReader = new InputStreamReader(
+					new ByteArrayInputStream(responseBody));
+			int c = inputStreamReader.read();
+			StringBuilder builder = new StringBuilder();
+			while (c != -1) {
+				builder.append(c);
+				c = inputStreamReader.read();
+			}
+			OWSLogger.DEV.finest("Response from server for the error is:  \n\n"
+					+ builder);
+		}
 	}
 
 	private void configureProxy(HttpClient client) {

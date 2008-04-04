@@ -2,7 +2,7 @@ package com.camptocamp.owsproxy;
 
 public class ConnectionEvent {
 	
-	public enum ConnectionStatus { IDLE, RUNNING, UNAUTHORIZED, ERROR, CONNECTING };
+	public enum ConnectionStatus { IDLE, RUNNING, UNAUTHORIZED, ERROR, CONNECTING, PROXY_AUTH_REQUIRED };
 
 	ConnectionEvent.ConnectionStatus status;
 	String message;
