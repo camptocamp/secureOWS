@@ -58,7 +58,7 @@ public class OWSHeadlessClient implements Observer {
 
 		switch (connEvent.status) {
 		case ERROR:
-			System.exit(0);
+//			System.exit(0);
 			break;
 
 		default:

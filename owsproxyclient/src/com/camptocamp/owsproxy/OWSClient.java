@@ -19,6 +19,9 @@ import java.util.logging.Level;
 
 import javax.swing.JComponent;
 
+import owsproxyclient.OWSClientGUI;
+import owsproxyclient.ProxySettingsDialog;
+
 import com.camptocamp.owsproxy.logging.OWSLogger;
 import com.camptocamp.owsproxy.parameters.ConnectionParameters;
 
@@ -27,6 +30,7 @@ public class OWSClient implements Observer {
 	ConnectionManager connManager;
 	private owsproxyclient.OWSClientGUI client;
     Color textColor;
+	private ProxySettingsDialog proxyDialog;
 
 	public OWSClient() {
 		
@@ -143,7 +147,23 @@ public class OWSClient implements Observer {
                         String username = client.usernameField.getText();
 						String password = new String(client.passwordField.getPassword());
 						
-						connManager.connect(new ConnectionParameters(host, username, password, null, -1, null, null));
+						String proxyHost = proxyDialog.url.getText().trim();
+						int proxyPort;
+						String proxyUser = "";
+						String proxyPass = "";
+						if(proxyHost.length()==0 || proxyHost.equals("http://")){
+							proxyHost = proxyUser = proxyPass = null;
+							proxyPort = -1;
+						}else{
+							proxyPort=Integer.parseInt(proxyDialog.port.getText());
+							if( proxyDialog.useAuthentication.isSelected() ){
+								proxyUser=proxyDialog.username.getText();
+								proxyPass=new String(proxyDialog.password.getPassword());
+							}
+						}
+						
+						connManager.connect(new ConnectionParameters(host, username, password, 
+								proxyHost, proxyPort, proxyUser, proxyPass));
 					}
                 }).start();
 			}
@@ -179,10 +199,33 @@ public class OWSClient implements Observer {
 				copyToClipboard(client.proxyURL.getText());
 			}
         });
+        
+        initAdvancedDialog(client);
 
         connManager.fireIdleEvent();
 	}
 	
+	private void initAdvancedDialog(OWSClientGUI client2) {
+		this.proxyDialog = new ProxySettingsDialog(client, true);
+		proxyDialog.okButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				proxyDialog.setVisible(false);
+			}
+			
+		});
+		
+		client.proxyButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				proxyDialog.setVisible(true);
+			}
+			
+		});
+	}
+
 	/**
 	 * @param args
 	 */

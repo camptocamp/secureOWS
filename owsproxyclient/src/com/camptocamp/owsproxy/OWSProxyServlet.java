@@ -34,7 +34,8 @@ public class OWSProxyServlet extends HttpServlet {
 
 	private ConnectionParameters connectionParams;
 
-	public OWSProxyServlet(ErrorReporter reporter, ConnectionParameters connectionParams) {
+	public OWSProxyServlet(ErrorReporter reporter,
+			ConnectionParameters connectionParams) {
 		this.reporter = reporter;
 		this.connectionParams = connectionParams;
 	}
@@ -69,11 +70,12 @@ public class OWSProxyServlet extends HttpServlet {
 
 				serviceEndPoint += "?" + queryString;
 			}
-			
+
 			OWSLogger.DEV.info("End point: " + serviceEndPoint);
 			HttpMethod method = new GetMethod(serviceEndPoint);
 			// Authentication
-			if (connectionParams.username != null && connectionParams.password != null) {
+			if (connectionParams.username != null
+					&& connectionParams.password != null) {
 				client.getParams().setAuthenticationPreemptive(true);
 				Credentials defaultcreds = new UsernamePasswordCredentials(
 						connectionParams.username, connectionParams.password);
@@ -131,13 +133,18 @@ public class OWSProxyServlet extends HttpServlet {
 			builder.append(c);
 			c = inputStreamReader.read();
 		}
-		OWSLogger.DEV.severe("Response from server for the error is:  \n\n"+builder);
+		OWSLogger.DEV.severe("Response from server for the error is:  \n\n"
+				+ builder);
 	}
 
 	private void configureProxy(HttpClient client) {
-		client.getHostConfiguration().setProxy(connectionParams.proxyHost, connectionParams.proxyPort);
-		Credentials defaultcreds = new UsernamePasswordCredentials(connectionParams.proxyUsername,
-				connectionParams.proxyPassword);
-		client.getState().setProxyCredentials(AuthScope.ANY, defaultcreds);
+		if (connectionParams.proxyHost != null) {
+			client.getHostConfiguration().setProxy(connectionParams.proxyHost,
+					connectionParams.proxyPort);
+			Credentials defaultcreds = new UsernamePasswordCredentials(
+					connectionParams.proxyUsername,
+					connectionParams.proxyPassword);
+			client.getState().setProxyCredentials(AuthScope.ANY, defaultcreds);
+		}
 	}
 }

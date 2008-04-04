@@ -32,7 +32,7 @@ public enum OWSLogger {
 				&& !System.getProperties().containsKey(
 						"java.util.logging.config.class")) {
 			System.setProperty("java.util.logging.config.class",
-					"com.camptocamp.owsproxy.OWSLoggingConfigurator");
+					"com.camptocamp.owsproxy.logging.OWSLoggingConfigurator");
 			
 			try {
 				LogManager logManager = LogManager.getLogManager();

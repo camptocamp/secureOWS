@@ -5,6 +5,7 @@ package com.camptocamp.owsproxy.logging;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 /**
@@ -21,11 +22,12 @@ public class OWSLoggingConfigurator {
 			LogManager.getLogManager().readConfiguration(configurationFile);
 		} catch (Exception e) {
 			try {
+				System.getProperties().remove("java.util.logging.config.class");
 				LogManager.getLogManager().readConfiguration();
 			} catch (IOException e1) {
 				// can't further handle issue so ignore it
 			}
-			OWSLogger.DEV.severe("default log configuration is not available!");
+			OWSLogger.DEV.log(Level.SEVERE, "default log configuration is not available!", e);
 		}
 
 	}
