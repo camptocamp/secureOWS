@@ -63,7 +63,7 @@ public class OWSLogHandler extends Handler {
 			logFile = Translations.getString("OWSLogHandler.defaultLog", logger.name()); //$NON-NLS-1$
 		}	
 		try {
-			return new FileOutputStream(logFile);
+			return new FileOutputStream(logFile, true);
 		} catch (IOException e) {
 			return System.err;
 		}

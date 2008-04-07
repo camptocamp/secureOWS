@@ -146,7 +146,7 @@ public class OWSClientGUI extends javax.swing.JFrame {
 
         jLabel9.setText(bundle.getString("User_name")); // NOI18N
 
-        proxyButton.setText("Proxy...");
+        proxyButton.setText(bundle.getString("Proxy...")); // NOI18N
         proxyButton.setActionCommand("Proxy");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());

@@ -361,7 +361,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="proxyButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Proxy..."/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="owsproxyclient/translations.properties" key="Proxy..." replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
         <Property name="actionCommand" type="java.lang.String" value="Proxy"/>
       </Properties>
       <AuxValues>

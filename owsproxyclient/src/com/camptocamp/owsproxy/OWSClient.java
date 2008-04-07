@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 import javax.swing.JComponent;
@@ -89,15 +88,13 @@ public class OWSClient implements Observer {
 
 		String msg;
 
-		ResourceBundle bundle = java.util.ResourceBundle
-				.getBundle("owsproxyclient/translations");
 		switch (connEvent.status) {
 		case IDLE:
-			msg = bundle.getString("OWSProxy_not_connected");
+			msg = Translations.getString("OWSProxy_not_connected");
 
 			break;
 		case CONNECTING:
-			msg = bundle.getString("OWSProxy_not_connected");
+			msg = Translations.getString("OWSProxy_not_connected");
 			break;
 		case RUNNING:
 
@@ -106,25 +103,25 @@ public class OWSClient implements Observer {
 			}
 
 			client.statusLabel.setForeground(new Color(0, 128, 0));
-			msg = bundle.getString("Connected");
+			msg = Translations.getString("Connected");
 			client.proxyURL.setText(connManager.getListeningAddress());
 			break;
 
 		case UNAUTHORIZED:
 			client.statusLabel.setForeground(Color.RED);
-			msg = bundle.getString("Unauthorized");
+			msg = Translations.getString("Unauthorized");
 			client.statusLabel2.setText(connEvent.message);
 			break;
 			
 		case ERROR:
 			client.statusLabel.setForeground(Color.RED);
-			msg = bundle.getString("Error");
+			msg = Translations.getString("Error");
 			client.statusLabel2.setText(connEvent.message);
 			break;
 			
 		case PROXY_AUTH_REQUIRED:
 			client.statusLabel.setForeground(Color.RED);
-			msg = bundle.getString("Proxy_Auth");
+			msg = Translations.getString("Proxy_Auth");
 			client.statusLabel2.setText(connEvent.message);
 			break;
 			

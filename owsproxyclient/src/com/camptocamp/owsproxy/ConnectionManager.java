@@ -19,7 +19,6 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 	
 	private Server server;
 	private String listeningAddress;
-	private ConnectionParameters connectionParams;
 
     // XXX should use config option
     static final int STARTING_PORT = 8888;
@@ -28,8 +27,6 @@ public class ConnectionManager extends Observable implements ErrorReporter {
     static final String LISTENING_HOST = "http://localhost:"; 
     
 	void connect(ConnectionParameters connectionParams) {
-		
-		this.connectionParams = connectionParams.copy();
 		
         OWSProxyServlet servlet = new OWSProxyServlet(this, connectionParams.copy());
 

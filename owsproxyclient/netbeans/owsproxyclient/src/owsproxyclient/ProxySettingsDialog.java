@@ -7,7 +7,7 @@
 package owsproxyclient;
 
 /**
- *
+ * A dialog for entering the proxy connection settings
  * @author  jeichar
  */
 public class ProxySettingsDialog extends javax.swing.JDialog {
@@ -34,7 +34,7 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
             messages.setText("");
             okButton.setEnabled(true);
         } catch (NumberFormatException exception) {
-            messages.setText("The port must be an integer");
+            messages.setText(java.util.ResourceBundle.getBundle("owsproxyclient/translations").getString("portError"));
             okButton.setEnabled(false);
         }
     }
@@ -58,7 +58,8 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
         passwordLabel = new javax.swing.JLabel();
         messages = new javax.swing.JLabel();
 
-        setTitle("Proxy Settings");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("owsproxyclient/translations"); // NOI18N
+        setTitle(bundle.getString("Proxy_Settings")); // NOI18N
         setModalityType(ModalityType.APPLICATION_MODAL);
         setName("Proxy Settings"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -67,25 +68,25 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
             }
         });
 
-        okButton.setText("OK");
+        okButton.setText(bundle.getString("OK")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(bundle.getString("Cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("URL");
+        jLabel1.setText(bundle.getString("URL")); // NOI18N
 
         url.setText("http://");
 
-        jLabel2.setText("Port");
+        jLabel2.setText(bundle.getString("Port")); // NOI18N
 
         port.setText("3128");
         port.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -94,19 +95,19 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
             }
         });
 
-        useAuthentication.setText("Use Authentication");
+        useAuthentication.setText(bundle.getString("Use_Authentication")); // NOI18N
         useAuthentication.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 useAuthenticationStateChanged(evt);
             }
         });
 
-        usernameLabel.setText("User name");
+        usernameLabel.setText(bundle.getString("User_name")); // NOI18N
         usernameLabel.setEnabled(false);
 
         username.setEnabled(false);
 
-        passwordLabel.setText("Password");
+        passwordLabel.setText(bundle.getString("Password")); // NOI18N
         passwordLabel.setEnabled(false);
 
         password.setEnabled(false);
