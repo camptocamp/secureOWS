@@ -5,6 +5,7 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 import com.camptocamp.owsproxy.OWSHeadlessClient;
+import com.camptocamp.owsproxy.Translations;
 import com.camptocamp.owsproxy.logging.OWSLogHandler;
 import com.camptocamp.owsproxy.logging.OWSLogger;
 
@@ -24,8 +25,7 @@ public class DevLogFileParameter extends Parameter {
 		try {
 			lookupOWSLogHandler().setDevLogFile(nextParam);
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException(nextParam
-					+ " cannot be created as a file");
+			throw new IllegalArgumentException(Translations.getString("cantCreateFile", nextParam));
 		}
 		return true;
 	}

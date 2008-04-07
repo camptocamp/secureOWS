@@ -1,13 +1,11 @@
 package com.camptocamp.owsproxy;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 import com.camptocamp.owsproxy.logging.OWSLogger;
@@ -23,7 +21,7 @@ import com.camptocamp.owsproxy.parameters.ProxyUserParameter;
 import com.camptocamp.owsproxy.parameters.UserLogFileParameter;
 
 /**
- * This is the client for running without a graphical user interface
+ * This is the client for running without a graphical user interface.
  * 
  * @author jeichar
  */
@@ -56,32 +54,27 @@ public class OWSHeadlessClient implements Observer {
 		if (!(arg instanceof ConnectionEvent))
 			return;
 		ConnectionEvent connEvent = (ConnectionEvent) arg;
-		ResourceBundle bundle = java.util.ResourceBundle
-		.getBundle("owsproxyclient/translations");
 		switch (connEvent.status) {
 		case ERROR: {
-			String pattern = "Warning: An error just occurred verify that operation is continuing correctly.  Error Message: {0}";
-			OWSLogger.USER.warning(MessageFormat.format(pattern,
+			OWSLogger.USER.warning(Translations.getString("OWSHeadlessClient.Error",
 					connEvent.message));
 
 			break;
 		}
 		case UNAUTHORIZED: {
 			OWSLogger.USER
-					.severe(bundle.getString("Unauthorized"));
+					.severe(Translations.getString("OWSHeadlessClient.Unauthorized")); //$NON-NLS-1$
 			System.exit(0);
 			break;
 		}
 		case PROXY_AUTH_REQUIRED: {
 			OWSLogger.USER
-					.severe("Unauthorized: Verify the username and password");
+					.severe(Translations.getString("OWSHeadlessClient.Prox_Unauth")); //$NON-NLS-1$
 			System.exit(0);
 			break;
 		}
 		default: {
-			String pattern = ResourceBundle.getBundle(
-					"owsproxyclient/translations").getString("headlessStatus");
-			String message = MessageFormat.format(pattern, connEvent.status);
+			String message = Translations.getString("OWSHeadlessClient.headlessStatus", connEvent.status);
 			OWSLogger.USER.info(message);
 			break;
 		}
@@ -128,7 +121,7 @@ public class OWSHeadlessClient implements Observer {
 
 		if (args.size() != 2) {
 			throw new IllegalArgumentException(
-					"Two or three arguments are required");
+					Translations.getString("OWSHeadlessClient.wrongParams")); //$NON-NLS-1$
 		}
 		String usernamePassword = args.get(0);
 		client.getParams().username = ProxyUserParameter
@@ -142,9 +135,8 @@ public class OWSHeadlessClient implements Observer {
 	}
 
 	private static void usage(String error) {
-		String usage = ResourceBundle.getBundle("owsproxyclient/translations")
-				.getString("usage");
-		OWSLogger.USER.info(MessageFormat.format(usage, error));
+		String usage = Translations.getString("OWSHeadlessClient.usage", error);
+		OWSLogger.USER.info(usage);
 	}
 
 	public ConnectionParameters getParams() {

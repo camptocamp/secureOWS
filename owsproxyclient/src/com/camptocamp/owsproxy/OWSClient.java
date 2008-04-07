@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 
 import owsproxyclient.OWSClientGUI;
 import owsproxyclient.ProxySettingsDialog;
+import owsproxyclient.State;
 
 import com.camptocamp.owsproxy.logging.OWSLogger;
 import com.camptocamp.owsproxy.parameters.ConnectionParameters;
@@ -32,6 +33,9 @@ public class OWSClient implements Observer {
 	private owsproxyclient.OWSClientGUI client;
 	Color textColor;
 	private ProxySettingsDialog proxyDialog;
+	/** The settings obtained from proxyDialog for configuring the proxy.  This was added mainly so that
+	 * the cancel button on the proxyDialog could be implemented*/
+	private State proxySettings=new State("","",false,"",new char[0]);
 
 	public OWSClient() {
 
@@ -157,7 +161,6 @@ public class OWSClient implements Observer {
 						String username = client.usernameField.getText();
 						String password = new String(client.passwordField
 								.getPassword());
-
 						String proxyHost = proxyDialog.url.getText().trim();
 						int proxyPort;
 						String proxyUser = "";
@@ -175,7 +178,6 @@ public class OWSClient implements Observer {
 										.getPassword());
 							}
 						}
-
 						connManager.connect(new ConnectionParameters(host,
 								username, password, proxyHost, proxyPort,
 								proxyUser, proxyPass));
@@ -228,10 +230,39 @@ public class OWSClient implements Observer {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				proxyDialog.setVisible(false);
+				proxySettings=proxyDialog.copyState();
 			}
 
 		});
 
+		proxyDialog.cancelButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				State params = proxySettings;
+				if( params.url.length()==0 ){
+					proxyDialog.url.setText("http://");
+				} else {
+					proxyDialog.url.setText(params.url);
+				}
+				
+				if( params.port.length()==0 ){
+					proxyDialog.port.setText("3128");
+				} else {
+					proxyDialog.port.setText(String.valueOf(params.port));
+				}
+				
+				proxyDialog.useAuthentication.setSelected(params.useAuthentication);
+				proxyDialog.username.setText(params.username);
+				proxyDialog.password.setText(new String(params.password));
+				
+				proxyDialog.validatePort();
+				
+			}
+			
+		});
+		
 		client.proxyButton.addActionListener(new ActionListener() {
 
 			@Override

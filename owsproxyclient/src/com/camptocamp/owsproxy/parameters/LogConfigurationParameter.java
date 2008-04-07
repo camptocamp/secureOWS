@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.util.logging.LogManager;
 
 import com.camptocamp.owsproxy.OWSHeadlessClient;
+import com.camptocamp.owsproxy.Translations;
 
 public class LogConfigurationParameter extends Parameter {
 
 	public LogConfigurationParameter() {
-		super("-logConf");
+		super("-logConf"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -18,9 +19,9 @@ public class LogConfigurationParameter extends Parameter {
 		try {
 			LogManager.getLogManager().readConfiguration(new FileInputStream(nextParam));
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException("Logging configuration file cannot be read");
+			throw new IllegalArgumentException(Translations.getString("LogConfigurationParameter.cantRead")); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new IllegalArgumentException("Logging configuration file cannot be read");
+			throw new IllegalArgumentException(Translations.getString("LogConfigurationParameter.cantRead")); //$NON-NLS-1$
 		}
 		return true;
 	}

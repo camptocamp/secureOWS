@@ -2,6 +2,8 @@ package com.camptocamp.owsproxy.parameters;
 
 import java.net.URL;
 
+import com.camptocamp.owsproxy.Translations;
+
 public class ConnectionParameters {
 	public String server;
 	public String username;
@@ -33,25 +35,25 @@ public class ConnectionParameters {
 	 */
 	public void checkConfiguration() throws IllegalArgumentException {
 		if (username == null) {
-			throw new IllegalArgumentException("username is required");
+			throw new IllegalArgumentException(Translations.getString("ConnectionParameters.userRequired")); //$NON-NLS-1$
 		}
 		if (!validURL(server)) {
 			throw new IllegalArgumentException(
-					"The Server paramter is an Invalid URL");
+					Translations.getString("ConnectionParameters.MalformedURL")); //$NON-NLS-1$
 		}
 
 		if ((proxyHost != null && proxyPort == -1)
 				|| (proxyHost == null && proxyPort != -1)) {
 			throw new IllegalArgumentException(
-					"Either both proxyPort and proxyHost are required or neither");
+					Translations.getString("ConnectionParameters.bothHostAndPort")); //$NON-NLS-1$
 		}
 		
 		if( proxyUsername!=null && proxyHost==null ){
-			throw new IllegalArgumentException("The Proxy Host must be specified if the Proxy Username is specificed");
+			throw new IllegalArgumentException(Translations.getString("ConnectionParameters.UserRequiresHost")); //$NON-NLS-1$
 		}
 		
 		if( proxyPassword!=null && proxyUsername==null ){
-			throw new IllegalArgumentException("The Proxy Username must be specified if the Proxy Password is specificed");
+			throw new IllegalArgumentException(Translations.getString("ConnectionParameters.PasswordRequiresUsername")); //$NON-NLS-1$
 		}
 		
 		

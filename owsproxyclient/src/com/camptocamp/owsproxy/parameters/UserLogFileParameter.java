@@ -3,6 +3,7 @@ package com.camptocamp.owsproxy.parameters;
 import java.io.FileNotFoundException;
 
 import com.camptocamp.owsproxy.OWSHeadlessClient;
+import com.camptocamp.owsproxy.Translations;
 
 /**
  * Parameter for configuring the ProxyHost URL
@@ -20,7 +21,7 @@ public class UserLogFileParameter extends Parameter {
 		try {
 			DevLogFileParameter.lookupOWSLogHandler().setUserLogFile(nextParam);
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException(nextParam+" cannot be created as a file");
+			throw new IllegalArgumentException(Translations.getString("cantCreateFile", nextParam));
 		}
 		return true;
 	}

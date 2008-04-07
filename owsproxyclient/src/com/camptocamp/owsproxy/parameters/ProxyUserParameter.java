@@ -1,6 +1,7 @@
 package com.camptocamp.owsproxy.parameters;
 
 import com.camptocamp.owsproxy.OWSHeadlessClient;
+import com.camptocamp.owsproxy.Translations;
 
 /**
  * Parameter for configuring the ProxyHost URL
@@ -10,7 +11,7 @@ import com.camptocamp.owsproxy.OWSHeadlessClient;
 public class ProxyUserParameter extends Parameter {
 
 	public ProxyUserParameter() {
-		super("-proxyUser");
+		super("-proxyUser"); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -24,11 +25,11 @@ public class ProxyUserParameter extends Parameter {
 	 * Parses out the username from the username:password string
 	 */
 	public static String parseUsername(String string) {
-		if (string.contains(":")) {
-			String[] split = string.split(":");
+		if (string.contains(":")) { //$NON-NLS-1$
+			String[] split = string.split(":"); //$NON-NLS-1$
 			if (split.length != 2) {
 				throw new IllegalArgumentException(
-						"Neither password nor username can have a : in them");
+						Translations.getString("ProxyUserParameter.illegalArg")); //$NON-NLS-1$
 			}
 	
 			return split[0];
@@ -42,7 +43,7 @@ public class ProxyUserParameter extends Parameter {
 	 */
 	public static String parsePassword(String string) {
 		// note: size of string after : is checked in parseUsername
-		String[] split = string.split(":");
+		String[] split = string.split(":"); //$NON-NLS-1$
 		if (split.length > 1) {
 			return split[1];
 		}

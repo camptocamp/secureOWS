@@ -10,7 +10,7 @@ import com.camptocamp.owsproxy.OWSHeadlessClient;
 public class ProxyHostParameter extends Parameter {
 
 	public ProxyHostParameter() {
-		super("-proxyHost");
+		super("-proxyHost"); //$NON-NLS-1$
 	}
 	
 	@Override

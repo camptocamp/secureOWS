@@ -26,6 +26,22 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
     public int getReturnStatus() {
         return returnStatus;
     }
+
+    public void validatePort() {
+        try {
+            final String text = port.getText();
+            Integer.parseInt(text);
+            messages.setText("");
+            okButton.setEnabled(true);
+        } catch (NumberFormatException exception) {
+            messages.setText("The port must be an integer");
+            okButton.setEnabled(false);
+        }
+    }
+    
+    public State copyState(){
+        return new State( url.getText(), port.getText(), useAuthentication.isSelected(), username.getText(), password.getPassword());
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -35,12 +51,12 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        cancelButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         useAuthentication = new javax.swing.JCheckBox();
         usernameLabel = new javax.swing.JLabel();
         passwordLabel = new javax.swing.JLabel();
+        messages = new javax.swing.JLabel();
 
         setTitle("Proxy Settings");
         setModalityType(ModalityType.APPLICATION_MODAL);
@@ -72,11 +88,16 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
         jLabel2.setText("Port");
 
         port.setText("3128");
+        port.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                portKeyReleased(evt);
+            }
+        });
 
         useAuthentication.setText("Use Authentication");
-        useAuthentication.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                useAuthenticationActionPerformed(evt);
+        useAuthentication.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                useAuthenticationStateChanged(evt);
             }
         });
 
@@ -90,6 +111,8 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
 
         password.setEnabled(false);
 
+        messages.setForeground(new java.awt.Color(255, 0, 3));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -98,6 +121,8 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(messages, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
@@ -144,10 +169,12 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(passwordLabel)
                     .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
+                .addGap(72, 72, 72)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cancelButton)
+                        .addComponent(okButton))
+                    .addComponent(messages, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -167,13 +194,18 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
 
-    private void useAuthenticationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useAuthenticationActionPerformed
+    private void useAuthenticationStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_useAuthenticationStateChanged
         final boolean enabled = useAuthentication.isSelected();
         username.setEnabled(enabled);  
         usernameLabel.setEnabled(enabled);
         password.setEnabled(enabled);
         passwordLabel.setEnabled(enabled);
-    }//GEN-LAST:event_useAuthenticationActionPerformed
+
+    }//GEN-LAST:event_useAuthenticationStateChanged
+
+    private void portKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_portKeyReleased
+        validatePort();
+    }//GEN-LAST:event_portKeyReleased
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -199,9 +231,10 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
+    public final javax.swing.JButton cancelButton = new javax.swing.JButton();
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel messages;
     public final javax.swing.JButton okButton = new javax.swing.JButton();
     public final javax.swing.JPasswordField password = new javax.swing.JPasswordField();
     private javax.swing.JLabel passwordLabel;

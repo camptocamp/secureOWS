@@ -5,9 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.logging.ErrorManager;
 import java.util.logging.Filter;
 import java.util.logging.Formatter;
@@ -16,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
 
-import com.camptocamp.owsproxy.OWSClient;
+import com.camptocamp.owsproxy.Translations;
 
 /**
  * A log handler that writes USER log messages to the standard out and a file.
@@ -63,11 +60,8 @@ public class OWSLogHandler extends Handler {
 	private static OutputStream createLogWriter(OWSLogger logger) {
 		String logFile = System.getProperty(logger.systemPropertyKey());
 		if( logFile==null ){
-			ResourceBundle bundle = ResourceBundle.getBundle("owsproxyclient/translations", Locale.getDefault(),
-					OWSClient.class.getClassLoader()); //$NON-NLS-1$
-			String pattern = bundle.getString("defaultLog"); //$NON-NLS-1$
-			logFile=MessageFormat.format(pattern, logger.name() );
-		}
+			logFile = Translations.getString("OWSLogHandler.defaultLog", logger.name()); //$NON-NLS-1$
+		}	
 		try {
 			return new FileOutputStream(logFile);
 		} catch (IOException e) {

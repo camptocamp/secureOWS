@@ -1,6 +1,7 @@
 package com.camptocamp.owsproxy.parameters;
 
 import com.camptocamp.owsproxy.OWSHeadlessClient;
+import com.camptocamp.owsproxy.Translations;
 
 /**
  * Parameter for configuring the ProxyHost URL
@@ -10,7 +11,7 @@ import com.camptocamp.owsproxy.OWSHeadlessClient;
 public class ProxyPortParameter extends Parameter {
 
 	public ProxyPortParameter() {
-		super("-proxyPort");
+		super("-proxyPort"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -20,7 +21,7 @@ public class ProxyPortParameter extends Parameter {
 			client.getParams().proxyPort = port;
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException(
-					"The port number must be an integer");
+					Translations.getString("ProxyPortParameter.portNotInteger")); //$NON-NLS-1$
 		}
 
 		return true;
