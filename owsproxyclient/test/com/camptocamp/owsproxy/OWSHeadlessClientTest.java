@@ -42,6 +42,18 @@ public class OWSHeadlessClientTest extends TestCase {
 			OWSHeadlessClient.parseProgramArgs("-h");
 			fail("Should throw exception");
 		} catch (IllegalArgumentException e) {
+			assertEquals("", e.getMessage());
+			// good
+		}
+	}
+
+
+	public void testParseProgramNoArgs() {
+		try {
+			OWSHeadlessClient.parseProgramArgs(new String[0]);
+			fail("Should throw exception");
+		} catch (IllegalArgumentException e) {
+			assertEquals("", e.getMessage());
 			// good
 		}
 	}

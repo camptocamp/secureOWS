@@ -99,7 +99,9 @@ public class OWSProxyServlet extends HttpServlet {
 			Header[] headers = method.getResponseHeaders();
 			for (Header h : headers) {
 				// XXX override some headers?
-				response.setHeader(h.getName(), h.getValue());
+				if( !ieBugCausingHeader(h) ){
+					response.setHeader(h.getName(), h.getValue());
+				}
 			}
 
 			if (statusCode != HttpStatus.SC_OK) {
@@ -116,6 +118,15 @@ public class OWSProxyServlet extends HttpServlet {
 			e.printStackTrace();
 			reporter.reportError(ConnectionStatus.ERROR, e.toString());
 		}
+	}
+
+	private boolean ieBugCausingHeader(Header h) {
+		if( h.getName().equals("Cache-Control") ){
+			return h.getValue().equalsIgnoreCase("no-store")
+				|| h.getValue().equalsIgnoreCase("no-cache");
+		}
+		
+		return false;
 	}
 
 	private void handleError(HttpMethod method, int statusCode,

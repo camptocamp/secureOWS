@@ -73,6 +73,10 @@ public class OWSHeadlessClient implements Observer {
 			System.exit(0);
 			break;
 		}
+		case RUNNING: {
+			OWSLogger.USER.info(Translations.getString("HeadlessRunning", connManager.getListeningAddress()));
+			break;
+		}
 		default: {
 			String message = Translations.getString("OWSHeadlessClient.headlessStatus", connEvent.status);
 			OWSLogger.USER.info(message);
@@ -95,6 +99,10 @@ public class OWSHeadlessClient implements Observer {
 
 	static OWSHeadlessClient parseProgramArgs(String... args2)
 			throws IllegalArgumentException {
+		if( args2.length==0){
+			throw new IllegalArgumentException(""); //$NON-NLS-1$
+		}
+		
 		OWSHeadlessClient client = new OWSHeadlessClient();
 
 		List<String> args = new ArrayList<String>(Arrays.asList(args2));

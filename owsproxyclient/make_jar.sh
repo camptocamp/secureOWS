@@ -3,7 +3,8 @@
 # Script to create a standalone .jar file of the project
 
 # WARNING: keep in sync with ~/c2c/projects/wms/project_public_files/Makefile
-VERSION=0.3
+VERSION=0.5pre
+SWING_LAYOUT_VERSION=1.0.3
 
 [ -d dist ] && rm -rf dist
 mkdir dist
@@ -15,7 +16,7 @@ $BASE/lib/servlet-api-2.5-6.0.1.jar:$BASE/lib/commons-httpclient-3.0.1.jar:\
 $BASE/lib/commons-logging-1.1.jar:$BASE/lib/commons-logging-adapters-1.1.jar:\
 $BASE/lib/commons-logging-api-1.1.jar:$BASE/lib/commons-codec-1.3.jar:\
 $BASE/netbeans/owsproxyclient/dist/owsproxyclient.jar:\
-$BASE/netbeans/owsproxyclient/dist/lib/swing-layout-1.0.jar
+$BASE/netbeans/owsproxyclient/dist/lib/swing-layout-${SWING_LAYOUT_VERSION}.jar
 
 echo $DIRS
 

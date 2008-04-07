@@ -48,11 +48,11 @@ public class ConnectionParameters {
 					Translations.getString("ConnectionParameters.bothHostAndPort")); //$NON-NLS-1$
 		}
 		
-		if( proxyUsername!=null && proxyHost==null ){
+		if( proxyUsername.length() > 0 && proxyHost==null ){
 			throw new IllegalArgumentException(Translations.getString("ConnectionParameters.UserRequiresHost")); //$NON-NLS-1$
 		}
 		
-		if( proxyPassword!=null && proxyUsername==null ){
+		if( proxyPassword.length() > 0 && proxyUsername.length() == 0 ){
 			throw new IllegalArgumentException(Translations.getString("ConnectionParameters.PasswordRequiresUsername")); //$NON-NLS-1$
 		}
 		
