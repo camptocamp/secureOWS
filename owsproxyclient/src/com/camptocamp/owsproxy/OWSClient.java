@@ -195,8 +195,7 @@ public class OWSClient implements Observer {
 					new URL(host);
 				} catch (MalformedURLException e) {
 					client.connectButton.setEnabled(false);
-					String invalidURLMsg = java.util.ResourceBundle.getBundle(
-							"owsproxyclient/translations").getString(
+					String invalidURLMsg = Translations.getString(
 							"Invalid_URL");
 					client.validationLabel.setText(invalidURLMsg);
 				}
