@@ -44,37 +44,29 @@ public enum OWSLogger {
 			// no logging preference file specified so use default
 			Log.setLog(new org.mortbay.log.Logger(){
 
-				@Override
 				public void debug(String msg, Throwable th) {
 				}
 
-				@Override
 				public void debug(String msg, Object arg0, Object arg1) {
 				}
 
-				@Override
 				public org.mortbay.log.Logger getLogger(String name) {
 					return this;
 				}
 
-				@Override
 				public void info(String msg, Object arg0, Object arg1) {
 				}
 
-				@Override
 				public boolean isDebugEnabled() {
 					return false;
 				}
 
-				@Override
 				public void setDebugEnabled(boolean enabled) {
 				}
 
-				@Override
 				public void warn(String msg, Throwable th) {
 				}
 
-				@Override
 				public void warn(String msg, Object arg0, Object arg1) {
 				}
 				

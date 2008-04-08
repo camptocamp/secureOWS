@@ -224,7 +224,6 @@ public class OWSClient implements Observer {
 		this.proxyDialog = new ProxySettingsDialog(client, true);
 		proxyDialog.okButton.addActionListener(new ActionListener() {
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				proxyDialog.setVisible(false);
 				proxySettings=proxyDialog.copyState();
@@ -234,7 +233,6 @@ public class OWSClient implements Observer {
 
 		proxyDialog.cancelButton.addActionListener(new ActionListener(){
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				
 				State params = proxySettings;
@@ -262,7 +260,6 @@ public class OWSClient implements Observer {
 		
 		client.proxyButton.addActionListener(new ActionListener() {
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				proxyDialog.setVisible(true);
 			}

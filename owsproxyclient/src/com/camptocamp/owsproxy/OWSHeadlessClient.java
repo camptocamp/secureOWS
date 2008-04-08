@@ -46,7 +46,6 @@ public class OWSHeadlessClient implements Observer {
 		connManager.connect(params);
 	}
 
-	@Override
 	public void update(Observable o, Object arg) {
 
 		OWSLogger.DEV.fine(arg.toString());
