@@ -49,7 +49,7 @@ public class OWSHeadlessClient implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 
-		OWSLogger.DEV.finer(arg.toString());
+		OWSLogger.DEV.fine(arg.toString());
 
 		if (!(arg instanceof ConnectionEvent))
 			return;
@@ -88,7 +88,7 @@ public class OWSHeadlessClient implements Observer {
 	public static void main(String[] args) {
 		try {
 			OWSHeadlessClient client = parseProgramArgs(args);
-			if (OWSLogger.DEV.isLoggable(Level.FINER)) {
+			if (OWSLogger.DEV.isLoggable(Level.FINEST)) {
 				OWSLogger.enableHttpClientDebug();
 			}
 			client.run();

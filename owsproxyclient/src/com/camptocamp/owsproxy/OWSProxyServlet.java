@@ -47,7 +47,7 @@ public class OWSProxyServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		OWSLogger.DEV.info("server handling: "
+		OWSLogger.DEV.fine("server handling: "
 				+ Thread.currentThread().getName());
 
 		String serviceEndPoint = connectionParams.server;
@@ -72,7 +72,7 @@ public class OWSProxyServlet extends HttpServlet {
 				serviceEndPoint += "?" + queryString;
 			}
 
-			OWSLogger.DEV.info("End point: " + serviceEndPoint);
+			OWSLogger.DEV.fine("End point: " + serviceEndPoint);
 			HttpMethod method = new GetMethod(serviceEndPoint);
 			// Authentication
 			if (connectionParams.username != null
