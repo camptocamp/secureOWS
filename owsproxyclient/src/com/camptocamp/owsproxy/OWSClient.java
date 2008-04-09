@@ -266,9 +266,6 @@ public class OWSClient implements Observer {
 		});
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		new OWSClient();
 	}

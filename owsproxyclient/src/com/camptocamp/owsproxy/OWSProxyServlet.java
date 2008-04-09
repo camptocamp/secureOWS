@@ -72,7 +72,7 @@ public class OWSProxyServlet extends HttpServlet {
 				serviceEndPoint += "?" + queryString;
 			}
 
-			OWSLogger.DEV.fine("End point: " + serviceEndPoint);
+			OWSLogger.DEV.info("Request: " + serviceEndPoint);
 			HttpMethod method = new GetMethod(serviceEndPoint);
 			// Authentication
 			if (connectionParams.username != null
