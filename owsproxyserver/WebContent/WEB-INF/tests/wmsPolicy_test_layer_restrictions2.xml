@@ -34,5 +34,7 @@
 				</Parameter>
 			</PostConditions>
 		</GetCapabilities>
+		<GetLegendGraphic>
+		</GetLegendGraphic>
 	</Requests>
 </OWSPolicy>

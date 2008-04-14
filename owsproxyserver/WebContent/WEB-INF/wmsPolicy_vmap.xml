@@ -8,5 +8,7 @@
         </GetFeatureInfo>
         <GetCapabilities>
         </GetCapabilities>
+		<GetLegendGraphic>
+		</GetLegendGraphic>
 	</Requests>
 </OWSPolicy>

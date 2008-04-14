@@ -16,5 +16,7 @@
 
 		<GetCapabilities>
 		</GetCapabilities>
+		<GetLegendGraphic>
+		</GetLegendGraphic>
 	</Requests>
 </OWSPolicy>
