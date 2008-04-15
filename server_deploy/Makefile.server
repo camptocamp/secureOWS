@@ -1,4 +1,5 @@
 include config.mk
+-include config.deploy.mk
 
 # for prepare_owsproxyserver target
 include Makefile.testing
@@ -35,4 +36,36 @@ clean:
 	-rm -rf owsproxytest
 	-rm -rf requirements
 	-rm -rf war
+
+# Deployment targets
+RSYNC=rsync -a --delete $(RSYNC_FLAGS)
+
+prepare_tomcat:
+	rm -rf tomcat_base
+	mkdir tomcat_base
+	(cd tomcat_base; tar zxf ../requirements/$(TOMCAT_VERSION).tar.gz)
+	rsync -av requirements/tomcat_overrided_files/ tomcat_base/$(TOMCAT_VERSION)
+	(cd tomcat_base/$(TOMCAT_VERSION)/webapps/; unzip ../../../requirements/$(GEOSERVER_VERSION))
+	cp $(TEST_WAR) tomcat_base/$(TOMCAT_VERSION)/webapps
+	(cd tomcat_base/$(TOMCAT_VERSION)/webapps; unzip -qd owsproxyserver owsproxyserver.war)
+	rm tomcat_base/$(TOMCAT_VERSION)/webapps/*war
+	#java -cp tomcat_base/$(TOMCAT_VERSION)/webapps/owsproxyserver/WEB-INF/classes OwsAdmin tomcat_base/$(TOMCAT_VERSION)/webapps/owsproxyserver/WEB-INF/ services_test.xml
+
+cur_make_target = $(filter-out %/,$(subst /,/ ,$@))
+host = $(cur_make_target)
+
+$(patsubst %,prepare_tomcat/%,$(ALL_HOSTS)): prepare_tomcat
+	echo $(cur_make_target)
+	-mkdir -p $(host)/tomcat_overrided_files
+	-rm -rf $(host)/$(INSTANCE_$(host))
+	-mkdir $(host)
+	mv tomcat_base $(host)/$(INSTANCE_$(host))
+	rsync -av $(host)/tomcat_overrided_files/ $(host)/$(INSTANCE_$(host))/$(TOMCAT_VERSION)
+	java -cp $(host)/$(INSTANCE_$(host))/$(TOMCAT_VERSION)/webapps/owsproxyserver/WEB-INF/classes OwsAdmin \
+		$(host)/$(INSTANCE_$(host))/$(TOMCAT_VERSION)/webapps/owsproxyserver/WEB-INF/ $(SERVICES_$(host))
+
+$(patsubst %,sync_server/%,$(ALL_HOSTS)):
+	$(RSYNC) $(RSYNC_FLAGS) $(RSYNC_DEBUG_$(host)) $(EXCLUDES_$(host)) \
+		 $(host)/$(INSTANCE_$(host)) $(SERVER_$(host)):/var/www/tomcat/
+	@echo NOW RESTART TOMCAT INSTANCE
 
