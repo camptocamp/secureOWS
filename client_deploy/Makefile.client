@@ -17,6 +17,8 @@ make_jar:
 update_jnlp:
 	cat owsproxyclient.jnlp.in | sed -e "s/@VERSION_JNLP@/$(WEBSTART_VERSION)/" -e "s/@VERSION@/$(WEBSTART_VERSION)/" > \
 		webstart/owsproxyclient-$(WEBSTART_VERSION).jnlp
+	cat owsproxyclient.jnlp.in | sed -e "s/@VERSION_JNLP@/latest/" -e "s/@VERSION@/$(WEBSTART_VERSION)/" > \
+		webstart/owsproxyclient-latest.jnlp
 
 make_webstart_archive: make_jar sign update_jnlp
 
