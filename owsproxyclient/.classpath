@@ -14,7 +14,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
 	<classpathentry kind="lib" path="netbeans/owsproxyclient/dist/owsproxyclient.jar" sourcepath="netbeans/owsproxyclient/src"/>
 	<classpathentry kind="lib" path="netbeans/owsproxyclient/dist/lib/swing-layout-1.0.3.jar"/>
-	<classpathentry kind="var" path="AGITAR_MOCK_OBJECTS"/>
-	<classpathentry kind="var" path="AGITAR_TEST_LIB"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
