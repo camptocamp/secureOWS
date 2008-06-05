@@ -6,6 +6,8 @@
 VERSION=0.5
 SWING_LAYOUT_VERSION=1.0.3
 
+[ ! -d releases ] && mkdir releases
+
 [ -d dist ] && rm -rf dist
 mkdir dist
 
