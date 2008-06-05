@@ -41,10 +41,10 @@
                                   </Group>
                                   <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="serviceURL" pref="562" max="32767" attributes="1"/>
-                                      <Component id="validationLabel" alignment="0" pref="562" max="32767" attributes="1"/>
-                                      <Component id="usernameField" alignment="0" pref="562" max="32767" attributes="1"/>
-                                      <Component id="passwordField" alignment="0" pref="562" max="32767" attributes="0"/>
+                                      <Component id="serviceURL" pref="576" max="32767" attributes="1"/>
+                                      <Component id="validationLabel" alignment="0" pref="576" max="32767" attributes="1"/>
+                                      <Component id="usernameField" alignment="0" pref="576" max="32767" attributes="1"/>
+                                      <Component id="passwordField" alignment="0" pref="576" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="jLabel8" alignment="0" min="-2" pref="143" max="-2" attributes="0"/>

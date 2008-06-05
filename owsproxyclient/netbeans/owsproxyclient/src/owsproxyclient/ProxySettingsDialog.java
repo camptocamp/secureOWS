@@ -29,9 +29,11 @@ public class ProxySettingsDialog extends javax.swing.JDialog {
 
     public void validatePort() {
         try {
-            final String text = port.getText();
-            Integer.parseInt(text);
-            messages.setText("");
+            final String text = port.getText().trim();
+            if( text.length()>0 ){
+                Integer.parseInt(text);
+                messages.setText("");                
+            }
             okButton.setEnabled(true);
         } catch (NumberFormatException exception) {
             messages.setText(java.util.ResourceBundle.getBundle("owsproxyclient/translations").getString("portError"));

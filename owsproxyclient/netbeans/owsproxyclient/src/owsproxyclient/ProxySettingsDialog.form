@@ -44,8 +44,8 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="port" pref="346" max="32767" attributes="0"/>
-                          <Component id="url" alignment="0" pref="346" max="32767" attributes="0"/>
+                          <Component id="port" pref="356" max="32767" attributes="0"/>
+                          <Component id="url" alignment="0" pref="356" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="useAuthentication" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -54,7 +54,7 @@
                           <Component id="usernameLabel" min="-2" max="-2" attributes="0"/>
                           <Component id="passwordLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="32" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="password" max="32767" attributes="1"/>
                           <Component id="username" alignment="0" pref="301" max="32767" attributes="1"/>

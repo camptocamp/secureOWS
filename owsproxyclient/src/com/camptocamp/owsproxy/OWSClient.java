@@ -139,6 +139,8 @@ public class OWSClient implements Observer {
 	private void initGUI() {
 
 		client = new owsproxyclient.OWSClientGUI();
+		String title = client.getTitle()+" - "+Translations.getString("version");
+		client.setTitle(title);
 		client.setVisible(true);
 		client.errorDetail.setVisible(OWSLogger.DEV.isLoggable(Level.FINER));
 

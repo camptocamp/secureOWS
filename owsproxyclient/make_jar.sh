@@ -3,7 +3,7 @@
 # Script to create a standalone .jar file of the project
 
 # WARNING: keep in sync with ~/c2c/projects/wms/project_public_files/Makefile
-VERSION=0.5pre
+VERSION=0.5
 SWING_LAYOUT_VERSION=1.0.3
 
 [ -d dist ] && rm -rf dist
@@ -30,6 +30,7 @@ for j in $(echo $DIRS|sed 's/:/ /g'); do
 done
 
 cp -r bin/* dist
+sed s/REPLACE_WITH_VERSION/v${VERSION}/ bin/com/camptocamp/owsproxy/translations.properties > dist/com/camptocamp/owsproxy/translations.properties
 
 cp MANIFEST.MF dist/META-INF/
 
