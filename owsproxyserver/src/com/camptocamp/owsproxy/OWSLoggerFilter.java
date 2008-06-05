@@ -49,7 +49,8 @@ public class OWSLoggerFilter implements Filter {
             }
             String[] values = (String[]) parameters.get(key);
             assert values.length == 1;
-            String val = URLEncoder.encode(values[0], "UTF-8");
+//            String val = URLEncoder.encode(values[0], "UTF-8");
+            String val = values[0];
             result += key + "=" + val;
 
         }

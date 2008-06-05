@@ -247,7 +247,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
 		GeoTransformer gt;
 		try {
 			gt = new GeoTransformer(conditionSRS);
-		}catch (Exception e) {
+		}catch (Throwable e) {
 			e.printStackTrace();
 			gt=this.wgs84Transformer;
 		}
@@ -259,13 +259,13 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
 				CoordinateSystem crs = CRSFactory.create(requestSRS);
 				try {
 					tranformedEnvelope = gt.transform(envelope, crs);
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					throw new InvalidParameterValueException(
 							"Unable to transform request to a the condition SRS. ",
 							e);
 
 				}
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				// SRS is either bad or this server doesn't support it.
 				
 				// TODO change getCaps so that it doesn't provide the unsupported SRSs

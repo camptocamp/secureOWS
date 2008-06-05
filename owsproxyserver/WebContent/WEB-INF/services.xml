@@ -13,16 +13,15 @@
 	</roles>
   </service>
   
-  <service
-  serviceId="gmap"
-  serviceDescription="DM Solutions WMS Demo Server"
-  serviceEndPoint="http://209.217.116.146/cgi-bin/mswms_gmap"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
+     <service
+     serviceId="ivs"
+       serviceDescription="IVS restreint"
+         serviceEndPoint="http://prod.swisstopogeodata.ch/wms-ivs/?">
+       <roles>
+        <role>tomcat</role>
+    </roles>
+   </service>
+
 
   <service
   serviceId="vmap"
