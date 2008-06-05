@@ -1,59 +1,55 @@
 <?xml version="1.0"?>
 <services>
-  
-  <!-- sample WMS servers -->
-  <service
-  serviceId="mistra"
-  serviceDescription="Mistra WMS (only inside Swisstopo network)"
-  serviceEndPoint="http://test4-swisstopogeodata.lt.admin.ch/wms-mistra"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
-  
-     <service
-     serviceId="ivs"
-       serviceDescription="IVS restreint"
-         serviceEndPoint="http://prod.swisstopogeodata.ch/wms-ivs/?">
-       <roles>
-        <role>tomcat</role>
-    </roles>
-   </service>
 
+	<!-- sample WMS servers -->
+	<service serviceId="mistra"
+		serviceDescription="Mistra WMS (only inside Swisstopo network)"
+		serviceEndPoint="http://test4-swisstopogeodata.lt.admin.ch/wms-mistra">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
 
-  <service
-  serviceId="vmap"
-  serviceDescription="Metacarta vmap"
-  serviceEndPoint="http://labs.metacarta.com/wms/vmap0?"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
+	<service serviceId="ivs" serviceDescription="IVS restreint"
+		serviceEndPoint="http://prod.swisstopogeodata.ch/wms-ivs/?">
+		<roles>
+			<role>tomcat</role>
+		</roles>
+	</service>
 
-  <service
-  serviceId="germany"
-  serviceDescription="Germany"
-  serviceEndPoint="http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&amp;"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
-  
-  <service
-  serviceId="geoserver"
-  serviceDescription="Geoserver on localhost"
-  serviceEndPoint="http://localhost:8080/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
-    
+	<service serviceId="gmap"
+		serviceDescription="DM Solutions WMS Demo Server"
+		serviceEndPoint="http://www2.dmsolutions.ca/cgi-bin/mswms_gmap">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
+
+	<service serviceId="vmap" serviceDescription="Metacarta vmap"
+		serviceEndPoint="http://labs.metacarta.com/wms/vmap0?">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
+
+	<service serviceId="germany" serviceDescription="Germany"
+		serviceEndPoint="http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&amp;">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
+
+	<service serviceId="geoserver"
+		serviceDescription="Geoserver on localhost"
+		serviceEndPoint="http://localhost:8080/geoserver/wms">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
+
 </services>

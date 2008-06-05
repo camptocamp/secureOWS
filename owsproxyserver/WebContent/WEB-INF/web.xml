@@ -111,6 +111,61 @@
 </auth-constraint>
 </security-constraint>
 <filter>
+<filter-name>OWSProxyServletFilter_gmap</filter-name>
+<filter-class>
+			org.deegree.security.owsproxy.OWSProxyServletFilter
+		</filter-class>
+<init-param>
+<param-name>WMS:POLICY</param-name>
+<param-value>/WEB-INF//wmsPolicy_gmap.xml</param-value>
+</init-param>
+<init-param>
+<param-name>ALTREQUESTPAGE</param-name>
+<param-value>/accessDenied.html</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>OWSProxyServletFilter_gmap</filter-name>
+<servlet-name>gmap</servlet-name>
+</filter-mapping>
+<filter>
+<filter-name>OWSLoggerFilter_gmap</filter-name>
+<filter-class>com.camptocamp.owsproxy.OWSLoggerFilter</filter-class>
+</filter>
+<filter-mapping>
+<filter-name>OWSLoggerFilter_gmap</filter-name>
+<servlet-name>gmap</servlet-name>
+</filter-mapping>
+<servlet>
+<description/>
+<display-name>DM Solutions WMS Demo Server</display-name>
+<servlet-name>gmap</servlet-name>
+<servlet-class>com.camptocamp.owsproxy.OWSProxyServlet</servlet-class>
+<init-param>
+<param-name>serviceEndPoint</param-name>
+<param-value>http://www2.dmsolutions.ca/cgi-bin/mswms_gmap</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>gmap</servlet-name>
+<url-pattern>/gmap</url-pattern>
+</servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/gmap</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
+<filter>
 <filter-name>OWSProxyServletFilter_vmap</filter-name>
 <filter-class>
 			org.deegree.security.owsproxy.OWSProxyServletFilter

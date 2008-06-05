@@ -258,7 +258,10 @@ public class GetFeatureInfo extends WMSRequestBase {
         GetMap getMapRequestCopy = null;
 
         try {
-            getMapRequestCopy = GetMap.create( model );
+        	if(!model.containsKey("FORMAT")){
+        		model.put("FORMAT", "image/jpeg");
+        	}
+        		getMapRequestCopy = GetMap.create( model );
         } catch ( Exception ex ) {
             throw new InconsistentRequestException(
                                                     "\nAn Exception "
