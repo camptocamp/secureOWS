@@ -206,11 +206,9 @@ public class OWSProxyServletFilter implements Filter {
      */
     public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain )
                             throws IOException, ServletException {
-
         // encapsulate the servelt request into a wrapper object to ensure
         // the availability of the InputStream
         ServletRequestWrapper reqWrap = new ServletRequestWrapper( (HttpServletRequest) request );
-
         // create OGCWebServiceRequest from the ServletRequest
 //        String req = null;
 //        try {

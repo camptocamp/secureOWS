@@ -4,10 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +46,6 @@ public class OWSLoggerFilter implements Filter {
             }
             String[] values = (String[]) parameters.get(key);
             assert values.length == 1;
-//            String val = URLEncoder.encode(values[0], "UTF-8");
             String val = values[0];
             result += key + "=" + val;
 
@@ -62,12 +58,7 @@ public class OWSLoggerFilter implements Filter {
 
         if (filterConfig == null)
             return;
-        StringWriter sw = new StringWriter();
-        PrintWriter writer = new PrintWriter(sw);
-
         System.out.println("LOGGING request");
-
-        String prefix = new Date().getTime() + " - ";
 
         Map m = request.getParameterMap();
         String paramsString = _parametersToString(m);
@@ -99,20 +90,26 @@ public class OWSLoggerFilter implements Filter {
             result += key + "=" + params.get(key);
 
         }
-        System.out.println(result);
 
-        String catalinaBase = System.getProperty("catalina.base");
-        String logPath = catalinaBase + File.separator + "logs"
-                + File.separator + "owsproxyserver_logs.txt";
-        System.out.println("Log path: " + logPath);
-        BufferedWriter bf = new BufferedWriter(new FileWriter(logPath, true));
-        bf.write(prefix + result + "\n");
-        bf.flush();
-        bf.close();
+        log(result);
 
         HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(
                 (HttpServletResponse) response);
         chain.doFilter(request, wrapper);
     }
+
+	static void log(String result) throws IOException {
+        String prefix = new Date().getTime() + " - ";
+		String catalinaBase = System.getProperty("catalina.base");
+        String logPath = catalinaBase + File.separator + "logs"
+                + File.separator + "owsproxyserver_logs.txt";
+        System.out.println("Log path: " + logPath);
+        BufferedWriter bf = new BufferedWriter(new FileWriter(logPath, true));
+
+        System.out.println(prefix + result);
+        bf.write(prefix + result + "\n");
+        bf.flush();
+        bf.close();
+	}
 
 }

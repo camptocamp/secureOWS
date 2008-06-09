@@ -51,7 +51,8 @@ public class OWSProxyServlet extends javax.servlet.http.HttpServlet implements
             HttpServletResponse response) throws ServletException, IOException {
 
         String queryString = request.getQueryString();
-        
+        String protocol = request.getProtocol().split("/")[0].toLowerCase();
+        OWSLoggerFilter.log(protocol+"://"+request.getLocalName()+":"+request.getServerPort()+request.getRequestURI()+"?"+queryString);
         
         // Some WMS Client, like ArcMAP, only send the QUERY_LAYERS parameter without a LAYERS parameter.
         // However, some WMS server like MapServer fail in case there is no LAYERS parameter send.
