@@ -60,9 +60,11 @@ public class OWSLoggerFilter implements Filter {
             return;
         System.out.println("LOGGING request");
 
+        
         Map m = request.getParameterMap();
         String paramsString = _parametersToString(m);
         System.out.println("Value: " + paramsString);
+        HttpServletRequest httpServletRequest = ((HttpServletRequest) request);
 
         Map<String, String> params = new HashMap<String, String>();
 
@@ -73,11 +75,13 @@ public class OWSLoggerFilter implements Filter {
         params.put("local_addr", request.getLocalAddr());
         params.put("local_name", request.getLocalName());
         params.put("local_port", "" + request.getLocalPort());
-        // XXX more ... ?
+        params.put("requestURI", httpServletRequest.getRequestURI());
+
+        
         params.put("remote_host", "" + request.getRemoteHost());
 
-        params.put("user_principal", ""
-                + ((HttpServletRequest) request).getUserPrincipal().getName());
+		params.put("user_principal", ""
+                + httpServletRequest.getUserPrincipal().getName());
 
         String result = "";
         boolean first = true;
