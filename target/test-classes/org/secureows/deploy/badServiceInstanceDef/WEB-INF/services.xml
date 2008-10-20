@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<services>
+
+	<service serviceId="geoserver"
+		serviceDescription="Geoserver on localhost"
+		serviceEndPoint="http://localhost:8080/geoserver/wms">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
+
+</services>

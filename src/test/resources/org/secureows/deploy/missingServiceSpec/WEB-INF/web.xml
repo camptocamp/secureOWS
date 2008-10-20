@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="owsproxy" version="2.4" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee">
+<display-name>owsproxyserver</display-name>
+<filter>
+<filter-name>OWSProxyServletFilter_mistra</filter-name>
+<filter-class>
+			org.deegree.security.owsproxy.OWSProxyServletFilter
+		</filter-class>
+<init-param>
+<param-name>WMS:POLICY</param-name>
+<param-value>/WEB-INF//wmsPolicy_mistra.xml</param-value>
+</init-param>
+<init-param>
+<param-name>ALTREQUESTPAGE</param-name>
+<param-value>/accessDenied.html</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>OWSProxyServletFilter_mistra</filter-name>
+<servlet-name>mistra</servlet-name>
+</filter-mapping>
+<filter>
+<filter-name>OWSLoggerFilter_mistra</filter-name>
+<filter-class>com.camptocamp.owsproxy.OWSLoggerFilter</filter-class>
+</filter>
+<filter-mapping>
+<filter-name>OWSLoggerFilter_mistra</filter-name>
+<servlet-name>mistra</servlet-name>
+</filter-mapping>
+<servlet>
+<description/>
+<display-name>Mistra WMS (only inside Swisstopo network)</display-name>
+<servlet-name>mistra</servlet-name>
+<servlet-class>com.camptocamp.owsproxy.OWSProxyServlet</servlet-class>
+<init-param>
+<param-name>serviceEndPoint</param-name>
+<param-value>http://test4-swisstopogeodata.lt.admin.ch/wms-mistra</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>mistra</servlet-name>
+<url-pattern>/mistra</url-pattern>
+</servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/mistra</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
+<filter>
+<filter-name>OWSProxyServletFilter_ivs</filter-name>
+<filter-class>
+			org.deegree.security.owsproxy.OWSProxyServletFilter
+		</filter-class>
+<init-param>
+<param-name>WMS:POLICY</param-name>
+<param-value>/WEB-INF//wmsPolicy_ivs.xml</param-value>
+</init-param>
+<init-param>
+<param-name>ALTREQUESTPAGE</param-name>
+<param-value>/accessDenied.html</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>OWSProxyServletFilter_ivs</filter-name>
+<servlet-name>ivs</servlet-name>
+</filter-mapping>
+<filter>
+<filter-name>OWSLoggerFilter_ivs</filter-name>
+<filter-class>com.camptocamp.owsproxy.OWSLoggerFilter</filter-class>
+</filter>
+<filter-mapping>
+<filter-name>OWSLoggerFilter_ivs</filter-name>
+<servlet-name>ivs</servlet-name>
+</filter-mapping>
+<servlet>
+<description/>
+<display-name>IVS restreint</display-name>
+<servlet-name>ivs</servlet-name>
+<servlet-class>com.camptocamp.owsproxy.OWSProxyServlet</servlet-class>
+<init-param>
+<param-name>serviceEndPoint</param-name>
+<param-value>http://prod.swisstopogeodata.ch/wms-ivs/?</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>ivs</servlet-name>
+<url-pattern>/ivs</url-pattern>
+</servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/ivs</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+</auth-constraint>
+</security-constraint>
+<filter>
+<filter-name>OWSProxyServletFilter_gmap</filter-name>
+<filter-class>
+			org.deegree.security.owsproxy.OWSProxyServletFilter
+		</filter-class>
+<init-param>
+<param-name>WMS:POLICY</param-name>
+<param-value>/WEB-INF//wmsPolicy_gmap.xml</param-value>
+</init-param>
+<init-param>
+<param-name>ALTREQUESTPAGE</param-name>
+<param-value>/accessDenied.html</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>OWSProxyServletFilter_gmap</filter-name>
+<servlet-name>gmap</servlet-name>
+</filter-mapping>
+<filter>
+<filter-name>OWSLoggerFilter_gmap</filter-name>
+<filter-class>com.camptocamp.owsproxy.OWSLoggerFilter</filter-class>
+</filter>
+<filter-mapping>
+<filter-name>OWSLoggerFilter_gmap</filter-name>
+<servlet-name>gmap</servlet-name>
+</filter-mapping>
+<servlet>
+<description/>
+<display-name>DM Solutions WMS Demo Server</display-name>
+<servlet-name>gmap</servlet-name>
+<servlet-class>com.camptocamp.owsproxy.OWSProxyServlet</servlet-class>
+<init-param>
+<param-name>serviceEndPoint</param-name>
+<param-value>http://www2.dmsolutions.ca/cgi-bin/mswms_gmap</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>gmap</servlet-name>
+<url-pattern>/gmap</url-pattern>
+</servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/gmap</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
+<filter>
+<filter-name>OWSProxyServletFilter_vmap</filter-name>
+<filter-class>
+			org.deegree.security.owsproxy.OWSProxyServletFilter
+		</filter-class>
+<init-param>
+<param-name>WMS:POLICY</param-name>
+<param-value>/WEB-INF//wmsPolicy_vmap.xml</param-value>
+</init-param>
+<init-param>
+<param-name>ALTREQUESTPAGE</param-name>
+<param-value>/accessDenied.html</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>OWSProxyServletFilter_vmap</filter-name>
+<servlet-name>vmap</servlet-name>
+</filter-mapping>
+<filter>
+<filter-name>OWSLoggerFilter_vmap</filter-name>
+<filter-class>com.camptocamp.owsproxy.OWSLoggerFilter</filter-class>
+</filter>
+<filter-mapping>
+<filter-name>OWSLoggerFilter_vmap</filter-name>
+<servlet-name>vmap</servlet-name>
+</filter-mapping>
+<servlet>
+<description/>
+<display-name>Metacarta vmap</display-name>
+<servlet-name>vmap</servlet-name>
+<servlet-class>com.camptocamp.owsproxy.OWSProxyServlet</servlet-class>
+<init-param>
+<param-name>serviceEndPoint</param-name>
+<param-value>http://labs.metacarta.com/wms/vmap0?</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>vmap</servlet-name>
+<url-pattern>/vmap</url-pattern>
+</servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/vmap</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
+<filter>
+<filter-name>OWSProxyServletFilter_germany</filter-name>
+<filter-class>
+			org.deegree.security.owsproxy.OWSProxyServletFilter
+		</filter-class>
+<init-param>
+<param-name>WMS:POLICY</param-name>
+<param-value>/WEB-INF//wmsPolicy_germany.xml</param-value>
+</init-param>
+<init-param>
+<param-name>ALTREQUESTPAGE</param-name>
+<param-value>/accessDenied.html</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>OWSProxyServletFilter_germany</filter-name>
+<servlet-name>germany</servlet-name>
+</filter-mapping>
+<filter>
+<filter-name>OWSLoggerFilter_germany</filter-name>
+<filter-class>com.camptocamp.owsproxy.OWSLoggerFilter</filter-class>
+</filter>
+<filter-mapping>
+<filter-name>OWSLoggerFilter_germany</filter-name>
+<servlet-name>germany</servlet-name>
+</filter-mapping>
+<servlet>
+<description/>
+<display-name>Germany</display-name>
+<servlet-name>germany</servlet-name>
+<servlet-class>com.camptocamp.owsproxy.OWSProxyServlet</servlet-class>
+<init-param>
+<param-name>serviceEndPoint</param-name>
+<param-value>http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&amp;</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>germany</servlet-name>
+<url-pattern>/germany</url-pattern>
+</servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/germany</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
+<filter>
+<filter-name>OWSProxyServletFilter_geoserver</filter-name>
+<filter-class>
+			org.deegree.security.owsproxy.OWSProxyServletFilter
+		</filter-class>
+<init-param>
+<param-name>WMS:POLICY</param-name>
+<param-value>/WEB-INF//wmsPolicy_geoserver.xml</param-value>
+</init-param>
+<init-param>
+<param-name>ALTREQUESTPAGE</param-name>
+<param-value>/accessDenied.html</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>OWSProxyServletFilter_geoserver</filter-name>
+<servlet-name>geoserver</servlet-name>
+</filter-mapping>
+<filter>
+<filter-name>OWSLoggerFilter_geoserver</filter-name>
+<filter-class>com.camptocamp.owsproxy.OWSLoggerFilter</filter-class>
+</filter>
+<filter-mapping>
+<filter-name>OWSLoggerFilter_geoserver</filter-name>
+<servlet-name>geoserver</servlet-name>
+</filter-mapping>
+<servlet>
+<description/>
+<display-name>Geoserver on localhost</display-name>
+<servlet-name>geoserver</servlet-name>
+<servlet-class>com.camptocamp.owsproxy.OWSProxyServlet</servlet-class>
+<init-param>
+<param-name>serviceEndPoint</param-name>
+<param-value>http://localhost:8080/geoserver/wms</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>geoserver</servlet-name>
+<url-pattern>/geoserver</url-pattern>
+</servlet-mapping>
+<security-constraint>
+<display-name>Ows Proxy Security Constraint</display-name>
+<web-resource-collection>
+<web-resource-name>Protected Area</web-resource-name>
+<url-pattern>/geoserver</url-pattern>
+<http-method>DELETE</http-method>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+<http-method>PUT</http-method>
+</web-resource-collection>
+<auth-constraint>
+<role-name>tomcat</role-name>
+<role-name>role1</role-name>
+</auth-constraint>
+</security-constraint>
+<login-config>
+<auth-method>BASIC</auth-method>
+<realm-name>Ows Proxy Realm</realm-name>
+</login-config>
+</web-app>
