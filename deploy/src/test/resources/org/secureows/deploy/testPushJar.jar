@@ -1,0 +1,4 @@
+aliases = local -> localhost, remote -> www.secureows.org
+tmpDir = /tmp/
+remoteUsername = camptocamp
+maxBackups = 5

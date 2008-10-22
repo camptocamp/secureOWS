@@ -26,7 +26,7 @@ object Validation {
 		    
       validateSpecs.find( !_.isEmpty ).getOrElse(None)
      }catch{
-      case e:org.xml.sax.SAXParseException => Some(servicesFile+" is not valid XML"+e.getMessage)
+      case e:org.xml.sax.SAXParseException => Some(servicesFile+" is not valid XML\n\t"+e.getMessage)
      }
   }
   
@@ -55,7 +55,7 @@ object Validation {
         Some(xmlFile+" is missing.  It is a the definition for a service defined in the services.xml file") 
       }
     }catch{
-      case e => Some(xmlFile+" is not valid XML"+e.getMessage)
+      case e => Some(xmlFile+" is not valid XML:\n\t"+e.getMessage)
     }
   }
 }
