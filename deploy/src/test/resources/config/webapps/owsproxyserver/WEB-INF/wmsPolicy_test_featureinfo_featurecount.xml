@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OWSPolicy service="WMS" xmlns="http://www.deegree.org/security">
+	<Security></Security>
+	<Requests>
+		<GetMap>
+		</GetMap>
+
+		<GetFeatureInfo>
+			<PreConditions>
+				<Parameter name="maxFeatureCount">
+					<Value>100</Value>
+				</Parameter>
+			</PreConditions>
+		</GetFeatureInfo>
+
+		<GetCapabilities>
+		</GetCapabilities>
+		<GetLegendGraphic>
+		</GetLegendGraphic>
+	</Requests>
+</OWSPolicy>

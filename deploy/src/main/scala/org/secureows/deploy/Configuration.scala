@@ -23,7 +23,6 @@ class Configuration(val configFile:File, val arguments:Seq[String], val deployAp
   def username(alias:String) = find(alias,"Username")
   def configDirs(alias:String) = find(alias,"ConfigDirs").split(",").map( path => assureDir(path.trim) ).toSeq
   def isLocalhost(alias:String) = localhost.contains(alias)
-  def appFetchUrl = new URL("http://www.secureows.org/downloads/war/"+elements("version")+"secureowsproxy.war")
   def distributeJars(destinations:Iterable[String]) {
     val destAliases = destinations.filter( alias => (!isLocalhost(alias) &&  aliases.keys.contains(alias)))
     if( !destAliases.isEmpty ){
