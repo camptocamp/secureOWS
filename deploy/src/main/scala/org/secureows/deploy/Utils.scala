@@ -27,6 +27,7 @@ class ProcessRunner(cOutput:((InputStreamResource[InputStream]))=>Unit,
                     cInput:Array[Byte],
                     val cEnv:Map[String,String],
                     cDir:File,
+                    cLog:Boolean,
                     cCmds:String*){
                     
   def this(mCmds:String*)=this(ProcessRunner.pipe(System.out)_,
@@ -34,9 +35,10 @@ class ProcessRunner(cOutput:((InputStreamResource[InputStream]))=>Unit,
                              new Array[Byte](0), 
                              Map[String,String](),
                              new File("."),
+                             false,
                              mCmds:_*)
   def this(cOutput:((InputStreamResource[InputStream]))=>Unit,mCmds:String*)={
-    this(cOutput,cOutput,new Array[Byte](0),Map[String,String](),new File("."),mCmds:_*)
+    this(cOutput,cOutput,new Array[Byte](0),Map[String,String](),new File("."),false,mCmds:_*)
   }
                   
   private val cmdAsList=new scala.collection.jcl.ArrayList[String]()
@@ -45,6 +47,7 @@ class ProcessRunner(cOutput:((InputStreamResource[InputStream]))=>Unit,
   scala.collection.jcl.Map(builder.environment())++=cEnv
 
   def run():Int={
+    if(cLog) println("Executing Process: "+cCmds.mkString(" "))
     val process = builder.start()
     val mainActor = Actor.self
     val outActor = actor {
@@ -76,30 +79,33 @@ class ProcessRunner(cOutput:((InputStreamResource[InputStream]))=>Unit,
   }
 
   def apply() = run
-  def apply(pCmds:String*) = new ProcessRunner(cOutput,cError,cInput,cEnv,cDir,pCmds:_*).run
+  def apply(pCmds:String*) = new ProcessRunner(cOutput,cError,cInput,cEnv,cDir,cLog,pCmds:_*).run
     
   def output(pHandler:(InputStreamResource[InputStream])=>Unit):ProcessRunner={
-    new ProcessRunner(pHandler,cError,cInput,cEnv,cDir,cCmds:_*)
+    new ProcessRunner(pHandler,cError,cInput,cEnv,cDir,cLog,cCmds:_*)
   }
   def error(pHandler:(InputStreamResource[InputStream])=>Unit):ProcessRunner={
-        new ProcessRunner(cOutput,pHandler,cInput,cEnv,cDir,cCmds:_*)
+        new ProcessRunner(cOutput,pHandler,cInput,cEnv,cDir,cLog,cCmds:_*)
   }
 
   def input(pIn:String):ProcessRunner={
-        new ProcessRunner(cOutput,cError,pIn.getBytes,cEnv,cDir,cCmds:_*)
+        new ProcessRunner(cOutput,cError,pIn.getBytes,cEnv,cDir,cLog,cCmds:_*)
   }  
-    
+  
+  def log:ProcessRunner = {
+    new ProcessRunner(cOutput,cError,cInput,cEnv,cDir,true,cCmds:_*)
+  }
   def env(pEnv:Map[String,String]):ProcessRunner = {
-    new ProcessRunner(cOutput,cError,cInput,pEnv,cDir,cCmds:_*)
+    new ProcessRunner(cOutput,cError,cInput,pEnv,cDir,cLog,cCmds:_*)
   }
   def env(pEnv:(String,String)*):ProcessRunner = {
-    new ProcessRunner(cOutput,cError,cInput,Map(pEnv:_*),cDir,cCmds:_*)
+    new ProcessRunner(cOutput,cError,cInput,Map(pEnv:_*),cDir,cLog,cCmds:_*)
   }
   def dir(pWd:File):ProcessRunner = {
-    new ProcessRunner(cOutput,cError,cInput,cEnv,pWd,cCmds:_*)
+    new ProcessRunner(cOutput,cError,cInput,cEnv,pWd,cLog,cCmds:_*)
   }
   def dir(pWd:String):ProcessRunner = {
-    new ProcessRunner(cOutput,cError,cInput,cEnv,new File(pWd),cCmds:_*)
+    new ProcessRunner(cOutput,cError,cInput,cEnv,new File(pWd),cLog,cCmds:_*)
   }
   /**
    * Execute a script in the local shell. If windows type is ignored and script is executed as a bat file.
@@ -123,8 +129,8 @@ class ProcessRunner(cOutput:((InputStreamResource[InputStream]))=>Unit,
       case _ => 
     }
 
-    val result = if( windows) new ProcessRunner(cOutput, cError, cInput, cEnv, cDir, file.getName).run
-                 else new ProcessRunner(cOutput, cError, cInput, cEnv, cDir,"./"+file.getName).run
+    val result = if( windows) new ProcessRunner(cOutput, cError, cInput, cEnv, cDir, cLog, file.getName).run
+                 else new ProcessRunner(cOutput, cError, cInput, cEnv, cDir,cLog,"./"+file.getName).run
 
     if (!file.delete) file.deleteOnExit
 

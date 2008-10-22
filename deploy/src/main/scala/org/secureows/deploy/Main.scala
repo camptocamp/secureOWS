@@ -76,7 +76,7 @@ object Main {
         println(lines.mkString("\n"))
       }
       val svnSt = ProcessRunner(args:_*)
-      svnSt.output(handler _).run
+      svnSt.output(handler _).log.run
         
       if( modified ) return Some("There are uncommitted changes in the installation directory")
       else return None
