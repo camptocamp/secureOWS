@@ -1,127 +1,55 @@
 <?xml version="1.0"?>
 <services>
-  <!-- Services used for the unit tests.
-       The policy documents are available in the tests directory.
-   -->
 
-  <service
-  serviceId="test_no_restrictions"
-  directory="tests"
-  serviceDescription="test_no_restrictions"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
+	<!-- sample WMS servers -->
+	<service serviceId="mistra"
+		serviceDescription="Mistra WMS (only inside Swisstopo network)"
+		serviceEndPoint="http://test4-swisstopogeodata.lt.admin.ch/wms-mistra">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
 
-  <service
-  serviceId="test_size_restrictions"
-  directory="tests"
-  serviceDescription="test_size_restrictions"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
+	<service serviceId="ivs" serviceDescription="IVS restreint"
+		serviceEndPoint="http://prod.swisstopogeodata.ch/wms-ivs/?">
+		<roles>
+			<role>tomcat</role>
+		</roles>
+	</service>
 
-  <service
-  serviceId="test_layer_restrictions"
-  directory="tests"
-  serviceDescription="test_layer_restrictions"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
+	<service serviceId="gmap"
+		serviceDescription="DM Solutions WMS Demo Server"
+		serviceEndPoint="http://www2.dmsolutions.ca/cgi-bin/mswms_gmap">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
 
-  <service
-  serviceId="test_layer_restrictions2"
-  directory="tests"
-  serviceDescription="test_layer_restrictions2"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
+	<service serviceId="vmap" serviceDescription="Metacarta vmap"
+		serviceEndPoint="http://labs.metacarta.com/wms/vmap0?">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
 
-  <service
-  serviceId="test_bbox_restrictions"
-  directory="tests"
-  serviceDescription="test_bbox_restrictions"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
+	<service serviceId="germany" serviceDescription="Germany"
+		serviceEndPoint="http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&amp;">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
 
-  <service
-  serviceId="test_bbox_outside_restrictions"
-  directory="tests"
-  serviceDescription="test_bbox_outside_restrictions"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
-
-  <service
-  serviceId="test_bbox_restrictions2"
-  directory="tests"
-  serviceDescription="test_bbox_restrictions2"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
-
-  <service
-  serviceId="test_featureinfo_featurecount"
-  directory="tests"
-  serviceDescription="test_featureinfo_featurecount"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
-
-  <service
-  serviceId="test_featureinfo_format"
-  directory="tests"
-  serviceDescription="test_featureinfo_format"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
-
-  <service
-  serviceId="test_featureinfo_layers"
-  directory="tests"
-  serviceDescription="test_featureinfo_layers"
-  serviceEndPoint="http://localhost:8081/geoserver/wms"
-  >
-	<roles>
-		<role>tomcat</role>
-		<role>role1</role>
-	</roles>
-  </service>
+	<service serviceId="geoserver"
+		serviceDescription="Geoserver on localhost"
+		serviceEndPoint="http://localhost:8080/geoserver/wms">
+		<roles>
+			<role>tomcat</role>
+			<role>role1</role>
+		</roles>
+	</service>
 
 </services>
