@@ -28,10 +28,10 @@ object FetchOp {
       if(webapp.exists)      webapp.deleteRecursively
       webapp.mkdirs
       
-      println("Downloading owsproxyserver.war")
+      println("Downloading "+appRemoteUrl)
       InputStreamResource(appRemoteUrl.openStream).pumpTo(localWar.outputStream.buffered )
 
-      println("decompressing war")
+      println("decompressing "+localWar.getAbsolutePath)
       ProcessRunner("unzip",localWar.getAbsolutePath, "-d", webapp.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
   
       checkoutConfigFiles(alias,configDir,config)
