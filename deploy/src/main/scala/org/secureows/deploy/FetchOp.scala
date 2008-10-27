@@ -6,7 +6,10 @@ import java.text.MessageFormat.format
 import java.io.File
 
 object FetchOp {
-    def run(args:Seq[String], config:Configuration):Option[String]={
+  val TMP_APP = "owsproxyserver"
+  val TMP_CONF = "conf"
+  
+  def run(args:Seq[String], config:Configuration):Option[String]={
       if(args.length != 1) throw new IllegalArgumentException("fetch requires exactly one argument, the alias. Arguments passed to program were: "+args.mkString(","))
 
       val alias = args(0)
@@ -15,9 +18,9 @@ object FetchOp {
       if(!config.isLocalhost(alias) ) throw new IllegalArgumentException("Alias "+alias+" is not on the localhost")
       
       
-      
       val appRemoteUrl = appFetchUrl(alias,config)
       val localAppDir = new File(config.tmpAppDir(alias))
+      val localConfDir = new File(config.tmpConfigDir(alias))
       val localWar = new File(config.tmpWar(alias))
       val webapp = new File(config.tmpWebapp(alias))
       val configDir = localAppDir/"configuration"
@@ -32,27 +35,33 @@ object FetchOp {
       ProcessRunner("unzip",localWar.getAbsolutePath, "-d", webapp.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
   
       checkoutConfigFiles(alias,configDir,config)
-  
-      Utils.replaceTree(configDir, localAppDir/"tomcat")
+      
+      if( (configDir/TMP_CONF).listFiles.isEmpty ){
+        print("There are no configuration files for the web server.\nCheck "+config.configSvnConf(alias)+"\nAre you sure you want to continue?(y/n) ")
+        if( readChar != 'y'  ) return Some("Cancelled by user")
+      }
+      if( (configDir/TMP_APP).listFiles.isEmpty ){
+        print("There are no configuration files for the owsproxyserver.\nCheck "+config.configSvnApp(alias)+"\nAre you sure you want to continue?(y/n) ")
+        if( readChar != 'y' ) return Some("Cancelled by user")
+      }
+
+      Utils.replaceTree(configDir/TMP_CONF, localConfDir)
+      Utils.replaceTree(configDir/TMP_APP, localAppDir)
       
       InstallOp.run(Array(alias),config)
     }
 
     private def checkoutConfigFiles(alias:String, configDir:File,config:Configuration) = {
       println("Checking out configuration files")
-      var conflict = false
-      
-      def conflictHandler(in:InputStreamResource[java.io.InputStream]){
-        val lines = in.lines.filter(_.contains("C  ")).toList
-        if( !lines.isEmpty ) {
-          conflict = true
-          println("Conflicts occurred:" + lines.mkString("\n"))
-        }
+
+      def doCheckout(dir:File, url:String){
+          dir.deleteRecursively
+          dir.mkdirs
+	      ProcessRunner("svn","co",url,dir.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
       }
       
-      if( (configDir).exists ) ProcessRunner("svn","up",configDir.getAbsolutePath).output(conflictHandler _).error(conflictHandler _).run
-      else ProcessRunner("svn","co",config.configSvn(alias),configDir.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
-      
+      doCheckout(configDir/TMP_CONF,config.configSvnConf(alias))
+      doCheckout(configDir/TMP_APP,config.configSvnApp(alias))
     }
     
     private def checkConfigModifications(alias:String, config:Configuration):Option[String] = {
@@ -74,7 +83,7 @@ object FetchOp {
       svnSt.output(handler _).run
         
       if( modified ) {
-        println ("Do you want to overwrite changes? (y/n)")
+        print ("Do you want to overwrite changes?(y/n) ")
         val result = readChar
         if( result.toLowerCase == 'n'){
           return Some("There are uncommitted changes in the installation directory")

@@ -52,7 +52,6 @@ object PushOp {
     
     val pattern =  
       """ssh {0} "rm -rf {1}"
-        |ssh {0} "rm -rf {2}"
         |ssh {0} "mkdir -p {1}"
         |ssh {0} "mkdir -p {2}"
         |scp -r {3} {0}:{5}

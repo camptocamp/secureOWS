@@ -20,7 +20,8 @@ class Configuration(val configFile:File, val deployApp:File) {
   } 
   def asURL(name:String) = new URL("http://"+aliases(name))
 
-  def configSvn(alias:String):String = find(alias, "configSvn")
+  def configSvnApp(alias:String):String = find(alias, "configSvnApp")
+  def configSvnConf(alias:String):String = find(alias, "configSvnConf")
   def downloadUrl(alias:String):String = find(alias,"downloadUrl")
   def url(name:String):String = aliases(name)
   def installWebapp(alias:String):String = assureDir( find(alias,"installWebapp") )

@@ -23,7 +23,7 @@ object InstallOp {
     mostSevere match {
 	  case Error(s) => Some(s)
 	  case Warning(s) if(!remote)=> {
-	      println("There were warnings in the configuration.  Do you wish to install?(y/n)")
+	      print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
           if ( readChar == 'y'){
             doInstall(alias, webapp, tmpConf,config)
           }else{
