@@ -8,9 +8,22 @@ object Parser extends CommandLineParser {
   val testing = new Flag('t',"testing","This flag is for testing the commandline parser") with AllowAll
   val config = new StringOption('c',"config","The path to the configuration file") with AllowAll
   val jar = new StringOption('j',"jar","The path to the jar file being executed") with AllowAll
-  val fetch = new Flag('f',"fetch","Indicates that the fetch behaviour will be performed") with AllowAllButSelf
-  val validate = new Flag('v',"validate","Indicates that the validate behaviour will be performed") with AllowAllButSelf
-  val push = new Flag('p',"push","Indicates that the push behaviour will be performed") with AllowAllButSelf
+
+  var ops:List[(Flag,(Seq[String],Configuration)=>Option[String])] = Nil
+
+  // operations in the reverse order that they will be executed if all are present
+  val push = addOp('p',"push","Indicates that the push behaviour will be performed",PushOp.run _)
+  val install = addOp('i',"install","Indicates that the push behaviour will be performed",InstallOp.run _)
+  val backup = addOp('b',"backup","Indicates that the push behaviour will be performed", BackupOp.run _)
+  val validate = addOp('v',"validate","Indicates that the validate behaviour will be performed",ValidateOp.run _)
+  val fetch = addOp('f',"fetch","Indicates that the fetch behaviour will be performed", FetchOp.run _)
+  
+  
+  def addOp(short:Char, long:String, desc:String, op:(Seq[String],Configuration)=>Option[String]) = {
+    val flag = new Flag( short,long,desc ) with AllowAllButSelf
+    ops = (flag,op) :: ops
+    flag
+  }
   
   override def helpHeader = """
          |Deployment Tool v1.0
@@ -31,28 +44,21 @@ object Main {
        
        val deployApp = new File(parsedArgs(Parser.jar).get)
        val otherArgs = parsedArgs.nonOptions
-       val config = new Configuration(configFile,otherArgs,deployApp)
+       val config = new Configuration(configFile,deployApp)
        
-       def run( run:Boolean, action: ()=> Option[String])={
-         if( run && !parsedArgs(Parser.testing) ){
-           action()
-         }else None
-       }
+       val testing = parsedArgs(Parser.testing)
        
-       val fetchResult = run(parsedArgs(Parser.fetch), FetchOp.run(config)_)
-       if( fetchResult.isDefined ){
-         println("Fetch FAILED: "+fetchResult.get)
-         return
-       }
-       val validateResult = run(parsedArgs(Parser.validate), ValidateOp.run(config)_)
-       if( validateResult.isDefined ){
-         println("Validate FAILED: "+validateResult.get)
-         return
-       }
-       val pushResult = run(parsedArgs(Parser.push), doPush(config)_)
-       if( pushResult.isDefined ){
-         println("Push FAILED: "+pushResult.get)
-         return
+       var failure = false 
+       for{
+         (flag,op) <- Parser.ops
+         if (parsedArgs(flag) && !failure && !testing) 
+       }{
+         val result = op( otherArgs, config )
+         if( result.isDefined ){
+           val name = flag.longName.take(1).toUpperCase+flag.longName.drop(1)
+           println(name+" FAILED:\n  "+result.get.replaceAll("[\\n\\r]","\n>  "))
+           failure = true
+         }
        }
        
      }

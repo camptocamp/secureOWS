@@ -4,10 +4,22 @@ import scalax.data.Positive
 import java.text.MessageFormat.format
 import java.io.File
 
+object ValType extends Enumeration("install","tmp"){
+    val install,tmp=Value
+    
+    def apply(name:String)={
+      val found = filter( name.toLowerCase == _.toString)
+      if( !found.hasNext ) throw new IllegalArgumentException("The first argument must be one of "+toString)
+      else found.next
+    }
+}
+  
 object ValidateOp {
-
-    def run(config:Configuration)():Option[String]={
-      val aliases = config.arguments
+    def run(args:Seq[String],config:Configuration):Option[String]={
+      // options are tmp or install indicating that the installed app should be validated 
+      // or the temporary working directory should be validated
+      val valType = ValType(args(0))
+      val aliases = args.drop(1)
       
       if( aliases.isEmpty ) throw new IllegalArgumentException("Validate requires at least one alias to validate")
       
@@ -17,39 +29,34 @@ object ValidateOp {
       
       config.distributeJars(aliases)
       
-      val results = for( alias <- aliases) yield { 
-        println("Validating alias: "+alias)
-        if( config.isLocalhost(alias)) localValidate(alias,config)
-        else remoteValidate(alias,config)
+      val results = for( alias <- aliases ) yield { 
+        println("\nVALIDATING: "+alias)
+        val validationResult = if( config.isLocalhost(alias)) localValidate(valType,alias,config)
+                               else remoteValidate(valType,alias,config)
+        validationResult.toList.sort( (l,r)=> l.id<r.id).head match {
+          case Error(s) => s
+          case _ => ""
+        }
       }
-      results.find( _.isDefined ) match {
-        case Some(s) => s
-        case None => None
-      }
+      val failures = results.filter( _.length > 0)
+
+      if( failures.isEmpty ) None
+      else Some(failures.mkString(","))
     }
     
-    def remoteValidate(alias:String,config:Configuration)={
-      val login = config.username(alias)+"@"+config.url(alias)
+    def remoteValidate(valType:ValType.Value,alias:String,config:Configuration)={
       val appJar = config.tmpDir(alias)+config.deployApp.getName
       val configFile = config.tmpDir(alias)+config.configFile.getName
-      val javaCMD = "java -cp "+appJar+" org.secureows.deploy.Main -v -c "+configFile+" -j "+appJar+" "+alias
-
-      var result:Option[String] = None
-      def handler (stream:InputStreamResource[java.io.InputStream]) {
-        val lines = stream.lines.toList
-        if(lines.find( l => l.contains("FAILED")).isDefined) result = Some(lines.mkString("\n"))
+      val javaCMD = "java -cp "+appJar+" org.secureows.deploy.Main -v -c "+configFile+" -j "+appJar+" "+valType+" "+alias
+      Remoting.runRemote(alias,javaCMD,config)
+    }
+    
+    def localValidate(valType:ValType.Value,alias:String,config:Configuration)={
+      val dir = valType match {
+        case ValType.install => config.installWebapp(alias)
+        case ValType.tmp => config.tmpWebapp(alias)
       }
-
-      val process = ProcessRunner("ssh",login,javaCMD).
-        output(handler _).
-        error(handler _)
-      process.run
-
-      result
+      Validation.validate(new File(dir) )
     }
-    
-    def localValidate(alias:String,config:Configuration)={
-        Validation.validate(new File(config.installDir(alias)) )
-    }
-    
+
 }

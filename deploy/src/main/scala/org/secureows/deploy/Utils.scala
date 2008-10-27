@@ -115,7 +115,7 @@ class ProcessRunner(cOutput:((InputStreamResource[InputStream]))=>Unit,
    * @param script the script to execute
    */
   def script(scriptType:String, script:String)={
-    val file=new File(cDir,".script"+System.currentTimeMillis)
+    val file=File.createTempFile(".script","",cDir)
     file.deleteOnExit()
     val complete="#!"+scriptType+"\n"+script
     file.write(complete)
@@ -243,14 +243,19 @@ object Utils {
   	def relative( root:File, file:File ):String = {
 		file.getPath.drop(root.getPath.length)
 	}
-	
 	def copyTree(from:File, to:File):Int = {
+	  copyTree(from,to, (s,d)=>s.lastModified>d.lastModified)
+	}
+	def replaceTree(from:File, to:File):Int = {
+	  copyTree(from,to, (s,d)=>true)
+	}
+	def copyTree(from:File, to:File, replace:(File,File)=>Boolean):Int = {
 		from.tree.projection.foldLeft(0)( (count,f) => {
 			val dest = new File(to, relative(from,f))
 			if(f.isDirectory) dest.mkdirs
-			else if(!dest.exists || f.lastModified() > dest.lastModified() ) f.copyTo(dest)
-			
-			if( (f ~> "canExecute").getOrElse(false).asInstanceOf[Boolean] ) setExecutable(dest)
+			else if(!dest.exists || replace(f,dest) ) f.copyTo(dest)
+   
+			if(f.isFile && (f ~> "canExecute").getOrElse(false).asInstanceOf[Boolean] ) setExecutable(dest)
 			count + 1
 		})
 	}

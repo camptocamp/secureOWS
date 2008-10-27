@@ -4,7 +4,7 @@ import java.net.{URL,InetAddress}
 import scalax.io.Implicits._
 import java.text.MessageFormat.format
 
-class Configuration(val configFile:File, val arguments:Seq[String], val deployApp:File) {
+class Configuration(val configFile:File, val deployApp:File) {
   
   private[this] val elements = Map[String,String]( loadProperties.toSeq:_* )
   val aliases = createAliases()
@@ -12,16 +12,28 @@ class Configuration(val configFile:File, val arguments:Seq[String], val deployAp
   // ----  End of construction ----
   
   // ---- Start of API
-  val maxBackups = elements("maxBackups")
-  def apply(name:String)= elements(name)
-  def url(name:String) = aliases(name)
+  val maxBackups = {
+    val backups = elements("maxBackups")
+    if( backups == null ) throw new IllegalArgumentException("maxBackups is not defined in the configuration file")
+    if( backups.toInt < 0 ) throw new IllegalArgumentException("maxBackups must be a positive number")
+    backups.toInt
+  } 
   def asURL(name:String) = new URL("http://"+aliases(name))
+
+  def configSvn(alias:String):String = find(alias, "configSvn")
+  def downloadUrl(alias:String):String = find(alias,"downloadUrl")
+  def url(name:String):String = aliases(name)
+  def installWebapp(alias:String):String = assureDir( find(alias,"installWebapp") )
+  def installConfig(alias:String):String = assureDir( find(alias,"installConfig") )
+  def tmpDir(alias:String):String = assureDir( find(alias,"tmpDir") )
+  def backupDir(alias:String):String = assureDir( find(alias,"backupDir") )
+  def username(alias:String):String = find(alias,"username")
+  def tmpAppDir(alias:String) = tmpDir(alias) + "server/"
+  def tmpWar(alias:String):String = tmpAppDir(alias) + "owsproxyserver.war"
+  def tmpWebapp(alias:String):String = tmpAppDir(alias) + "tomcat/webapps/owsproxyserver/"
+  def tmpConfigDir(alias:String):String = tmpAppDir(alias) + "tomcat/conf/"
+
   
-  def installDir(alias:String) = assureDir( find(alias,"InstallDir") )
-  def tmpDir(alias:String) = assureDir( find(alias,"TmpDir") )
-  def backupDir(alias:String) = assureDir( find(alias,"BackupDir") )
-  def username(alias:String) = find(alias,"Username")
-  def configDirs(alias:String) = find(alias,"ConfigDirs").split(",").map( path => assureDir(path.trim) ).toSeq
   def isLocalhost(alias:String) = localhost.contains(alias)
   def distributeJars(destinations:Iterable[String]) {
     val destAliases = destinations.filter( alias => (!isLocalhost(alias) &&  aliases.keys.contains(alias)))
@@ -72,10 +84,15 @@ class Configuration(val configFile:File, val arguments:Seq[String], val deployAp
   
   private[this] def find(alias:String,base:String) = {
     if(!aliases.contains(alias)) throw new IllegalArgumentException(alias+" is not a listed alias in the configuration file")
-    if( elements.contains(alias+base)) elements(alias+base)
-    else elements(base.take(1).toLowerCase+base.drop(1))
+    
+    val defaultKey = base.take(1).toLowerCase+base.drop(1)
+    val extensionKey = base.take(1).toUpperCase+base.drop(1)
+    
+    if( elements.contains(alias+extensionKey)) elements(alias+extensionKey)
+    else if(elements.contains(defaultKey)) elements(defaultKey)
+    else throw new IllegalArgumentException("There is no default value for "+defaultKey+" in the configuration file")
   }
-
+  
   private[this] def copyJarScript(alias:String)={
       val server = username(alias)+"@"+url(alias)
       val tmp = server+":"+tmpDir(alias)

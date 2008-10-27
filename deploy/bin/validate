@@ -21,7 +21,7 @@ do
 done
 
 JAR=$PRGDIR/../lib/deploy.jar
-CMD_ARGS="-v -j $JAR"
+CMD_ARGS="-v -j $JAR install"
 
 if $DATA_ARG; then 
 	CMD="java -cp $JAR org.secureows.deploy.Main $CMD_ARGS $@"

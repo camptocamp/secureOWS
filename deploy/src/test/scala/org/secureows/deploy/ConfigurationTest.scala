@@ -11,7 +11,7 @@ object ConfigurationSpec extends Specification{
     val configFile = SpecUtil.file(this,"testPushJarConfig.properties")
     val jarFile = SpecUtil.file(this,"testPushJar.jar")
     val aliases = "localhost"::Nil
-    val config = new Configuration(configFile, aliases, jarFile)
+    val config = new Configuration(configFile, jarFile)
     config.isLocalhost("local") mustBe true
     config.isLocalhost("otherLocal") mustBe true
 

@@ -21,12 +21,16 @@ object OnlineSpecs extends Specification{
     val aliases = "remote"::Nil
     new Configuration(configFile, aliases, jarFile).distributeJars(aliases)
   }
-  
+   
   "can run validate on a remote computer" in {
-    Main.main(Array("-v","-j","target/deploy-1.0-SNAPSHOT/lib/deploy.jar","-c","testing.properties","website"))
-  }*/
+    Main.main(Array("-v","-j","target/deploy-1.0-SNAPSHOT/lib/deploy.jar","-c","testing.properties","install","website"))
+  }
 
   "fetch" in {
-    Main.main(Array("-f","-j","target/deploy-1.0-SNAPSHOT/lib/deploy.jar","-c","testing.properties","20080609","home"))
+    Main.main(Array("-f","-j","target/deploy-1.0-SNAPSHOT/lib/deploy.jar","-c","testing.properties","home"))
+  }
+*/
+  "push" in {
+    Main.main(Array("-p","-j","target/deploy-1.0-SNAPSHOT/lib/deploy.jar","-c","testing.properties","home","website"))
   }
 }
