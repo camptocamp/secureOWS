@@ -45,11 +45,19 @@ object FetchOp {
         if( readChar != 'y' ) return Some("Cancelled by user")
       }
 
+      (webapp/"WEB-INF").listFiles.filter( _.isFile).filter( _.getName.endsWith(".xml")).foreach( _.delete)
+      
       Utils.replaceTree(configDir/TMP_CONF, localConfDir)
-      Utils.replaceTree(configDir/TMP_APP, localAppDir)
+      Utils.replaceTree(configDir/TMP_APP, webapp)
+      
+      generateWebXml(webapp)
       
       InstallOp.run(Array(alias),config)
     }
+  
+  def generateWebXml(webapp:File){
+    ProcessRunner("java","-cp","WEB-INF/classes","OwsAdmin", "./WEB-INF/").dir(webapp).run
+  }
 
     private def checkoutConfigFiles(alias:String, configDir:File,config:Configuration) = {
       println("Checking out configuration files")
