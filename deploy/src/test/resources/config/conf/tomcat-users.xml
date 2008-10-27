@@ -1,13 +1,15 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  NOTE:  By default, no user is included in the "manager" role required
+  to operate the "/manager" web application.  If you wish to use this app,
+  you must define such a user - the username and password are arbitrary.
+-->
 <tomcat-users>
-  <role rolename="role_alice"/>
-  <role rolename="tomcat"/>
-  <role rolename="role_bob"/>
-  <role rolename="role2"/>
-  <role rolename="role1"/>
-  <user username="bob" password="bob" roles="tomcat,role2,role_bob"/>
-  <user username="both" password="tomcat" roles="tomcat,role1"/>
-  <user username="tomcat" password="tomcat" roles="tomcat"/>
-  <user username="alice" password="alice" roles="tomcat,role1,role_alice"/>
-  <user username="role1" password="tomcat" roles="role1"/>
+  <user name="tomcat" password="tomcat" roles="tomcat"/>
+  <user name="role1" password="tomcat" roles="role1"/>
+  <user name="both" password="tomcat" roles="tomcat,role1"/>
+
+  <user name="alice" password="alice" roles="tomcat,role1,role_alice"/>
+  <user name="bob" password="bob" roles="tomcat,role2,role_bob"/>
+
 </tomcat-users>
