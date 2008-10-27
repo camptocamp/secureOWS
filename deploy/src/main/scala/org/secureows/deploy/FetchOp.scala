@@ -31,7 +31,7 @@ object FetchOp {
       println("Downloading "+appRemoteUrl)
       InputStreamResource(appRemoteUrl.openStream).pumpTo(localWar.outputStream.buffered )
 
-      println("decompressing "+localWar.getAbsolutePath)
+      println("decompressing "+localWar.getName)
       ProcessRunner("unzip",localWar.getAbsolutePath, "-d", webapp.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
   
       checkoutConfigFiles(alias,configDir,config)
