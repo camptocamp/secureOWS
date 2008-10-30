@@ -38,30 +38,56 @@ object Validation {
   }
   
   private[deploy] def checkServiceSpec( xmlFile:File ):Seq[Result]={
-    def testTags()={
-      val xml = XML.loadFile(xmlFile)    
-      val tags = Map( "Security"->true, 
-           "Requests"->true,
-           "GetMap"->false,
-           "GetFeatureInfo"->false,
-           "GetCapabilities"->false,
-           "GetLegendGraphic"->false)
+    val tags = Map( "Security"->REQUIRED, 
+           "Requests"->REQUIRED,
+           "OWSPolicy"->REQUIRED,
            
-     for( (tag,required) <- tags ) yield {
-       val result:Result = if ( (xml \\ tag ).isEmpty ) {
-         if( required ) {
-             Error("The "+tag+" is required but is missing")
-         } else {
-           val warning = ">  WARNING: the "+tag+" tag is missing\n"
-           log.print (warning);
-           Warning(warning)
+           "GetMap"->RECOMMENDED,
+           "GetFeatureInfo"->RECOMMENDED,
+           "GetCapabilities"->RECOMMENDED,
+           "GetLegendGraphic"->RECOMMENDED,
+
+           "PreConditions"->OPTIONAL,
+           "Parameter"->OPTIONAL,
+           "Role"->OPTIONAL,
+           "Value"->OPTIONAL,
+           "PostConditions"->OPTIONAL,
+           "Any"->OPTIONAL
+      )
+    def isValid(node:Node):Iterable[Result]={
+      if ( !tags.keys.contains(node.label) ){
+        val warning = ">  WARNING: <"+node.label+"> is not a recognized tag.  Check Spelling and capitalization"
+        log.print (warning);
+        List(Warning(warning))
+      }else if(!node.child.isEmpty){
+        val results = for(child <- node.child) yield {
+          isValid(child)
+        }
+        results.flatMap( e => e )
+      } else {
+        List(Good)
+      }
+    }
+    def testTags()={
+      val xml = scala.xml.Utility.trim(XML.loadFile(xmlFile))
+                 
+     val required = for( (tag,required) <- tags if (required != OPTIONAL) ) yield {
+       if ( (xml \\ tag ).isEmpty ) {
+         required match {
+           case REQUIRED => Error("The "+tag+" is required but is missing")
+           case _ => {
+             val warning = ">  WARNING: the "+tag+" tag is missing\n"
+             log.print (warning);
+             Warning(warning)
+           }
          }
        } else Good
-       
-       result
      }
+     
+     required ++ isValid(xml)
     }
 
+    
     try{
       if( xmlFile.exists() ){
         testTags().toSeq
@@ -74,4 +100,7 @@ object Validation {
   }
 }
 
-
+sealed abstract class Requirement
+case object REQUIRED extends Requirement
+case object RECOMMENDED extends Requirement
+case object OPTIONAL extends Requirement

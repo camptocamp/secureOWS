@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OWSPolicy service="WMS" xmlns="http://www.deegree.org/security">
+	<Security></Security>
+	<Requests>
+		<GetMap>
+			<!-- Next line is supposed to have a capital 'C' -->
+			<Preconditions>
+				<Parameter name="layers">
+					<Role name="tomcat">
+						<Value>gelaendekarte</Value>
+					</Role>
+				</Parameter>
+				<Parameter name="bbox">
+					<Role name="tomcat">
+						<Value>
+							551943,138341,623897,225795
+							@deny_if_completely_outside
+						</Value>
+					</Role>
+					<Role name="tomcat">
+						<Value>551943,138341,623897,225795</Value>
+					</Role>
+				</Parameter>
+			</Preconditions>
+		</GetMap>
+		<GetFeatureInfo>
+		</GetFeatureInfo>
+		<GetCapabilities>
+		</GetCapabilities>
+		<GetLegendGraphic>
+		</GetLegendGraphic>
+	</Requests>
+</OWSPolicy>

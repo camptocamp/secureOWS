@@ -21,6 +21,18 @@ object ValidationSpec extends Specification{
     val result = Validation.checkServiceSpec(testFile)
     result.filter(_!=Good) must beEmpty
   }
+  
+  
+  "tag with wrong capitalization should raise a warning" in {
+    val testFile = file(this, "policyFiles/capitalizationMistakes.xml")
+    val result = Validation.checkServiceSpec(testFile)
+   
+    result mustExist(c => c.isInstanceOf[Warning])
+    val msg = result.elements.next.toString 
+    val error = result.find(_.isInstanceOf[Warning]).get.msg
+    error must include("Preconditions")
+  }
+  
   "missing security tag spec should be detected" in {
     val testFile = file(this, "policyFiles/missing_security.xml")
     val result = Validation.checkServiceSpec(testFile)
