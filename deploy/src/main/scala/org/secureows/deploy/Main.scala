@@ -62,6 +62,7 @@ object Main {
        }
        
      }
+    
   }
     
     def doPush(config:Configuration)():Option[String]={

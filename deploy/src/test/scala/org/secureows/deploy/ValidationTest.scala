@@ -76,7 +76,8 @@ object ValidationSpec extends Specification{
   "service.xml with no role tags should be detected" in {
     val result = Validation.validate(file(this,"norole"))
     result mustExist(c => c.isInstanceOf[Error])
-    result.elements.next.toString must include("At least one role ")
+    result.filter( _.isInstanceOf[Error] ).length mustBe 1
+    result.elements.next.toString must include("There are no roles defined in services.xml")
   }
   
 }

@@ -20,17 +20,25 @@ object Validation {
 	   val servicesXML = XML.loadFile(servicesFile)
 	 
 	   val services = servicesXML \ "service"
-		 
+	
+       val roles = servicesXML \ "roles" \ "role" 
+       
+       
        val validateSpecs = for( service <- services ) yield { 
-	       if ( (service \\ "role").isEmpty ) {
-           List(Error("At least one role must be defined"))
+	     if ( (service \\ "role").isEmpty ) {
+           List(Error("There are no roles defined in services.xml for service: '"+service \ "@serviceId"+"'.\n  This means this service is inaccessible"))
          } else {
 		       val serviceSpec = new File(webinf,"wmsPolicy_"+(service\"@serviceId")+".xml")
 	           checkServiceSpec(serviceSpec)
 		 } 
       }
-		    
-      validateSpecs.flatMap( e => e ).toSeq
+      
+      if( roles.isEmpty ) validateSpecs.flatMap( e => e ).toSeq
+      else {
+        Warning("There is a roles tag that is not a child of a service.  This is ignored") :: 
+        validateSpecs.flatMap( e => e ).toList
+      }
+      
      }catch{
       case e:org.xml.sax.SAXParseException => List(Error(servicesFile+" is not valid XML\n\t"+e.getMessage))
       case e:Throwable => List(Error("An error occurred while validating "+servicesFile+"\n\t"+e.getMessage))
@@ -52,11 +60,12 @@ object Validation {
            "Role"->OPTIONAL,
            "Value"->OPTIONAL,
            "PostConditions"->OPTIONAL,
-           "Any"->OPTIONAL
+           "Any"->OPTIONAL,
+           "#PCDATA" -> OPTIONAL
       )
     def isValid(node:Node):Iterable[Result]={
       if ( !tags.keys.contains(node.label) ){
-        val warning = ">  WARNING: <"+node.label+"> is not a recognized tag.  Check Spelling and capitalization"
+        val warning = ">  WARNING: <"+node.label+"> is not a recognized tag.  Check Spelling and capitalization\n"
         log.print (warning);
         List(Warning(warning))
       }else if(!node.child.isEmpty){

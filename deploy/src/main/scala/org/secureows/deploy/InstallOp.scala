@@ -43,7 +43,11 @@ object InstallOp {
 	    println("Backing up old version" )
 	    BackupOp.run(Array(alias),config)
 	    println("Shutting down server")
-	    ProcessRunner(bin.getAbsolutePath+"/shutdown.sh").error(_.lines.toList).output(_.lines.toList).env(env).run
+        try{
+		    ProcessRunner(bin.getAbsolutePath+"/shutdown.sh").error(_.lines.toList).output(_.lines.toList).env(env).run
+	    }catch{
+	       case _ => // ignore
+	    }
 	    Thread.sleep(3000)
 	      
 	    println("Copying temporary installation to active installation")
@@ -53,7 +57,11 @@ object InstallOp {
 	    Utils.replaceTree(tmpConf,installConf)
 	
 	    println("Starting server")
-	    ProcessRunner(bin.getAbsolutePath+"/startup.sh").env(env).run
+        try{
+          ProcessRunner(bin.getAbsolutePath+"/startup.sh").env(env).run
+	    }catch{
+	       case _ => println("WARNING:  There was an error starting the server, you may be required to do so manually" )
+	    }
 	    None
   } 
 }

@@ -10,7 +10,7 @@ object OnlineSpecs extends Specification{
     val configFile = SpecUtil.file(this,"testPushJarConfig.properties")
     val jarFile = SpecUtil.file(this,"testPushJar.jar")
     val aliases = "remote"::Nil
-    new Configuration(configFile, aliases, jarFile).distributeJars(aliases)
+    Remoting.distributeJars(aliases,new Configuration(configFile, aliases, jarFile))
     ProcessRunner.script("/bin/sh","ssh camptocamp@www.secureows.org \"java -cp /tmp/tmp/deploy.jar org.secureows.deploy.Main -v -c /tmp/tmp/testing.properties -j /tmp/tmp/deploy.jar website\"")
   }
   
@@ -19,7 +19,7 @@ object OnlineSpecs extends Specification{
     val configFile = SpecUtil.file(this,"testPushJarConfig.properties")
     val jarFile = SpecUtil.file(this,"testPushJar.jar")
     val aliases = "remote"::Nil
-    new Configuration(configFile, aliases, jarFile).distributeJars(aliases)
+    Remoting.distributeJars(aliases,new Configuration(configFile, aliases, jarFile))
   }
    
   "can run validate on a remote computer" in {

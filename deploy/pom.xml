@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.secureows</groupId>
 	<artifactId>deploy</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<inceptionYear>2008</inceptionYear>
 	<properties>
 		<scala.version>2.7.1</scala.version>
@@ -146,8 +146,10 @@
 		file.getPath.drop(root.getPath.length+1)
 	}
 	
-	def copyTree(from:File, to:File):Int = {
-		from.tree.projection.foldLeft(0)( (count,f) => {
+	val none = (file:File)=>true
+	
+	def copyTree(from:File, to:File, filter:(File)=>Boolean) = {
+		from.tree.projection.filter( filter ).foldLeft(0)( (count,f) => {
 			val dest = new File(to, relative(from,f))
 			if(f.isDirectory) dest.mkdirs
 			else if(!dest.exists || f.lastModified() > dest.lastModified() ) f.copyTo(dest)
@@ -169,7 +171,7 @@
 	deployJar.getParentFile.mkdirs()
 	
 	val classes = new File(target,"classes")
-	println( copyTree(classes,jarDir)+" files copied")
+	println( copyTree(classes,jarDir,none)+" files copied")
 	
 	val dependencies = new File(target,"dependency")
 	for( f <- dependencies.listFiles ){
@@ -178,28 +180,49 @@
 		to.mkdirs()
 		println("unzipping "+f+" to "+to)
 		f.unzipTo(to)
-		println(copyTree(to,jarDir)+" files copied")
+		println(copyTree(to,jarDir,none)+" files copied")
 	}
 	
-	import java.util.zip._
-	val zip=new ZipOutputStream(new java.io.FileOutputStream(deployJar))
-	try{		
-		for( f <- jarDir.tree; if f.isFile ){
-			val entry = new ZipEntry( relative(jarDir,f) )
-			
-			zip.putNextEntry(entry)
-			if( f.isFile ) {
-				val bytes = f.inputStream.buffered.slurp
-				zip.write( bytes, 0, bytes.length)
+	def zipUp(src:File,dest:File, root:File){
+		import java.util.zip._
+		val zip=new ZipOutputStream(new java.io.FileOutputStream(dest))
+		try{		
+			for( f <- src.tree; if f.isFile ){
+				val entry = new ZipEntry( relative(root,f) )
+				
+				zip.putNextEntry(entry)
+				if( f.isFile ) {
+					val bytes = f.inputStream.buffered.slurp
+					zip.write( bytes, 0, bytes.length)
+				}
+				zip.closeEntry()
 			}
-			zip.closeEntry()
+		}finally{
+			zip.close()
 		}
-	}finally{
-		zip.close()
 	}
 	
-	copyTree(new File("${project.basedir}/bin"),appDir / "bin")
-	copyTree(new File("${project.basedir}/config"),appDir / "config")
+	zipUp( jarDir, deployJar, jarDir )
+
+	def svnDir(root:File) (file:File):Boolean = {
+		if( file.getPath==root.getPath ) 	true
+		else if( file.getName == ".svn" ) 	false
+		else 								svnDir(root)(file.getParentFile)
+	} 
+	val bin = new File("${project.basedir}/bin")
+	copyTree(bin,appDir / "bin", svnDir(bin)_)
+	val config = new File("${project.basedir}/config")
+	copyTree(config,appDir / "config", svnDir(config)_)
+
+	def run( command:String ):Seq[String] = {
+		println(command)
+		val process = Runtime.getRuntime.exec(command)
+		scalax.io.InputStreamResource(process.getInputStream).lines.toList
+	}
+
+	val cmd = "zip -r "+appDir.getName+".zip "+appDir.getName	
+	Runtime.getRuntime.exec(cmd, Array[String](), appDir.getParentFile )
+
 ]]>
 							</script>
 

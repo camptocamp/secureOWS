@@ -36,13 +36,7 @@ class Configuration(val configFile:File, val deployApp:File) {
 
   
   def isLocalhost(alias:String) = localhost.contains(alias)
-  def distributeJars(destinations:Iterable[String]) {
-    val destAliases = destinations.filter( alias => (!isLocalhost(alias) &&  aliases.keys.contains(alias)))
-    if( !destAliases.isEmpty ){
-      val script = destAliases.flatMap[String] ( copyJarScript(_) ).mkString("\n")
-      ProcessRunner.script("/bin/sh",script)
-    }
-  }
+
   
   // ---- End of API
     private[this] def findLocalHost() = {
@@ -93,17 +87,5 @@ class Configuration(val configFile:File, val deployApp:File) {
     else if(elements.contains(defaultKey)) elements(defaultKey)
     else throw new IllegalArgumentException("There is no default value for "+defaultKey+" in the configuration file")
   }
-  
-  private[this] def copyJarScript(alias:String)={
-      val server = username(alias)+"@"+url(alias)
-      val tmp = server+":"+tmpDir(alias)
-      val destJar = tmp +deployApp.getName
-      val destConfig = tmp+configFile.getName
-
-      val copyJar = "scp "+deployApp.getAbsolutePath+" "+tmp
-      val copyConfig = "scp "+configFile.getAbsolutePath+" "+destConfig
-      
-      List(copyJar,copyConfig)
-    }
 
 }

@@ -27,15 +27,14 @@ object ValidateOp {
       
       if( !nonAliases.isEmpty ) throw new IllegalArgumentException("The following aliases are not defined in the configuration file: "+nonAliases.mkString)
       
-      config.distributeJars(aliases)
+      Remoting.distributeJars(aliases,config)
       
       val results = for( alias <- aliases ) yield { 
-        println("\nVALIDATING: "+alias)
         val validationResult = if( config.isLocalhost(alias)) localValidate(valType,alias,config)
                                else remoteValidate(valType,alias,config)
         validationResult.toList.sort( (l,r)=> l.id<r.id).head match {
           case Error(s) => s
-          case _ => ""
+          case _ => println("Validation successful");""
         }
       }
       val failures = results.filter( _.length > 0)
@@ -52,6 +51,8 @@ object ValidateOp {
     }
     
     def localValidate(valType:ValType.Value,alias:String,config:Configuration)={
+      
+      println("\nVALIDATING: "+alias)
       val dir = valType match {
         case ValType.install => config.installWebapp(alias)
         case ValType.tmp => config.tmpWebapp(alias)

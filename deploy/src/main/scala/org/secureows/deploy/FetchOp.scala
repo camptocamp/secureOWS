@@ -24,9 +24,12 @@ object FetchOp {
       val localWar = new File(config.tmpWar(alias))
       val webapp = new File(config.tmpWebapp(alias))
       val configDir = localAppDir/"configuration"
+      
+      val changes = checkConfigModifications(alias,config)
+      if( changes.isDefined ) return changes
 
       if(webapp.exists)      webapp.deleteRecursively
-      webapp.mkdirs
+      assert( webapp.mkdirs, "Unable to make directory: "+webapp+" forced to abort")
       
       println("Downloading "+appRemoteUrl)
       InputStreamResource(appRemoteUrl.openStream).pumpTo(localWar.outputStream.buffered )
@@ -63,8 +66,8 @@ object FetchOp {
       println("Checking out configuration files")
 
       def doCheckout(dir:File, url:String){
-          dir.deleteRecursively
-          dir.mkdirs
+          assert (dir.deleteRecursively, "unable to delete directory "+dir+" forced to abort")
+          assert (dir.mkdirs, "unable to make directory "+dir+" forced to abort")
 	      ProcessRunner("svn","co",url,dir.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
       }
       
@@ -80,7 +83,18 @@ object FetchOp {
       var modified = false
       
       def handler(stdOut:InputStreamResource[java.io.InputStream]){
-        val lines = stdOut.lines.filter(line => (line.contains(".xml") && !line.contains("services_test.xml"))&& (line.contains("M ") || line.contains("? ") || line.contains("! "))).toList
+        val test = (line:String) => {
+          (line.contains(".xml") && !line.contains("services_test.xml")) && 
+            (  line.contains("M ") || 
+               line.contains("? ") || 
+               line.contains("A ") || 
+               line.contains("C ") || 
+               line.contains("R ") || 
+               line.contains("~ ") || 
+               line.contains(" L ") || 
+                 line.contains("! "))
+        }
+        val lines = stdOut.lines.filter(test).toList
         modified = !lines.isEmpty
         if(modified){
           println("There are uncommitted configuration changes")

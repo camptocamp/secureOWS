@@ -6,22 +6,36 @@ import scalax.io.{InputStreamResource}
 object PushOp {
 
   def run(args:Seq[String],config:Configuration):Option[String]={
-    assert( args.length == 2, "Two parameters required: <from> <to>" )
-    val localAlias = args(0)
+    assert( args.length > 1, "Two parameters required: <from> <to>" )
+    val sourceAlias = args(0)
     val remoteAlias = args(1)
-    val connection = config.username(remoteAlias)+"@"+config.url(remoteAlias)
+    val force = args.length>2 && args(2).equals("force")
     
-    assert(config.isLocalhost(localAlias), "The from alias must be on the localhost")
+    //assert(config.isLocalhost(sourceAlias), "The from alias must be on the localhost")
     
-    def run = if(config.isLocalhost(remoteAlias)) pushLocal(localAlias,remoteAlias,config)
-	          else pushRemote(localAlias,remoteAlias,config)
+    if( config.isLocalhost(sourceAlias)) doPush(sourceAlias, remoteAlias, force, config) 
+    else runRemote(sourceAlias, remoteAlias, config)
+  }
+  
+  def runRemote(sourceAlias:String, remoteAlias:String, config:Configuration):Option[String]={
     
-     val results = ValidateOp.localValidate(ValType.install,localAlias,config) 
+    def run = {
+	    val appJar = config.tmpDir(sourceAlias)+config.deployApp.getName
+	    val configFile = config.tmpDir(sourceAlias)+config.configFile.getName
+	    val cmd= "java -cp "+appJar+" org.secureows.deploy.Main -p -c "+configFile+" -j "+appJar+" "+sourceAlias+" "+remoteAlias+" force"
+	      
+	    val results = Remoting.runRemote(sourceAlias,cmd,config)
+	    results.toList.sort( (l,r)=> l.id<r.id).head match {
+	      case Error(s) => Some(s)
+	      case _ => None
+	    }
+    }
+    
+     val results = ValidateOp.remoteValidate(ValType.install,sourceAlias,config) 
         
       results.toList.sort( (l,r)=> l.id<r.id).head match {
 	  case Error(s) => Some(s)
-      case Good => run
-	  case Warning(s) => {
+	  case Warning(s)  => {
 	      print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
           if ( readChar == 'y'){
             run
@@ -29,17 +43,41 @@ object PushOp {
             Some("Aborted by user")
           }
 	  }
+      case _ => run
+      }
+    
+  }
+  
+  def doPush(sourceAlias:String, remoteAlias:String, force:Boolean,config:Configuration):Option[String]={
+    def run = if(config.isLocalhost(remoteAlias)) pushLocal(sourceAlias,remoteAlias,config)
+	          else pushRemote(sourceAlias,remoteAlias,config)
+    
+    if( force ) run
+    else {
+     val results = ValidateOp.localValidate(ValType.install,sourceAlias,config) 
+        
+      results.toList.sort( (l,r)=> l.id<r.id).head match {
+	  case Error(s) => Some(s)
+	  case Warning(s)  => {
+	      print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
+          if ( readChar == 'y'){
+            run
+          }else{
+            Some("Aborted by user")
+          }
+	  }
+      case _ => run
+      }
     }
   }
   
-  
-  def pushLocal(localAlias:String,remoteAlias:String,config:Configuration) = {
+  def pushLocal(sourceAlias:String,remoteAlias:String,config:Configuration) = {
     error("Local to Local push not implemented")
     None
   }
-  def pushRemote(localAlias:String,remoteAlias:String,config:Configuration) = {
-    val sourceWebAppDir = config.installWebapp(localAlias)
-    val sourceConfig = config.installConfig(localAlias)
+  def pushRemote(sourceAlias:String,remoteAlias:String,config:Configuration) = {
+    val sourceWebAppDir = config.installWebapp(sourceAlias)
+    val sourceConfig = config.installConfig(sourceAlias)
     
     val destWebAppDir = new File(config.tmpWebapp(remoteAlias))
     val destConfig = new File(config.tmpConfigDir(remoteAlias))
@@ -75,7 +113,7 @@ object PushOp {
       Some("Error occurred while copying files to remote server:"+remoteAlias)
     }else{
       println ("Done copying to remote server... starting to validate the remote server")
-      config.distributeJars(Array(remoteAlias))
+      Remoting.distributeJars(Array(remoteAlias),config)
     
       val results = ValidateOp.remoteValidate(ValType.tmp,remoteAlias,config)   
       results.toList.sort( (l,r)=> l.id<r.id).head match {
