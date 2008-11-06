@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="src" path="netbeans/owsproxyclient/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jetty-6.0.1.jar" sourcepath="/home/sypasche/c2c/projects/wms/jetty/jetty-6.0.1"/>
 	<classpathentry kind="lib" path="lib/jetty-util-6.0.1.jar" sourcepath="/home/jeichar/dev/src/jetty-6.0.2/modules/util"/>
