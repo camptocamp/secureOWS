@@ -16,19 +16,17 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="addTempButton" pref="196" max="32767" attributes="1"/>
-                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                      <Component id="addPermButton" min="-2" pref="202" max="-2" attributes="1"/>
-                  </Group>
-                  <Component id="errorMsgText" alignment="0" pref="428" max="32767" attributes="1"/>
-                  <Component id="jScrollPane1" alignment="1" pref="428" max="32767" attributes="1"/>
-              </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="addTempButton" min="-2" pref="179" max="-2" attributes="1"/>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="addPermButton" pref="159" max="32767" attributes="1"/>
           </Group>
+          <Group type="102" attributes="0">
+              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="237" max="32767" attributes="0"/>
+          </Group>
+          <Component id="jScrollPane1" alignment="0" pref="344" max="32767" attributes="1"/>
+          <Component id="errorMsgText" alignment="0" pref="344" max="32767" attributes="1"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -41,8 +39,8 @@
               <Component id="jScrollPane1" min="-2" pref="193" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="addPermButton" alignment="3" max="32767" attributes="0"/>
                   <Component id="addTempButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="addPermButton" alignment="3" pref="29" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>

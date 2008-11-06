@@ -3,7 +3,7 @@
 # Script to create a standalone .jar file of the project
 
 # WARNING: keep in sync with ~/c2c/projects/wms/project_public_files/Makefile
-VERSION=0.5
+VERSION=0.6
 SWING_LAYOUT_VERSION=1.0.3
 
 [ ! -d releases ] && mkdir releases

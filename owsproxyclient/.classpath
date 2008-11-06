@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="netbeans/owsproxyclient/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jetty-6.0.1.jar" sourcepath="/home/sypasche/c2c/projects/wms/jetty/jetty-6.0.1"/>
 	<classpathentry kind="lib" path="lib/jetty-util-6.0.1.jar" sourcepath="/home/jeichar/dev/src/jetty-6.0.2/modules/util"/>
@@ -12,7 +13,7 @@
 	<classpathentry kind="lib" path="lib/commons-logging-api-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
-	<classpathentry kind="lib" path="netbeans/owsproxyclient/dist/owsproxyclient.jar" sourcepath="netbeans/owsproxyclient/src"/>
 	<classpathentry kind="lib" path="netbeans/owsproxyclient/dist/lib/swing-layout-1.0.3.jar"/>
+	<classpathentry kind="lib" path="netbeans/owsproxyclient/dist/owsproxyclient.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
