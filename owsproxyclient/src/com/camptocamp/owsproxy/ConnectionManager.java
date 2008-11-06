@@ -99,7 +99,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 		notifyObservers(new ConnectionEvent(ConnectionEvent.ConnectionStatus.ERROR, 
 		                "Error during connection", e));
 	}
-	
+    
     void fireIdleEvent() {
         
         setChanged();

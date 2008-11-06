@@ -13,6 +13,7 @@
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
@@ -30,21 +31,21 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane1" alignment="0" pref="677" max="32767" attributes="0"/>
+                              <Component id="jScrollPane1" alignment="0" pref="691" max="32767" attributes="0"/>
                               <Component id="jPanel1" alignment="1" max="32767" attributes="1"/>
                               <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" alignment="0" max="-2" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="1"/>
                                       <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="serviceURL" pref="576" max="32767" attributes="1"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="serviceURL" linkSize="2" pref="576" max="32767" attributes="1"/>
                                       <Component id="validationLabel" alignment="0" pref="576" max="32767" attributes="1"/>
-                                      <Component id="usernameField" alignment="0" pref="576" max="32767" attributes="1"/>
-                                      <Component id="passwordField" alignment="0" pref="576" max="32767" attributes="0"/>
+                                      <Component id="usernameField" linkSize="2" alignment="0" pref="576" max="32767" attributes="1"/>
+                                      <Component id="passwordField" linkSize="2" alignment="0" min="-2" pref="576" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="jLabel8" alignment="0" min="-2" pref="143" max="-2" attributes="0"/>
@@ -79,18 +80,18 @@
               <Component id="validationLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="serviceURL" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
+                  <Component id="serviceURL" linkSize="1" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="usernameField" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
+                  <Component id="usernameField" linkSize="1" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
                   <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="passwordField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="passwordField" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -104,7 +105,7 @@
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="126" max="32767" attributes="0"/>
+              <EmptySpace pref="105" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -204,10 +205,10 @@
                               <Component id="statusLabel2" min="-2" max="-2" attributes="0"/>
                               <Component id="urlPanel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="41" max="32767" attributes="0"/>
+                          <EmptySpace pref="55" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="statusLabel" pref="598" max="32767" attributes="0"/>
+                          <Component id="statusLabel" pref="612" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -248,11 +249,11 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="proxyUrlLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="proxyURL" alignment="0" min="-2" pref="413" max="-2" attributes="0"/>
+                          <Component id="proxyUrlLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="copyClipboardButton" alignment="0" min="-2" pref="252" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="195" max="32767" attributes="0"/>
@@ -265,8 +266,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="proxyUrlLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="proxyURL" pref="25" max="32767" attributes="1"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="proxyURL" min="-2" max="-2" attributes="1"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="copyClipboardButton" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -307,9 +308,10 @@
         <Component class="javax.swing.JLabel" name="statusLabel2">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Dialog" size="9" style="0"/>
+              <Font name="Dialog" size="11" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="status"/>
+            <Property name="autoscrolls" type="boolean" value="true"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
@@ -366,6 +368,9 @@
         </Property>
         <Property name="actionCommand" type="java.lang.String" value="Proxy"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proxyButtonActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
       </AuxValues>

@@ -1,7 +1,10 @@
 package com.camptocamp.owsproxy;
 
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Observable;
@@ -13,6 +16,7 @@ import com.camptocamp.owsproxy.parameters.ConnectionParameters;
 import com.camptocamp.owsproxy.parameters.DevLogFileParameter;
 import com.camptocamp.owsproxy.parameters.DevLogLevelParameter;
 import com.camptocamp.owsproxy.parameters.HelpParameter;
+import com.camptocamp.owsproxy.parameters.KeystoreParameter;
 import com.camptocamp.owsproxy.parameters.LogConfigurationParameter;
 import com.camptocamp.owsproxy.parameters.Parameter;
 import com.camptocamp.owsproxy.parameters.ProxyHostParameter;
@@ -31,11 +35,13 @@ public class OWSHeadlessClient implements Observer {
 			new ProxyHostParameter(), new ProxyPortParameter(),
 			new DevLogLevelParameter(), new DevLogFileParameter(),
 			new UserLogFileParameter(), new LogConfigurationParameter(),
-			new HelpParameter(), new ProxyUserParameter() };
+			new HelpParameter(), new ProxyUserParameter(), new KeystoreParameter() };
+
+	private Collection<X509Certificate> sessionCertificates = new HashSet<X509Certificate>();
 
 	ConnectionManager connManager;
 	ConnectionParameters params = new ConnectionParameters(null, null, null,
-			null, -1, "", "");
+			null, -1, "", "", OWSClient.DEFAULT_SECURITY_SETTINGS.keystore, "", false, true, sessionCertificates);
 
 	public OWSHeadlessClient() {
 		connManager = new ConnectionManager();

@@ -13,262 +13,240 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 
 import javax.swing.JComponent;
 
-import owsproxyclient.OWSClientGUI;
-import owsproxyclient.ProxySettingsDialog;
-import owsproxyclient.State;
+import owsproxyclient.settings.ProxyState;
+import owsproxyclient.settings.SecurityState;
 
+import com.camptocamp.owsproxy.ConnectionEvent.ConnectionStatus;
 import com.camptocamp.owsproxy.logging.OWSLogger;
 import com.camptocamp.owsproxy.parameters.ConnectionParameters;
 
 public class OWSClient implements Observer {
+    public static final ProxyState      DEFAULT_PROXY_SETTINGS    = new ProxyState("http://", "3218", false, "",
+                                                                          new char[0]);
+    public static final SecurityState   DEFAULT_SECURITY_SETTINGS = new SecurityState(System.getProperty("user.home")
+                                                                          + "/.secureows/keystore", "changeit".toCharArray(), false);
 
-	ConnectionManager connManager;
-	private owsproxyclient.OWSClientGUI client;
-	Color textColor;
-	private ProxySettingsDialog proxyDialog;
-	/** The settings obtained from proxyDialog for configuring the proxy.  This was added mainly so that
-	 * the cancel button on the proxyDialog could be implemented*/
-	private State proxySettings=new State("","",false,"",new char[0]);
+    ConnectionManager                   connManager;
+    private owsproxyclient.OWSClientGUI client;
+    Color                               textColor;
+    private ConnectionStatus status = ConnectionStatus.IDLE;
+    private Collection<X509Certificate> sessionCertificates = new HashSet<X509Certificate>();
+    public OWSClient() {
 
-	public OWSClient() {
+        connManager = new ConnectionManager();
+        connManager.addObserver(this);
 
-		connManager = new ConnectionManager();
-		connManager.addObserver(this);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                initGUI();
+            }
+        });
+    }
 
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				initGUI();
-			}
-		});
-	}
+    private void copyToClipboard(String text) {
+        StringSelection selection = new StringSelection(text);
 
-	private void copyToClipboard(String text) {
-		StringSelection selection = new StringSelection(text);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(selection, new ClipboardOwner() {
+            public void lostOwnership(Clipboard clipboard, Transferable contents) {
+                // ignored
+            }
+        });
+    }
 
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clipboard.setContents(selection, new ClipboardOwner() {
-			public void lostOwnership(Clipboard clipboard, Transferable contents) {
-				// ignored
-			}
-		});
-	}
+    public void update(Observable observable, Object arg) {
 
-	public void update(Observable observable, Object arg) {
+        if (!(arg instanceof ConnectionEvent))
+            return;
+        ConnectionEvent connEvent = (ConnectionEvent) arg;
 
-		if (!(arg instanceof ConnectionEvent))
-			return;
-		ConnectionEvent connEvent = (ConnectionEvent) arg;
+        OWSLogger.DEV.finer("Got event: " + connEvent);
 
-		OWSLogger.DEV.finer("Got event: " + connEvent);
+        client.proxyURL.setText("");
+        // resets state
+        if (textColor == null)
+            textColor = client.statusLabel.getForeground();
+        client.statusLabel.setForeground(textColor);
 
-		client.proxyURL.setText("");
-		client.connectButton
-				.setEnabled(connEvent.status == ConnectionEvent.ConnectionStatus.IDLE);
-		client.disconnectButton
-				.setEnabled(connEvent.status != ConnectionEvent.ConnectionStatus.IDLE);
+        client.statusLabel2.setText(" ");
 
-		// resets state
-		if (textColor == null)
-			textColor = client.statusLabel.getForeground();
-		client.statusLabel.setForeground(textColor);
+        String msg;
 
-		JComponent proxyComponents[] = new JComponent[] { client.proxyUrlLabel,
-				client.proxyUrlLabel, client.copyClipboardButton };
-		for (Component c : proxyComponents) {
-			c.setEnabled(false);
-		}
+        switch (connEvent.status) {
+        case IDLE:
+            showConnected(false);
+            msg = Translations.getString("OWSProxy_not_connected");
 
-		client.statusLabel2.setText(" ");
+            break;
+        case CONNECTING:
+            showConnected(true);
+            msg = Translations.getString("Connecting...");
+            break;
+        case RUNNING:
+            showConnected(true);
 
-		String msg;
+            client.statusLabel.setForeground(new Color(0, 128, 0));
+            msg = Translations.getString("Connected");
+            client.proxyURL.setText(connManager.getListeningAddress());
+            break;
 
-		switch (connEvent.status) {
-		case IDLE:
-			msg = Translations.getString("OWSProxy_not_connected");
+        case UNAUTHORIZED:
+            showConnected(status!=ConnectionStatus.CONNECTING);
+            client.statusLabel.setForeground(Color.RED);
+            msg = Translations.getString("Unauthorized");
+            client.statusLabel2.setText(connEvent.message);
+            break;
 
-			break;
-		case CONNECTING:
-			msg = Translations.getString("OWSProxy_not_connected");
-			break;
-		case RUNNING:
+        case ERROR:
+            showConnected(status!=ConnectionStatus.CONNECTING);
+            client.statusLabel.setForeground(Color.RED);
+            msg = Translations.getString("Error");
+            client.statusLabel2.setText(connEvent.message);
+            break;
 
-			for (Component c : proxyComponents) {
-				c.setEnabled(true);
-			}
+        case PROXY_AUTH_REQUIRED:
+            showConnected(status!=ConnectionStatus.CONNECTING);
+            client.statusLabel.setForeground(Color.RED);
+            msg = Translations.getString("Proxy_Auth");
+            client.statusLabel2.setText(connEvent.message);
+            break;
 
-			client.statusLabel.setForeground(new Color(0, 128, 0));
-			msg = Translations.getString("Connected");
-			client.proxyURL.setText(connManager.getListeningAddress());
-			break;
+        default:
+            throw new RuntimeException("Should not happen: " + connEvent);
+        }
+        status = connEvent.status;
 
-		case UNAUTHORIZED:
-			client.statusLabel.setForeground(Color.RED);
-			msg = Translations.getString("Unauthorized");
-			client.statusLabel2.setText(connEvent.message);
-			break;
-			
-		case ERROR:
-			client.statusLabel.setForeground(Color.RED);
-			msg = Translations.getString("Error");
-			client.statusLabel2.setText(connEvent.message);
-			break;
-			
-		case PROXY_AUTH_REQUIRED:
-			client.statusLabel.setForeground(Color.RED);
-			msg = Translations.getString("Proxy_Auth");
-			client.statusLabel2.setText(connEvent.message);
-			break;
-			
-		default:
-			throw new RuntimeException("Should not happen: "+ connEvent);
-		}
+        client.statusLabel.setText(msg);
 
-		client.statusLabel.setText(msg);
+        OWSLogger.DEV.info("Event " + arg);
+        if (OWSLogger.DEV.isLoggable(Level.FINER))
+            client.errorDetail.setText(arg.toString());
+    }
 
-		OWSLogger.DEV.info("Event " + arg);
-		if (OWSLogger.DEV.isLoggable(Level.FINER))
-			client.errorDetail.setText(arg.toString());
-	}
+    private void showConnected(boolean connected) {
+        client.connectButton.setEnabled(!connected);
+        client.disconnectButton.setEnabled(connected);       
 
-	private void initGUI() {
+        JComponent proxyComponents[] = new JComponent[] { client.proxyUrlLabel, client.proxyUrlLabel,
+                client.copyClipboardButton };
+        for (Component c : proxyComponents) {
+            c.setEnabled(connected);
+        }
+    }
 
-		client = new owsproxyclient.OWSClientGUI();
-		String title = client.getTitle()+" - "+Translations.getString("version");
-		client.setTitle(title);
-		client.setVisible(true);
-		client.errorDetail.setVisible(OWSLogger.DEV.isLoggable(Level.FINER));
+    private void initGUI() {
 
-		if (OWSLogger.DEV.isLoggable(Level.FINER)) {
-			client.serviceURL.setText("http://localhost");
-			client.usernameField.setText("tomcat");
-			client.passwordField.setText("tomcat");
-		}
+        client = new owsproxyclient.OWSClientGUI();
+        ArrayList<Object> defaultSettings = new ArrayList<Object>();
+        defaultSettings.add(DEFAULT_PROXY_SETTINGS);
+        defaultSettings.add(DEFAULT_SECURITY_SETTINGS);
+        client.setSettings(defaultSettings);
+        String title = client.getTitle() + " - " + Translations.getString("version");
+        client.setTitle(title);
+        client.setVisible(true);
+        client.errorDetail.setVisible(OWSLogger.DEV.isLoggable(Level.FINER));
 
-		client.connectButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				new Thread(new Runnable() {
-					public void run() {
-						// XXX validate these fields
-						String host = client.serviceURL.getText();
+        if (OWSLogger.DEV.isLoggable(Level.FINER)) {
+            client.serviceURL.setText("http://localhost");
+            client.usernameField.setText("tomcat");
+            client.passwordField.setText("tomcat");
+        }
 
-						String username = client.usernameField.getText();
-						String password = new String(client.passwordField
-								.getPassword());
-						String proxyHost = proxyDialog.url.getText().trim();
-						int proxyPort;
-						String proxyUser = "";
-						String proxyPass = "";
-						if (proxyHost.length() == 0
-								|| proxyHost.equals("http://")) {
-							proxyHost = proxyUser = proxyPass = null;
-							proxyPort = -1;
-						} else {
-							proxyPort = Integer.parseInt(proxyDialog.port
-									.getText());
-							if (proxyDialog.useAuthentication.isSelected()) {
-								proxyUser = proxyDialog.username.getText();
-								proxyPass = new String(proxyDialog.password
-										.getPassword());
-							}
-						}
-						connManager.connect(new ConnectionParameters(host,
-								username, password, proxyHost, proxyPort,
-								proxyUser, proxyPass));
-					}
-				}).start();
-			}
-		});
+        client.connectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                final ConnectionParameters connectionParams = getSettings();
+                new Thread(new Runnable() {
+                    public void run() {
+                        connManager.connect(connectionParams);
+                    }
 
-		client.validationLabel.setText(" ");
-		client.serviceURL.addKeyListener(new KeyAdapter() {
+                }).start();
+                
+            }
 
-			@Override
-			public void keyTyped(KeyEvent event) {
-				String host = client.serviceURL.getText();
-				client.validationLabel.setText(" ");
-				client.connectButton.setEnabled(true);
-				try {
-					new URL(host);
-				} catch (MalformedURLException e) {
-					client.connectButton.setEnabled(false);
-					String invalidURLMsg = Translations.getString(
-							"Invalid_URL");
-					client.validationLabel.setText(invalidURLMsg);
-				}
-			}
-		});
+            private ConnectionParameters getSettings() {
+                String host = client.serviceURL.getText();
 
-		client.disconnectButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				connManager.disconnect();
-			}
-		});
+                String username = client.usernameField.getText();
+                String password = new String(client.passwordField.getPassword());
 
-		client.copyClipboardButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				copyToClipboard(client.proxyURL.getText());
-			}
-		});
+                List<Object> allSettings = client.getSettings();
+                ProxyState pSettings = (ProxyState) allSettings.get(0);
+                String proxyHost = pSettings.url;
+                int proxyPort;
+                String proxyUser = "";
+                String proxyPass = "";
+                if (proxyHost.length() == 0 || proxyHost.equals("http://")) {
+                    proxyHost = proxyUser = proxyPass = null;
+                    proxyPort = -1;
+                } else {
+                    proxyPort = Integer.parseInt(pSettings.port);
+                    if (pSettings.useAuthentication) {
+                        proxyUser = pSettings.username;
+                        proxyPass = new String(pSettings.password);
+                    }
+                }
 
-		initAdvancedDialog(client);
+                SecurityState sSettings = (SecurityState) allSettings.get(1);
+                String keyStore = sSettings.keystore;
+                char[] keyStorePass = sSettings.password;
 
-		connManager.fireIdleEvent();
-	}
+                if (keyStorePass == null || keyStorePass.length == 0) {
+                    client.openSettings(1, "Keystore password is required");
+                    return getSettings();
+                }
 
-	private void initAdvancedDialog(OWSClientGUI client2) {
-		this.proxyDialog = new ProxySettingsDialog(client, true);
-		proxyDialog.okButton.addActionListener(new ActionListener() {
+                ConnectionParameters connectionParams = new ConnectionParameters(host, username, password,
+                        proxyHost, proxyPort, proxyUser, proxyPass, keyStore, new String(keyStorePass), sSettings.readonly, false, sessionCertificates);
+                return connectionParams;
+            }
+        });
 
-			public void actionPerformed(ActionEvent e) {
-				proxyDialog.setVisible(false);
-				proxySettings=proxyDialog.copyState();
-			}
+        client.validationLabel.setText(" ");
+        client.serviceURL.addKeyListener(new KeyAdapter() {
 
-		});
+            @Override
+            public void keyTyped(KeyEvent event) {
+                String host = client.serviceURL.getText();
+                client.validationLabel.setText(" ");
+                client.connectButton.setEnabled(true);
+                try {
+                    new URL(host);
+                } catch (MalformedURLException e) {
+                    client.connectButton.setEnabled(false);
+                    String invalidURLMsg = Translations.getString("Invalid_URL");
+                    client.validationLabel.setText(invalidURLMsg);
+                }
+            }
+        });
 
-		proxyDialog.cancelButton.addActionListener(new ActionListener(){
+        client.disconnectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                connManager.disconnect();
+            }
+        });
 
-			public void actionPerformed(ActionEvent e) {
-				
-				State params = proxySettings;
-				if( params.url.length()==0 ){
-					proxyDialog.url.setText("http://");
-				} else {
-					proxyDialog.url.setText(params.url);
-				}
-				
-				if( params.port.length()==0 ){
-					proxyDialog.port.setText("3128");
-				} else {
-					proxyDialog.port.setText(String.valueOf(params.port));
-				}
-				
-				proxyDialog.useAuthentication.setSelected(params.useAuthentication);
-				proxyDialog.username.setText(params.username);
-				proxyDialog.password.setText(new String(params.password));
-				
-				proxyDialog.validatePort();
-				
-			}
-			
-		});
-		
-		client.proxyButton.addActionListener(new ActionListener() {
+        client.copyClipboardButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                copyToClipboard(client.proxyURL.getText());
+            }
+        });
 
-			public void actionPerformed(ActionEvent e) {
-				proxyDialog.setVisible(true);
-			}
+        connManager.fireIdleEvent();
+    }
 
-		});
-	}
-
-	public static void main(String[] args) {
-		new OWSClient();
-	}
+    public static void main(String[] args) {
+        new OWSClient();
+    }
 }

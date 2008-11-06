@@ -6,19 +6,43 @@
 
 package owsproxyclient;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
+import owsproxyclient.settings.SettingsDialog;
 
 /**
  *
  * @author  sypasche
  */
 public class OWSClientGUI extends javax.swing.JFrame {
-    
+
+    private List<Object> settings;
+    private int lastSettingsIndex = 0;
+
     /** Creates new form OWSClientGUI */
     public OWSClientGUI() {
         initComponents();
     }
-    
+
+    public List<Object> getSettings(){
+        return settings;
+    }
+
+    public void setSettings(List<Object> newSettings){
+        settings = newSettings;
+    }
+
+    public void openSettings(int settingsIndex, String message){
+        SettingsDialog settingsDialog = new SettingsDialog(this, true, settings);
+        settingsDialog.setMessage(message);
+        settingsDialog.setActiveTab(settingsIndex);
+        settingsDialog.setVisible(true);
+        if( settingsDialog.getResult() == SettingsDialog.Result.OK){
+            settings = settingsDialog.getState();
+            lastSettingsIndex = settingsDialog.getActiveTabIndex();
+        }
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -90,8 +114,8 @@ public class OWSClientGUI extends javax.swing.JFrame {
             .add(urlPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(urlPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(proxyUrlLabel)
                     .add(proxyURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 413, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(proxyUrlLabel)
                     .add(copyClipboardButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 252, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(195, Short.MAX_VALUE))
         );
@@ -101,14 +125,15 @@ public class OWSClientGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(proxyUrlLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(proxyURL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(proxyURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(copyClipboardButton)
                 .addContainerGap())
         );
 
-        statusLabel2.setFont(new java.awt.Font("Dialog", 0, 9));
+        statusLabel2.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         statusLabel2.setText("status");
+        statusLabel2.setAutoscrolls(true);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -121,9 +146,9 @@ public class OWSClientGUI extends javax.swing.JFrame {
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(statusLabel2)
                             .add(urlPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(41, Short.MAX_VALUE))
+                        .addContainerGap(55, Short.MAX_VALUE))
                     .add(jPanel1Layout.createSequentialGroup()
-                        .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
+                        .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                         .add(63, 63, 63))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -148,6 +173,11 @@ public class OWSClientGUI extends javax.swing.JFrame {
 
         proxyButton.setText(bundle.getString("Proxy...")); // NOI18N
         proxyButton.setActionCommand("Proxy");
+        proxyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proxyButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -159,7 +189,7 @@ public class OWSClientGUI extends javax.swing.JFrame {
                     .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                         .add(layout.createSequentialGroup()
                             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
+                                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
                                 .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .add(jLabel4)
                                 .add(layout.createSequentialGroup()
@@ -168,11 +198,11 @@ public class OWSClientGUI extends javax.swing.JFrame {
                                         .add(jLabel1)
                                         .add(jLabel9))
                                     .add(39, 39, 39)
-                                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                         .add(serviceURL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                                         .add(validationLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                                         .add(usernameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-                                        .add(passwordField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)))
+                                        .add(passwordField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 576, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                                 .add(jLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 143, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(jLabel6))
                             .addContainerGap())
@@ -185,6 +215,9 @@ public class OWSClientGUI extends javax.swing.JFrame {
                         .add(proxyButton)
                         .addContainerGap())))
         );
+
+        layout.linkSize(new java.awt.Component[] {passwordField, serviceURL, usernameField}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -219,11 +252,17 @@ public class OWSClientGUI extends javax.swing.JFrame {
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(126, Short.MAX_VALUE))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
+
+        layout.linkSize(new java.awt.Component[] {passwordField, serviceURL, usernameField}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void proxyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyButtonActionPerformed
+        openSettings(lastSettingsIndex,"");
+    }//GEN-LAST:event_proxyButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton connectButton;

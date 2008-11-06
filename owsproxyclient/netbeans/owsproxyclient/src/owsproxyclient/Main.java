@@ -29,7 +29,8 @@ public class Main {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new OWSClientGUI().setVisible(true);
+                final OWSClientGUI oWSClientGUI = new OWSClientGUI();
+                oWSClientGUI.setVisible(true);
             }
         });
         
