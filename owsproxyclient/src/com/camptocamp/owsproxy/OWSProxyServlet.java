@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.security.UnrecoverableKeyException;
 import java.util.logging.Level;
 
 import javax.servlet.ServletException;
@@ -13,9 +14,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -24,6 +22,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.contrib.ssl.AuthSSLInitializationError;
 import org.apache.commons.httpclient.contrib.ssl.AuthSSLProtocolSocketFactory;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
@@ -116,42 +115,30 @@ public class OWSProxyServlet extends HttpServlet {
             }
 
         } catch (NoKeystoreException e) {
-            reporter.reportError(ConnectionStatus.ERROR, "Keystore needs to be correctly configured");
-        } catch (Exception e) {
-            e.printStackTrace();
+            reporter.reportError(ConnectionStatus.NO_KEYSTORE, e.getMessage());
+        } catch (AuthSSLInitializationError e) {
+            if( e.getCause() instanceof UnrecoverableKeyException) {
+                reporter.reportError(ConnectionStatus.KEYSTORE_PASSWORD, e.getLocalizedMessage());
+            }else {
+                reporter.reportError(ConnectionStatus.ERROR, e.getLocalizedMessage());
+            }
+        }catch (Throwable e) {
             reporter.reportError(ConnectionStatus.ERROR, e.getLocalizedMessage());
         }
     }
 
     private void configureSSH() throws MalformedURLException {
         
-        File keystore;
-        if( connectionParams.readonlyKeystore ) {
-            keystore = new File(OWSClient.DEFAULT_SECURITY_SETTINGS.keystore);
-        } else {
-            keystore = new File(connectionParams.keystore);
-            if (!keystore.exists() && !keystore.getAbsolutePath().equals(OWSClient.DEFAULT_SECURITY_SETTINGS.keystore)) {
-                try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                        public void run() {
-                            Object[] options = { "Yes", "No" };
-                            int result = JOptionPane.showOptionDialog(new JFrame(),
-                                    "The defined keystore does not exist\nDo you want to create it?",
-                                    "Missing Keystore", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                    null, options, options[0]);
-                            if (result == 1) {
-                                throw new RuntimeException("cancel chosen");
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    throw new NoKeystoreException();
-                }
+        File keystore = new File(connectionParams.keystore);
+            if( connectionParams.readonlyKeystore && !keystore.exists() ) {
+                throw new NoKeystoreException("Keystore: "+keystore+" does not exist");
             }
+            if (!keystore.exists() && !keystore.getAbsolutePath().equals(OWSClient.DEFAULT_SECURITY_SETTINGS.keystore)) {
+                reporter.keystoreMissing(keystore);
         }
         AuthSSLProtocolSocketFactory socketFactory;
             socketFactory = new AuthSSLProtocolSocketFactory(keystore, connectionParams.keystorePass, connectionParams.readonlyKeystore, 
-                    connectionParams.noUI, connectionParams.sessionCertificates );
+                    reporter, connectionParams.sessionCertificates );
         Protocol.registerProtocol("https", new Protocol("https", socketFactory, 443));
     }
 

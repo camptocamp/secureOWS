@@ -44,7 +44,7 @@ public class OWSClient implements Observer {
     private Collection<X509Certificate> sessionCertificates = new HashSet<X509Certificate>();
     public OWSClient() {
 
-        connManager = new ConnectionManager();
+        connManager = new UIConnectionManager();
         connManager.addObserver(this);
 
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -114,6 +114,20 @@ public class OWSClient implements Observer {
             msg = Translations.getString("Error");
             client.statusLabel2.setText(connEvent.message);
             break;
+        case KEYSTORE_PASSWORD:
+            showConnected(status!=ConnectionStatus.CONNECTING);
+            client.statusLabel.setForeground(Color.RED);
+            msg = Translations.getString("Error");
+            client.statusLabel2.setText(connEvent.message);
+            client.openSettings(1, "Password is incorrect");
+            break;
+        case NO_KEYSTORE:
+            showConnected(status!=ConnectionStatus.CONNECTING);
+            client.statusLabel.setForeground(Color.RED);
+            msg = Translations.getString("Error");
+            client.statusLabel2.setText(connEvent.message);
+            client.openSettings(1, "Keystore does not exist");
+            break;
 
         case PROXY_AUTH_REQUIRED:
             showConnected(status!=ConnectionStatus.CONNECTING);
@@ -166,13 +180,14 @@ public class OWSClient implements Observer {
         client.connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 final ConnectionParameters connectionParams = getSettings();
-                new Thread(new Runnable() {
-                    public void run() {
-                        connManager.connect(connectionParams);
-                    }
+                if (connectionParams != null) {
+                    new Thread(new Runnable() {
+                        public void run() {
+                            connManager.connect(connectionParams);
+                        }
 
-                }).start();
-                
+                    }).start();
+                }
             }
 
             private ConnectionParameters getSettings() {
@@ -199,16 +214,16 @@ public class OWSClient implements Observer {
                 }
 
                 SecurityState sSettings = (SecurityState) allSettings.get(1);
-                String keyStore = sSettings.keystore;
+                String keyStore = sSettings.keystore.trim();
                 char[] keyStorePass = sSettings.password;
 
                 if (keyStorePass == null || keyStorePass.length == 0) {
                     client.openSettings(1, "Keystore password is required");
-                    return getSettings();
+                    return null;
                 }
 
                 ConnectionParameters connectionParams = new ConnectionParameters(host, username, password,
-                        proxyHost, proxyPort, proxyUser, proxyPass, keyStore, new String(keyStorePass), sSettings.readonly, false, sessionCertificates);
+                        proxyHost, proxyPort, proxyUser, proxyPass, keyStore, new String(keyStorePass), sSettings.readonly, sessionCertificates);
                 return connectionParams;
             }
         });

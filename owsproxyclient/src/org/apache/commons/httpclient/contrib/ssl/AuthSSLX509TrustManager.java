@@ -40,15 +40,17 @@ import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.logging.Level;
 
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
-import javax.swing.JFrame;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import owsproxyclient.CertificateWarningDialog;
+import owsproxyclient.ExamineCertPanel.AddCert;
+
+import com.camptocamp.owsproxy.ErrorReporter;
+import com.camptocamp.owsproxy.logging.OWSLogger;
 
 /**
  * <p>
@@ -77,7 +79,9 @@ public class AuthSSLX509TrustManager implements X509TrustManager
 
     private Collection<X509Certificate> _sessionCertificates;
 
-    private boolean _noUI;
+    private ErrorReporter _errorReporter;
+
+    private boolean _readonlyKeystore;
 
     /** Log object for this class. */
     private static final Log LOG = LogFactory.getLog(AuthSSLX509TrustManager.class);
@@ -87,11 +91,12 @@ public class AuthSSLX509TrustManager implements X509TrustManager
      * @param keystore 
      * @param keyStoreFile 
      * @param storePassword 
-     * @param noUI 
+     * @param errorReporter 
      * @param sessionCertificates 
+     * @param readonlyKeystore 
      */
     public AuthSSLX509TrustManager(final X509TrustManager defaultTrustManager, KeyStore keystore, File keyStoreFile,
-            String storePassword, boolean noUI, Collection<X509Certificate> sessionCertificates) {
+            String storePassword, ErrorReporter errorReporter, Collection<X509Certificate> sessionCertificates, boolean readonlyKeystore) {
         super();
         if (defaultTrustManager == null) {
             throw new IllegalArgumentException("Trust manager may not be null");
@@ -101,7 +106,8 @@ public class AuthSSLX509TrustManager implements X509TrustManager
         _keyStoreFile = keyStoreFile;
         _storePassword = storePassword;
         _sessionCertificates = sessionCertificates;
-        _noUI = noUI;
+        _errorReporter = errorReporter;
+        _readonlyKeystore = readonlyKeystore;
     }
 
     /**
@@ -130,21 +136,18 @@ public class AuthSSLX509TrustManager implements X509TrustManager
         if (LOG.isInfoEnabled() && certificates != null) {
             for (int c = 0; c < certificates.length; c++) {
                 X509Certificate cert = certificates[c];
-                LOG.info(" Server certificate " + (c + 1) + ":");
-                LOG.info("  Subject DN: " + cert.getSubjectDN());
-                LOG.info("  Signature Algorithm: " + cert.getSigAlgName());
-                LOG.info("  Valid from: " + cert.getNotBefore() );
-                LOG.info("  Valid until: " + cert.getNotAfter());
-                LOG.info("  Issuer: " + cert.getIssuerDN());
+                OWSLogger.DEV.info(" Server certificate " + (c + 1) + ":");
+                OWSLogger.DEV.info("  Subject DN: " + cert.getSubjectDN());
+                OWSLogger.DEV.info("  Signature Algorithm: " + cert.getSigAlgName());
+                OWSLogger.DEV.info("  Valid from: " + cert.getNotBefore() );
+                OWSLogger.DEV.info("  Valid until: " + cert.getNotAfter());
+                OWSLogger.DEV.info("  Issuer: " + cert.getIssuerDN());
             }
         }
 
         try{
         	_defaultTrustManager.checkServerTrusted(certificates,authType);
     	}catch (CertificateException e) {
-    	    if( _noUI ) {
-    	        throw e;
-    	    }
     		ByteArrayOutputStream out = new ByteArrayOutputStream();
     		PrintStream s = new PrintStream(out);
     		for (int c = 0; c < certificates.length; c++) {
@@ -156,10 +159,9 @@ public class AuthSSLX509TrustManager implements X509TrustManager
                 s.println("  Valid until: " + cert.getNotAfter());
                 s.println("  Issuer: " + cert.getIssuerDN());
     		}
-    		CertificateWarningDialog warningDialog = new CertificateWarningDialog("localhost", e.getLocalizedMessage(), out.toString(), new JFrame(), true);
-    		warningDialog.setVisible(true);
-    		
-    		switch (warningDialog.addCertificateSelected()) {
+
+    		AddCert howToHandle = _errorReporter.certificateValidationFailure(_readonlyKeystore, e.getLocalizedMessage(), out.toString());
+    		switch (howToHandle ) {
 			case PERM:
 				addCertificateToKeystore(certificates);
 				break;
@@ -174,17 +176,9 @@ public class AuthSSLX509TrustManager implements X509TrustManager
     }
 
     private void addSessionCertificate(X509Certificate[] certificates) {
-//        try {
         for (X509Certificate certificate : certificates) {
             _sessionCertificates.add(certificate);
-//            addToKeystore(certificates);
         }
-//        TrustManagerFactory tmfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-//        tmfactory.init(_keystore);
-//        _defaultTrustManager = (X509TrustManager) tmfactory.getTrustManagers()[0];
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
 	private void addCertificateToKeystore(X509Certificate[] certificates) {
@@ -194,7 +188,7 @@ public class AuthSSLX509TrustManager implements X509TrustManager
 					new FileOutputStream(this._keyStoreFile));
 			_keystore.store(keyStoreOut, _storePassword.toCharArray());
 		} catch (Exception e1) {
-			e1.printStackTrace();
+			OWSLogger.DEV.log(Level.INFO, e1.getLocalizedMessage(), e1);
 		}
 	}
 

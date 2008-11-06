@@ -1,5 +1,6 @@
 package com.camptocamp.owsproxy;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.BindException;
 import java.util.Observable;
@@ -9,6 +10,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
+
+import owsproxyclient.ExamineCertPanel.AddCert;
 
 import com.camptocamp.owsproxy.ConnectionEvent.ConnectionStatus;
 import com.camptocamp.owsproxy.logging.OWSLogger;
@@ -116,7 +119,6 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 			server.stop();
 		} catch (Exception e) {
 			reportError(ConnectionStatus.ERROR, e.toString());
-			e.printStackTrace();
 		}
 		server = null;
 	}
@@ -134,5 +136,13 @@ public class ConnectionManager extends Observable implements ErrorReporter {
         setChanged();
         notifyObservers(new ConnectionEvent(ConnectionEvent.ConnectionStatus.RUNNING, 
                 "Server listening on " + listeningAddress));
+    }
+
+    public AddCert certificateValidationFailure(boolean readonlyKeystore, String errorMessage, String certificateInformation) {
+        return AddCert.NEVER;
+    }
+
+    public void keystoreMissing(File keystore) {
+        throw new NoKeystoreException("keystore: "+keystore+" is missing");
     }
 }

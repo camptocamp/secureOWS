@@ -51,10 +51,10 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.logging.Level;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -67,7 +67,9 @@ import org.apache.commons.httpclient.protocol.SecureProtocolSocketFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.camptocamp.owsproxy.ErrorReporter;
 import com.camptocamp.owsproxy.OWSProxyServlet;
+import com.camptocamp.owsproxy.logging.OWSLogger;
 
 /**
  * <p>
@@ -175,28 +177,32 @@ import com.camptocamp.owsproxy.OWSProxyServlet;
 public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
 
     /** Log object for this class. */
-    private static final Log LOG                = LogFactory.getLog(AuthSSLProtocolSocketFactory.class);
+    private static final Log                  LOG        = LogFactory.getLog(AuthSSLProtocolSocketFactory.class);
 
-    private SSLContext       sslcontext         = null;
-    private final File             keystoreStore;
-    private final String           keystorePassword;
+    private SSLContext                        sslcontext = null;
+    private final File                        keystoreStore;
+    private final String                      keystorePassword;
 
     private final Collection<X509Certificate> sessionCertificates;
 
-    private final boolean noUI;
+    private final ErrorReporter               errorReporter;
+
+    private boolean                           readonlyKeystore;
 
     /**
      * Constructor for AuthSSLProtocolSocketFactory. Either a keystore or
      * truststore file must be given. Otherwise SSL context initialization error
      * will result.
      */
-    public AuthSSLProtocolSocketFactory(final File keystoreStoreFile, final String keystorePassword, final boolean readonlyKeystore, 
-            final boolean noUI, Collection<X509Certificate> sessionCertificates) {
+    public AuthSSLProtocolSocketFactory(final File keystoreStoreFile, final String keystorePassword,
+            final boolean readonlyKeystore, final ErrorReporter errorReporter,
+            Collection<X509Certificate> sessionCertificates) {
         super();
         this.keystoreStore = keystoreStoreFile;
         this.keystorePassword = keystorePassword;
         this.sessionCertificates = sessionCertificates;
-        this.noUI = noUI;
+        this.errorReporter = errorReporter;
+        this.readonlyKeystore = readonlyKeystore;
     }
 
     private static KeyStore createKeyStore(final URL url, final String password) throws KeyStoreException,
@@ -223,13 +229,16 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
             Collection<TrustManager> trustmanagers = new ArrayList<TrustManager>();
             KeyStore writeableStore = null;
             if (keystoreStore != null) {
-                if (!keystoreStore.exists()) {
+                if( readonlyKeystore ) {
+                    if (!keystoreStore.exists()) {
+                        throw new KeyStoreException("Keystore does not exist");
+                    }
+                }else if (!keystoreStore.exists()) {
                     if (!keystoreStore.getParentFile().exists() && !keystoreStore.getParentFile().mkdirs()) {
                         throw new AssertionError("Unable to create the certificate keystore: " + keystoreStore);
                     }
-                    
-                    URL defaultKeystore = OWSProxyServlet.class.getResource(
-                            "default_keystore");
+
+                    URL defaultKeystore = OWSProxyServlet.class.getResource("default_keystore");
                     KeyStore keystore = createKeyStore(defaultKeystore, "changeit");
 
                     FileOutputStream stream = new FileOutputStream(keystoreStore);
@@ -247,22 +256,25 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
             sslcontext.init(keymanagers, trustmanagers.toArray(new TrustManager[0]), null);
             return sslcontext;
         } catch (NoSuchAlgorithmException e) {
-            LOG.error(e.getMessage(), e);
+            OWSLogger.DEV.log(Level.WARNING, e.getMessage(), e);
             throw new AuthSSLInitializationError("Unsupported algorithm exception: " + e.getMessage());
         } catch (KeyStoreException e) {
-            LOG.error(e.getMessage(), e);
+            OWSLogger.DEV.log(Level.WARNING, e.getMessage(), e);
             throw new AuthSSLInitializationError("Keystore exception: " + e.getMessage());
         } catch (GeneralSecurityException e) {
-            LOG.error(e.getMessage(), e);
+            OWSLogger.DEV.log(Level.WARNING, e.getMessage(), e);
             throw new AuthSSLInitializationError("Key management exception: " + e.getMessage());
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            if (e.getCause() instanceof UnrecoverableKeyException) {
+                throw (AuthSSLInitializationError) new AuthSSLInitializationError(
+                        "Password to keystore seems to be incorrect").initCause(e.getCause());
+            }
             throw new AuthSSLInitializationError("I/O error reading keystore/truststore file: " + e.getMessage());
         }
     }
 
-    private Collection<TrustManager> loadCertificates(KeyStore keystore)
-            throws KeyStoreException, NoSuchAlgorithmException {
+    private Collection<TrustManager> loadCertificates(KeyStore keystore) throws KeyStoreException,
+            NoSuchAlgorithmException {
         Collection<TrustManager> trustmanagers;
         if (keystore == null) {
             throw new IllegalArgumentException("Keystore may not be null");
@@ -273,15 +285,18 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
             String name = cert.getSubjectX500Principal().getName();
             keystore.setCertificateEntry(name, cert);
         }
-        LOG.debug("Initializing trust manager");
+        OWSLogger.DEV.fine("Initializing trust manager");
         TrustManagerFactory tmfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmfactory.init(keystore);
         TrustManager[] trustmanagers1 = tmfactory.getTrustManagers();
         ArrayList<TrustManager> managerCollection = new ArrayList<TrustManager>();
         for (int i = 0; i < trustmanagers1.length; i++) {
             if (trustmanagers1[i] instanceof X509TrustManager) {
-                managerCollection.add(new AuthSSLX509TrustManager((X509TrustManager) trustmanagers1[i], keystore,
-                        this.keystoreStore, this.keystorePassword, this.noUI, this.sessionCertificates));
+                AuthSSLX509TrustManager manager;
+                manager = new AuthSSLX509TrustManager((X509TrustManager) trustmanagers1[i], keystore,
+                        this.keystoreStore, this.keystorePassword, this.errorReporter, this.sessionCertificates,
+                        this.readonlyKeystore);
+                managerCollection.add(manager);
             }
         }
         trustmanagers = managerCollection;
@@ -290,19 +305,19 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
 
     @SuppressWarnings("unchecked")
     private void log(KeyStore keystore) throws KeyStoreException {
-        if (LOG.isDebugEnabled()) {
+        if (OWSLogger.DEV.isLoggable(Level.FINE)) {
             Enumeration aliases = keystore.aliases();
             while (aliases.hasMoreElements()) {
                 String alias = (String) aliases.nextElement();
-                LOG.debug("Trusted certificate '" + alias + "':");
+                OWSLogger.DEV.fine("Trusted certificate '" + alias + "':");
                 Certificate trustedcert = keystore.getCertificate(alias);
                 if (trustedcert != null && trustedcert instanceof X509Certificate) {
                     X509Certificate cert = (X509Certificate) trustedcert;
-                    LOG.debug("  Subject DN: " + cert.getSubjectDN());
-                    LOG.debug("  Signature Algorithm: " + cert.getSigAlgName());
-                    LOG.debug("  Valid from: " + cert.getNotBefore());
-                    LOG.debug("  Valid until: " + cert.getNotAfter());
-                    LOG.debug("  Issuer: " + cert.getIssuerDN());
+                    OWSLogger.DEV.fine("  Subject DN: " + cert.getSubjectDN());
+                    OWSLogger.DEV.fine("  Signature Algorithm: " + cert.getSigAlgName());
+                    OWSLogger.DEV.fine("  Valid from: " + cert.getNotBefore());
+                    OWSLogger.DEV.fine("  Valid until: " + cert.getNotAfter());
+                    OWSLogger.DEV.fine("  Issuer: " + cert.getIssuerDN());
                 }
             }
         }

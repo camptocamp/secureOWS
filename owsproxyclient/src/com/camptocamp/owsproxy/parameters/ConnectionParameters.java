@@ -17,11 +17,10 @@ public class ConnectionParameters {
     public String keystore;
     public String keystorePass;
     public boolean readonlyKeystore;
-    public boolean noUI;
     public Collection<X509Certificate> sessionCertificates;
 
     public ConnectionParameters(String server, String username, String password, String proxyHost, int proxyPort,
-            String proxyUsername, String proxyPassword, String keystore, String keystorePass, boolean readonlyKeystore, boolean noUI,
+            String proxyUsername, String proxyPassword, String keystore, String keystorePass, boolean readonlyKeystore, 
             Collection<X509Certificate> sessionCertificates) {
         this.server = server;
         this.username = username;
@@ -33,13 +32,12 @@ public class ConnectionParameters {
         this.keystore = keystore;
         this.keystorePass = keystorePass;
         this.readonlyKeystore = readonlyKeystore;
-        this.noUI = noUI;
         this.sessionCertificates = sessionCertificates;
     }
 
     public ConnectionParameters copy() {
         return new ConnectionParameters(server, username, password, proxyHost, proxyPort, proxyUsername, proxyPassword,
-                keystore, keystorePass, readonlyKeystore, noUI, sessionCertificates);
+                keystore, keystorePass, readonlyKeystore, sessionCertificates);
     }
 
     /**

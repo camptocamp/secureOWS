@@ -11,6 +11,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 
+import com.camptocamp.owsproxy.ConnectionEvent.ConnectionStatus;
 import com.camptocamp.owsproxy.logging.OWSLogger;
 import com.camptocamp.owsproxy.parameters.ConnectionParameters;
 import com.camptocamp.owsproxy.parameters.DevLogFileParameter;
@@ -41,8 +42,10 @@ public class OWSHeadlessClient implements Observer {
 
 	ConnectionManager connManager;
 	ConnectionParameters params = new ConnectionParameters(null, null, null,
-			null, -1, "", "", OWSClient.DEFAULT_SECURITY_SETTINGS.keystore, "", false, true, sessionCertificates);
+			null, -1, "", "", OWSClient.DEFAULT_SECURITY_SETTINGS.keystore, "", false, sessionCertificates);
 
+	private ConnectionStatus state = ConnectionStatus.IDLE;
+	
 	public OWSHeadlessClient() {
 		connManager = new ConnectionManager();
 		connManager.addObserver(this);
@@ -60,12 +63,30 @@ public class OWSHeadlessClient implements Observer {
 			return;
 		ConnectionEvent connEvent = (ConnectionEvent) arg;
 		switch (connEvent.status) {
-		case ERROR: {
-			OWSLogger.USER.warning(Translations.getString("OWSHeadlessClient.Error",
-					connEvent.message));
-
-			break;
-		}
+        case ERROR: {
+            OWSLogger.USER.warning(Translations.getString("OWSHeadlessClient.Error",
+                    connEvent.message));
+            if( state == ConnectionStatus.CONNECTING) {
+                System.exit(0);
+            }
+            break;
+        }      
+        case KEYSTORE_PASSWORD: {
+            OWSLogger.USER.severe(Translations.getString("OWSHeadlessClient.Error",
+                    connEvent.message));
+            if( state == ConnectionStatus.CONNECTING) {
+                System.exit(0);
+            }
+            break;
+        }
+        case NO_KEYSTORE: {
+            OWSLogger.USER.severe(Translations.getString("OWSHeadlessClient.Error",
+                    connEvent.message));
+            if( state == ConnectionStatus.CONNECTING) {
+                System.exit(0);
+            }
+            break;
+        }
 		case UNAUTHORIZED: {
 			OWSLogger.USER
 					.severe(Translations.getString("OWSHeadlessClient.Unauthorized")); //$NON-NLS-1$
@@ -88,6 +109,7 @@ public class OWSHeadlessClient implements Observer {
 			break;
 		}
 		}
+		state = connEvent.status;
 	}
 
 	public static void main(String[] args) {

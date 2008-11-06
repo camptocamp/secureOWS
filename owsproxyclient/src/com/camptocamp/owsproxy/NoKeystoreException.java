@@ -11,6 +11,10 @@ package com.camptocamp.owsproxy;
  */
 public class NoKeystoreException extends RuntimeException {
 
-	private static final long serialVersionUID = 1865025760158132228L;
+	public NoKeystoreException(String message) {
+        super(message);
+    }
+
+    private static final long serialVersionUID = 1865025760158132228L;
 
 }
