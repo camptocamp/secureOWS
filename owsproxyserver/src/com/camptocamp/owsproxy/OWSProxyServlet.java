@@ -1,8 +1,11 @@
 package com.camptocamp.owsproxy;
 
+
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,8 +14,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.deegree.ogcwebservices.wms.operation.GetFeatureInfo;
-import org.deegree.security.owsproxy.OWSProxyServletFilter;
 
 /**
  * Implementation class for Proxy OWS Servlet
@@ -85,10 +86,14 @@ public class OWSProxyServlet extends javax.servlet.http.HttpServlet implements
                 response.setContentType(contentTypeHeader.getValue());
             }
 
-            byte[] responseBody = method.getResponseBody();
 
-            response.getOutputStream().write(responseBody);
-
+            byte[] cache = new byte[response.getBufferSize()];
+            InputStream in = method.getResponseBodyAsStream();
+            ServletOutputStream out = response.getOutputStream();
+            for (int read = in.read(cache); read > 0; read = in.read(cache)) {
+                out.write(cache, 0, read);
+            }
+            
         } catch (Exception e) {
             throw new ServletException(e);
         }

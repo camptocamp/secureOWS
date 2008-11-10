@@ -2,12 +2,34 @@
 <OWSPolicy service="WMS" xmlns="http://www.deegree.org/security">
 	<Security></Security>
 	<Requests>
-        <GetMap>
-        </GetMap>
-        <GetFeatureInfo>
-        </GetFeatureInfo>
-        <GetCapabilities>
-        </GetCapabilities>
+		<GetMap>
+			<Preconditions>
+				<Parameter name="bbox">
+					<Role name="tomcat">
+						<Value>-2486119,840341,-1033438,240015,EPSG:42304
+						</Value>
+					</Role>
+				</Parameter>
+				<Parameter name="layers">
+					<Role name="tomcat">
+						<Value>park</Value>
+						<Value>bathymetry</Value>
+					</Role>
+				</Parameter>
+			</Preconditions>
+		</GetMap>
+		<GetCapabilities>
+			<PostConditions>
+				<Parameter name="layers">
+					<Role name="tomcat">
+						<Value>park</Value>
+						<Value>bathymetry</Value>
+					</Role>
+				</Parameter>
+			</PostConditions>
+		</GetCapabilities>
+		<GetFeatureInfo>
+		</GetFeatureInfo>
 		<GetLegendGraphic>
 		</GetLegendGraphic>
 	</Requests>

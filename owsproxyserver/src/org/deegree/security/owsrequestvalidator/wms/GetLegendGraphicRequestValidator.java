@@ -127,6 +127,9 @@ class GetLegendGraphicRequestValidator extends AbstractWMSRequestValidator {
 
         userCoupled = false;
         Request req = policy.getRequest( "WMS", "GetLegendGraphic" );
+        if( req==null){
+        	return;
+        }
         // request is valid because no restrictions are made
         if ( req.isAny() )
             return;

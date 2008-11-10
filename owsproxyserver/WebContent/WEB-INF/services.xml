@@ -2,7 +2,7 @@
 <services>
 
 	<!-- sample WMS servers -->
-	<service serviceId="mistra"
+	-<service serviceId="mistra"
 		serviceDescription="Mistra WMS (only inside Swisstopo network)"
 		serviceEndPoint="http://test4-swisstopogeodata.lt.admin.ch/wms-mistra">
 		<roles>
@@ -24,6 +24,14 @@
 		<roles>
 			<role>tomcat</role>
 			<role>role1</role>
+		</roles>
+	</service>
+	
+	<service serviceId="jpl"
+		serviceDescription="JPL"
+		serviceEndPoint="http://wms.jpl.nasa.gov/wms.cgi">
+		<roles>
+			<role>tomcat</role>
 		</roles>
 	</service>
 
