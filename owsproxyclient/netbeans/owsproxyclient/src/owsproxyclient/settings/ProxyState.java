@@ -5,12 +5,15 @@
 
 package owsproxyclient.settings;
 
+import java.util.ResourceBundle;
+
 /**
  * Encapsulates the state of the ProxySettingsPanel class
  *
  * @author jeichar
  */
 public class ProxyState {
+    private static final ResourceBundle translations = ResourceBundle.getBundle("owsproxyclient/translations");
     public final char[] password;
     public final String url;
     public final String port;

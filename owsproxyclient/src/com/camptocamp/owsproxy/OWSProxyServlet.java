@@ -52,7 +52,7 @@ public class OWSProxyServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        OWSLogger.DEV.fine("server handling: " + Thread.currentThread().getName());
+        OWSLogger.DEV.fine("server handling: " + Thread.currentThread().getName()); //$NON-NLS-1$
         String serviceEndPoint = connectionParams.server;
         String queryString = request.getQueryString();
 
@@ -66,13 +66,13 @@ public class OWSProxyServlet extends HttpServlet {
 
                 // TODO: only send for GetCapabilities
                 if (this.listenURL != null) {
-                    queryString += "&" + "VENDOR_ONLINE_RESOURCE=" + this.listenURL;
+                    queryString += "&" + "VENDOR_ONLINE_RESOURCE=" + this.listenURL; //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
-                serviceEndPoint += "?" + queryString;
+                serviceEndPoint += "?" + queryString; //$NON-NLS-1$
             }
 
-            OWSLogger.DEV.info("Request: " + serviceEndPoint);
+            OWSLogger.DEV.info("Request: " + serviceEndPoint); //$NON-NLS-1$
             HttpMethod method = new GetMethod(serviceEndPoint);
             // Authentication
             if (connectionParams.username != null && connectionParams.password != null) {
@@ -83,7 +83,7 @@ public class OWSProxyServlet extends HttpServlet {
             }
             int statusCode = client.executeMethod(method);
 
-            String header = "Content-Type";
+            String header = "Content-Type"; //$NON-NLS-1$
             Header contentTypeHeader = method.getResponseHeader(header);
             if (contentTypeHeader != null) {
                 response.setHeader(header, contentTypeHeader.getValue());
@@ -131,7 +131,7 @@ public class OWSProxyServlet extends HttpServlet {
         
         File keystore = new File(connectionParams.keystore);
             if( connectionParams.readonlyKeystore && !keystore.exists() ) {
-                throw new NoKeystoreException("Keystore: "+keystore+" does not exist");
+                throw new NoKeystoreException("Keystore: "+keystore+" does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             if (!keystore.exists() && !keystore.getAbsolutePath().equals(OWSClient.DEFAULT_SECURITY_SETTINGS.keystore)) {
                 reporter.keystoreMissing(keystore);
@@ -139,32 +139,32 @@ public class OWSProxyServlet extends HttpServlet {
         AuthSSLProtocolSocketFactory socketFactory;
             socketFactory = new AuthSSLProtocolSocketFactory(keystore, connectionParams.keystorePass, connectionParams.readonlyKeystore, 
                     reporter, connectionParams.sessionCertificates );
-        Protocol.registerProtocol("https", new Protocol("https", socketFactory, 443));
+        Protocol.registerProtocol("https", new Protocol("https", socketFactory, 443)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private boolean ieBugCausingHeader(Header h) {
-        if (h.getName().equals("Cache-Control")) {
-            return h.getValue().equalsIgnoreCase("no-store") || h.getValue().equalsIgnoreCase("no-cache");
+        if (h.getName().equals("Cache-Control")) { //$NON-NLS-1$
+            return h.getValue().equalsIgnoreCase("no-store") || h.getValue().equalsIgnoreCase("no-cache"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return false;
     }
 
     private void handleError(HttpMethod method, int statusCode, byte[] responseBody) throws IOException {
-        System.err.println("Method failed: " + method.getStatusLine());
+        System.err.println("Method failed: " + method.getStatusLine()); //$NON-NLS-1$
         write(responseBody);
 
         switch (statusCode) {
         case HttpStatus.SC_UNAUTHORIZED:
-            reporter.reportError(ConnectionStatus.UNAUTHORIZED, "Unauthorized: " + method.getStatusLine());
+            reporter.reportError(ConnectionStatus.UNAUTHORIZED, "Unauthorized: " + method.getStatusLine()); //$NON-NLS-1$
             break;
         case HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED:
-            reporter.reportError(ConnectionStatus.PROXY_AUTH_REQUIRED, "Proxy Authentication Failed: "
+            reporter.reportError(ConnectionStatus.PROXY_AUTH_REQUIRED, "Proxy Authentication Failed: " //$NON-NLS-1$
                     + method.getStatusLine());
             break;
 
         default:
-            reporter.reportError(ConnectionStatus.ERROR, "Method failed: " + method.getStatusLine());
+            reporter.reportError(ConnectionStatus.ERROR, "Method failed: " + method.getStatusLine()); //$NON-NLS-1$
             break;
         }
 
@@ -179,7 +179,7 @@ public class OWSProxyServlet extends HttpServlet {
                 builder.append(c);
                 c = inputStreamReader.read();
             }
-            OWSLogger.DEV.finest("Response from server for the error is:  \n\n" + builder);
+            OWSLogger.DEV.finest("Response from server for the error is:  \n\n" + builder); //$NON-NLS-1$
         }
     }
 

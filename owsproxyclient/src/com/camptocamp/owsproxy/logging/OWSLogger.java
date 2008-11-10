@@ -18,27 +18,27 @@ public enum OWSLogger {
 	/**
 	 * A logger for messages that only have meaning to developers.
 	 */
-	DEV("com.camptocamp.owsproxy.DEV"),
+	DEV("com.camptocamp.owsproxy.DEV"), //$NON-NLS-1$
 	/**
 	 * A logger that will be displayed on the console
 	 */
-	USER("com.camptocamp.owsproxy.USER");
+	USER("com.camptocamp.owsproxy.USER"); //$NON-NLS-1$
 
 	private final static org.mortbay.log.Logger defaultLogger = Log.getLog();
 	
 	static {
 		if (!System.getProperties()
-				.containsKey("java.util.logging.config.file")
+				.containsKey("java.util.logging.config.file") //$NON-NLS-1$
 				&& !System.getProperties().containsKey(
-						"java.util.logging.config.class")) {
-			System.setProperty("java.util.logging.config.class",
-					"com.camptocamp.owsproxy.logging.OWSLoggingConfigurator");
+						"java.util.logging.config.class")) { //$NON-NLS-1$
+			System.setProperty("java.util.logging.config.class", //$NON-NLS-1$
+					"com.camptocamp.owsproxy.logging.OWSLoggingConfigurator"); //$NON-NLS-1$
 			
 			try {
 				LogManager logManager = LogManager.getLogManager();
 				logManager.readConfiguration();
 			} catch (IOException e) {
-				DEV.log.severe("Unable to read configuration file!!!");
+				DEV.log.severe("Unable to read configuration file!!!"); //$NON-NLS-1$
 			}
 		
 			// no logging preference file specified so use default
@@ -82,12 +82,12 @@ public enum OWSLogger {
 	public static void enableHttpClientDebug() {
 		Log.setLog(defaultLogger);
 		defaultLogger.setDebugEnabled(true);
-		System.setProperty("DEBUG", "true");
+		System.setProperty("DEBUG", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-	    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-	    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
-	    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
-	    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");		
+	    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog"); //$NON-NLS-1$ //$NON-NLS-2$
+	    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+	    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug"); //$NON-NLS-1$ //$NON-NLS-2$
+	    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");		 //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 

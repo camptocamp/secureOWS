@@ -4,6 +4,7 @@
 package com.camptocamp.owsproxy;
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -16,7 +17,7 @@ public class UIConnectionManager extends ConnectionManager {
 
     @Override
     public AddCert certificateValidationFailure(boolean readonlyKeystore, String errorMessage, String certificateInformation) {
-        CertificateWarningDialog warningDialog = new CertificateWarningDialog("localhost", errorMessage, certificateInformation, new JFrame(), true);
+        CertificateWarningDialog warningDialog = new CertificateWarningDialog("localhost", errorMessage, certificateInformation, new JFrame(), true); //$NON-NLS-1$
         if( readonlyKeystore ) warningDialog.disablePermanentOption();
         warningDialog.setVisible(true);
         AddCert howToHandle = warningDialog.addCertificateSelected();
@@ -28,13 +29,14 @@ public class UIConnectionManager extends ConnectionManager {
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
-                    Object[] options = { "Yes", "No" };
+                    String msg = MessageFormat.format(Translations.getString("UIConnectionManager.warningMsg"), keystore); //$NON-NLS-1$
+                    Object[] options = { Translations.getString("UIConnectionManager.yes"), Translations.getString("UIConnectionManager.no") }; //$NON-NLS-1$ //$NON-NLS-2$
                     int result = JOptionPane.showOptionDialog(new JFrame(),
-                            "The defined keystore: "+keystore+" does not exist\nDo you want to create it?",
-                            "Missing Keystore", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                            msg,
+                            Translations.getString("UIConnectionManager.missingKeystore"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, //$NON-NLS-1$
                             null, options, options[0]);
                     if (result == 1) {
-                        throw new RuntimeException("cancel chosen");
+                        throw new RuntimeException("cancel chosen"); //$NON-NLS-1$
                     }
                 }
             });

@@ -23,7 +23,7 @@ public class DevLogLevelParameter extends Parameter {
 		Level level = Level.parse(nextParam.toUpperCase());
 		OWSLogger.DEV.logger().setLevel(level);
 		}catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(Translations.getString("DevLogLevelParamter.badLevel", nextParam));
+			throw new IllegalArgumentException(Translations.getString("DevLogLevelParamter.badLevel", nextParam)); //$NON-NLS-1$
 		}
 		return true;
 	}

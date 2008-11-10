@@ -13,7 +13,7 @@ import com.camptocamp.owsproxy.Translations;
 public class UserLogFileParameter extends Parameter {
 
 	public UserLogFileParameter() {
-		super("-userLogFile");
+		super("-userLogFile"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class UserLogFileParameter extends Parameter {
 		try {
 			DevLogFileParameter.lookupOWSLogHandler().setUserLogFile(nextParam);
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException(Translations.getString("cantCreateFile", nextParam));
+			throw new IllegalArgumentException(Translations.getString("cantCreateFile", nextParam)); //$NON-NLS-1$
 		}
 		return true;
 	}

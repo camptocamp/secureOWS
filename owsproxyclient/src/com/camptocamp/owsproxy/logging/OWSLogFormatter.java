@@ -35,7 +35,7 @@ public class OWSLogFormatter extends Formatter {
 		case USER:
 			Date date = new Date(record.getMillis());
 			String time = DateFormat.getTimeInstance().format(date);
-			return record.getMessage()+" - "+ time +"\n" ;
+			return record.getMessage()+" - "+ time +"\n" ; //$NON-NLS-1$ //$NON-NLS-2$
 
 		default:
 			return defaultFormatter.format(record);

@@ -25,9 +25,9 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 
     // XXX should use config option
     static final int STARTING_PORT = 8888;
-    static final String LISTENING_URL = "/";
+    static final String LISTENING_URL = "/"; //$NON-NLS-1$
     // This is only used to test the credentials.
-    static final String LISTENING_HOST = "http://localhost:"; 
+    static final String LISTENING_HOST = "http://localhost:";  //$NON-NLS-1$
     
 	void connect(ConnectionParameters connectionParams) {
 		
@@ -49,7 +49,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 					server.start();
 					break;
 		    	} catch (BindException be) {
-					OWSLogger.DEV.info("Port " + port + " already bound, trying next");
+					OWSLogger.DEV.info("Port " + port + " already bound, trying next"); //$NON-NLS-1$ //$NON-NLS-2$
 					port += 1;
 					server = new Server(port);
 				}
@@ -60,9 +60,9 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 		}
 
         Context context = new Context(server, LISTENING_URL, Context.SESSIONS);
-        context.addServlet(new ServletHolder(servlet), "/*");
+        context.addServlet(new ServletHolder(servlet), "/*"); //$NON-NLS-1$
         
-        OWSLogger.DEV.info("port is " + port);
+        OWSLogger.DEV.info("port is " + port); //$NON-NLS-1$
 	    new Thread(new Runnable() {
 			public void run() {
 		    	try {
@@ -73,7 +73,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 			}
 	    }).start();
 	    
-	    OWSLogger.DEV.finer("server starting thread: " + Thread.currentThread().getName());
+	    OWSLogger.DEV.finer("server starting thread: " + Thread.currentThread().getName()); //$NON-NLS-1$
 		
 		listeningAddress = LISTENING_HOST + port + LISTENING_URL;
 		servlet.setListenURL(listeningAddress);
@@ -88,7 +88,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
         GetMethod get = new GetMethod(listeningAddress);
 	    try {
             int statusCode = client.executeMethod(get);
-            OWSLogger.DEV.finer("status: " + statusCode);
+            OWSLogger.DEV.finer("status: " + statusCode); //$NON-NLS-1$
             
 	    } catch (IOException e) {
 			error(e);
@@ -100,14 +100,14 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 	void error(Throwable e) {
 		setChanged();
 		notifyObservers(new ConnectionEvent(ConnectionEvent.ConnectionStatus.ERROR, 
-		                "Error during connection", e));
+		                Translations.getString("ConnectionManager.connectionError"), e)); //$NON-NLS-1$
 	}
     
     void fireIdleEvent() {
         
         setChanged();
         notifyObservers(new ConnectionEvent(ConnectionEvent.ConnectionStatus.IDLE, 
-                        "Server idle"));
+                        Translations.getString("ConnectionManager.IdleServer"))); //$NON-NLS-1$
     }
     
 	void disconnect() {
@@ -125,7 +125,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
 
 	public void reportError(ConnectionStatus status, String error) {
 		setChanged();
-		notifyObservers(new ConnectionEvent(status, "Connection error " + error));
+		notifyObservers(new ConnectionEvent(status, Translations.getString("ConnectionManager.ConnectionError") + error)); //$NON-NLS-1$
 	}
 
 	public String getListeningAddress() {
@@ -135,7 +135,7 @@ public class ConnectionManager extends Observable implements ErrorReporter {
     public void connected() {
         setChanged();
         notifyObservers(new ConnectionEvent(ConnectionEvent.ConnectionStatus.RUNNING, 
-                "Server listening on " + listeningAddress));
+                "Server listening on " + listeningAddress)); //$NON-NLS-1$
     }
 
     public AddCert certificateValidationFailure(boolean readonlyKeystore, String errorMessage, String certificateInformation) {
@@ -143,6 +143,6 @@ public class ConnectionManager extends Observable implements ErrorReporter {
     }
 
     public void keystoreMissing(File keystore) {
-        throw new NoKeystoreException("keystore: "+keystore+" is missing");
+        throw new NoKeystoreException("keystore: "+keystore+" is missing XXX"); //$NON-NLS-2$
     }
 }

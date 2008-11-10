@@ -17,10 +17,10 @@ public class ConnectionEvent {
 		this(status, message, null);
 	}
 	public ConnectionEvent(ConnectionEvent.ConnectionStatus status) {
-		this(status, "");
+		this(status, ""); //$NON-NLS-1$
 	}
 	@Override
 	public String toString() {
-		return status.toString() + " " + message + " " + (throwable != null ? throwable.toString() : "");
+		return status.toString() + " " + message + " " + (throwable != null ? throwable.toString() : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

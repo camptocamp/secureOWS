@@ -12,6 +12,7 @@
 package owsproxyclient.settings;
 
 import java.io.File;
+import java.util.ResourceBundle;
 import javax.swing.JFileChooser;
 
 /**
@@ -19,6 +20,7 @@ import javax.swing.JFileChooser;
  * @author jeichar
  */
 public class SecuritySettingsPanel extends javax.swing.JPanel implements SettingsPanel{
+    private static final ResourceBundle translations = ResourceBundle.getBundle("owsproxyclient/translations");
     private SettingsDialog _owner;
 
     /** Creates new form SecuritySettingsPanel */
@@ -46,7 +48,7 @@ public class SecuritySettingsPanel extends javax.swing.JPanel implements Setting
         jLabel3 = new javax.swing.JLabel();
         readOnlyCheck = new javax.swing.JCheckBox();
 
-        jLabel1.setText("Keystore:");
+        jLabel1.setText(translations.getString("Keystore")); // NOI18N
 
         keystoreText.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -54,14 +56,14 @@ public class SecuritySettingsPanel extends javax.swing.JPanel implements Setting
             }
         });
 
-        browseButton.setText("Browse...");
+        browseButton.setText(translations.getString("BrowseButton")); // NOI18N
         browseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseButtonActionPerformed(evt);
             }
         });
 
-        jLabel2.setText("Password:");
+        jLabel2.setText(translations.getString("Password")); // NOI18N
 
         passwordText.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -70,9 +72,9 @@ public class SecuritySettingsPanel extends javax.swing.JPanel implements Setting
         });
 
         jLabel3.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
-        jLabel3.setText("Certificate and Key Settings");
+        jLabel3.setText(translations.getString("SecurityPanelTitle")); // NOI18N
 
-        readOnlyCheck.setText("Readonly");
+        readOnlyCheck.setText(translations.getString("Readonly")); // NOI18N
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -93,7 +95,7 @@ public class SecuritySettingsPanel extends javax.swing.JPanel implements Setting
                         .add(browseButton))
                     .add(jLabel3)
                     .add(readOnlyCheck))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -153,7 +155,7 @@ public class SecuritySettingsPanel extends javax.swing.JPanel implements Setting
 
     public String getErrorMessage() {
         if(keystoreText.getText().trim().length()==0){
-            return "A keystore must be declared.";
+            return translations.getString("keystoreValidation");
         }
         return null;
     }

@@ -69,6 +69,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.camptocamp.owsproxy.ErrorReporter;
 import com.camptocamp.owsproxy.OWSProxyServlet;
+import com.camptocamp.owsproxy.Translations;
 import com.camptocamp.owsproxy.logging.OWSLogger;
 
 /**
@@ -208,10 +209,10 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
     private static KeyStore createKeyStore(final URL url, final String password) throws KeyStoreException,
             NoSuchAlgorithmException, CertificateException, IOException {
         if (url == null) {
-            throw new IllegalArgumentException("Keystore url may not be null");
+            throw new IllegalArgumentException("Keystore url may not be null"); //$NON-NLS-1$
         }
-        LOG.debug("Initializing key store");
-        KeyStore keystore = KeyStore.getInstance("jks");
+        LOG.debug("Initializing key store"); //$NON-NLS-1$
+        KeyStore keystore = KeyStore.getInstance("jks"); //$NON-NLS-1$
         InputStream is = null;
         try {
             is = url.openStream();
@@ -231,15 +232,15 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
             if (keystoreStore != null) {
                 if( readonlyKeystore ) {
                     if (!keystoreStore.exists()) {
-                        throw new KeyStoreException("Keystore does not exist");
+                        throw new KeyStoreException("Keystore does not exist"); //$NON-NLS-1$
                     }
                 }else if (!keystoreStore.exists()) {
                     if (!keystoreStore.getParentFile().exists() && !keystoreStore.getParentFile().mkdirs()) {
-                        throw new AssertionError("Unable to create the certificate keystore: " + keystoreStore);
+                        throw new AssertionError("Unable to create the certificate keystore: " + keystoreStore); //$NON-NLS-1$
                     }
 
-                    URL defaultKeystore = OWSProxyServlet.class.getResource("default_keystore");
-                    KeyStore keystore = createKeyStore(defaultKeystore, "changeit");
+                    URL defaultKeystore = OWSProxyServlet.class.getResource("default_keystore"); //$NON-NLS-1$
+                    KeyStore keystore = createKeyStore(defaultKeystore, "changeit"); //$NON-NLS-1$
 
                     FileOutputStream stream = new FileOutputStream(keystoreStore);
                     try {
@@ -252,24 +253,24 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
                 trustmanagers.addAll(loadCertificates(writeableStore));
             }
 
-            SSLContext sslcontext = SSLContext.getInstance("SSL");
+            SSLContext sslcontext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
             sslcontext.init(keymanagers, trustmanagers.toArray(new TrustManager[0]), null);
             return sslcontext;
         } catch (NoSuchAlgorithmException e) {
             OWSLogger.DEV.log(Level.WARNING, e.getMessage(), e);
-            throw new AuthSSLInitializationError("Unsupported algorithm exception: " + e.getMessage());
+            throw new AuthSSLInitializationError("Unsupported algorithm exception: " + e.getMessage()); //$NON-NLS-1$
         } catch (KeyStoreException e) {
             OWSLogger.DEV.log(Level.WARNING, e.getMessage(), e);
-            throw new AuthSSLInitializationError("Keystore exception: " + e.getMessage());
+            throw new AuthSSLInitializationError("Keystore exception: " + e.getMessage()); //$NON-NLS-1$
         } catch (GeneralSecurityException e) {
             OWSLogger.DEV.log(Level.WARNING, e.getMessage(), e);
-            throw new AuthSSLInitializationError("Key management exception: " + e.getMessage());
+            throw new AuthSSLInitializationError("Key management exception: " + e.getMessage()); //$NON-NLS-1$
         } catch (IOException e) {
             if (e.getCause() instanceof UnrecoverableKeyException) {
                 throw (AuthSSLInitializationError) new AuthSSLInitializationError(
-                        "Password to keystore seems to be incorrect").initCause(e.getCause());
+                        Translations.getString("AuthSSLProtocolSocketFactory.incorrectPassword")).initCause(e.getCause()); //$NON-NLS-1$
             }
-            throw new AuthSSLInitializationError("I/O error reading keystore/truststore file: " + e.getMessage());
+            throw new AuthSSLInitializationError("I/O error reading keystore/truststore file: " + e.getMessage()); //$NON-NLS-1$
         }
     }
 
@@ -277,7 +278,7 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
             NoSuchAlgorithmException {
         Collection<TrustManager> trustmanagers;
         if (keystore == null) {
-            throw new IllegalArgumentException("Keystore may not be null");
+            throw new IllegalArgumentException("Keystore may not be null"); //$NON-NLS-1$
         }
         log(keystore);
         // add temporary(session) certificates
@@ -285,7 +286,7 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
             String name = cert.getSubjectX500Principal().getName();
             keystore.setCertificateEntry(name, cert);
         }
-        OWSLogger.DEV.fine("Initializing trust manager");
+        OWSLogger.DEV.fine("Initializing trust manager"); //$NON-NLS-1$
         TrustManagerFactory tmfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmfactory.init(keystore);
         TrustManager[] trustmanagers1 = tmfactory.getTrustManagers();
@@ -309,15 +310,15 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
             Enumeration aliases = keystore.aliases();
             while (aliases.hasMoreElements()) {
                 String alias = (String) aliases.nextElement();
-                OWSLogger.DEV.fine("Trusted certificate '" + alias + "':");
+                OWSLogger.DEV.fine("Trusted certificate '" + alias + "':"); //$NON-NLS-1$ //$NON-NLS-2$
                 Certificate trustedcert = keystore.getCertificate(alias);
                 if (trustedcert != null && trustedcert instanceof X509Certificate) {
                     X509Certificate cert = (X509Certificate) trustedcert;
-                    OWSLogger.DEV.fine("  Subject DN: " + cert.getSubjectDN());
-                    OWSLogger.DEV.fine("  Signature Algorithm: " + cert.getSigAlgName());
-                    OWSLogger.DEV.fine("  Valid from: " + cert.getNotBefore());
-                    OWSLogger.DEV.fine("  Valid until: " + cert.getNotAfter());
-                    OWSLogger.DEV.fine("  Issuer: " + cert.getIssuerDN());
+                    OWSLogger.DEV.fine("  Subject DN: " + cert.getSubjectDN()); //$NON-NLS-1$
+                    OWSLogger.DEV.fine("  Signature Algorithm: " + cert.getSigAlgName()); //$NON-NLS-1$
+                    OWSLogger.DEV.fine("  Valid from: " + cert.getNotBefore()); //$NON-NLS-1$
+                    OWSLogger.DEV.fine("  Valid until: " + cert.getNotAfter()); //$NON-NLS-1$
+                    OWSLogger.DEV.fine("  Issuer: " + cert.getIssuerDN()); //$NON-NLS-1$
                 }
             }
         }
@@ -362,7 +363,7 @@ public class AuthSSLProtocolSocketFactory implements ProtocolSocketFactory {
     public Socket createSocket(final String host, final int port, final InetAddress localAddress, final int localPort,
             final HttpConnectionParams params) throws IOException, UnknownHostException, ConnectTimeoutException {
         if (params == null) {
-            throw new IllegalArgumentException("Parameters may not be null");
+            throw new IllegalArgumentException("Parameters may not be null"); //$NON-NLS-1$
         }
         int timeout = params.getConnectionTimeout();
         SocketFactory socketfactory = getSSLContext().getSocketFactory();

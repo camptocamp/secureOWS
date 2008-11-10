@@ -11,12 +11,15 @@
 
 package owsproxyclient.settings;
 
+import java.util.ResourceBundle;
+
 /**
  * Panel for configuring proxy settings
  * 
  * @author jeichar
  */
 public class ProxySettingsPanel extends javax.swing.JPanel implements SettingsPanel {
+    private static final ResourceBundle translations = ResourceBundle.getBundle("owsproxyclient/translations");
     private SettingsDialog _owner;
 
     /** Creates new form ProxySettingsPanel */
@@ -86,8 +89,8 @@ public class ProxySettingsPanel extends javax.swing.JPanel implements SettingsPa
 
         username.setEnabled(false);
 
-        jLabel3.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
-        jLabel3.setText("Proxy Settings");
+        jLabel3.setFont(new java.awt.Font("DejaVu Sans", 1, 13));
+        jLabel3.setText(translations.getString("Proxy_Settings")); // NOI18N
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -149,7 +152,7 @@ public class ProxySettingsPanel extends javax.swing.JPanel implements SettingsPa
 
     private String validatePassword() {
         if(useAuthentication.isSelected() && username.getText().trim().length()==0){
-            return "No proxy username";
+            return translations.getString("No_proxy_username");
         }
         return null;
     }

@@ -17,7 +17,7 @@ import com.camptocamp.owsproxy.logging.OWSLogger;
 public class DevLogFileParameter extends Parameter {
 
 	public DevLogFileParameter() {
-		super("-devLogFile");
+		super("-devLogFile"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class DevLogFileParameter extends Parameter {
 		try {
 			lookupOWSLogHandler().setDevLogFile(nextParam);
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException(Translations.getString("cantCreateFile", nextParam));
+			throw new IllegalArgumentException(Translations.getString("cantCreateFile", nextParam)); //$NON-NLS-1$
 		}
 		return true;
 	}

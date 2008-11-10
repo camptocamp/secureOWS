@@ -42,7 +42,7 @@ public class OWSHeadlessClient implements Observer {
 
 	ConnectionManager connManager;
 	ConnectionParameters params = new ConnectionParameters(null, null, null,
-			null, -1, "", "", OWSClient.DEFAULT_SECURITY_SETTINGS.keystore, "", false, sessionCertificates);
+			null, -1, "", "", OWSClient.DEFAULT_SECURITY_SETTINGS.keystore, "", false, sessionCertificates); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private ConnectionStatus state = ConnectionStatus.IDLE;
 	
@@ -64,7 +64,7 @@ public class OWSHeadlessClient implements Observer {
 		ConnectionEvent connEvent = (ConnectionEvent) arg;
 		switch (connEvent.status) {
         case ERROR: {
-            OWSLogger.USER.warning(Translations.getString("OWSHeadlessClient.Error",
+            OWSLogger.USER.warning(Translations.getString("OWSHeadlessClient.Error", //$NON-NLS-1$
                     connEvent.message));
             if( state == ConnectionStatus.CONNECTING) {
                 System.exit(0);
@@ -72,7 +72,7 @@ public class OWSHeadlessClient implements Observer {
             break;
         }      
         case KEYSTORE_PASSWORD: {
-            OWSLogger.USER.severe(Translations.getString("OWSHeadlessClient.Error",
+            OWSLogger.USER.severe(Translations.getString("OWSHeadlessClient.Error", //$NON-NLS-1$
                     connEvent.message));
             if( state == ConnectionStatus.CONNECTING) {
                 System.exit(0);
@@ -80,7 +80,7 @@ public class OWSHeadlessClient implements Observer {
             break;
         }
         case NO_KEYSTORE: {
-            OWSLogger.USER.severe(Translations.getString("OWSHeadlessClient.Error",
+            OWSLogger.USER.severe(Translations.getString("OWSHeadlessClient.Error", //$NON-NLS-1$
                     connEvent.message));
             if( state == ConnectionStatus.CONNECTING) {
                 System.exit(0);
@@ -100,11 +100,11 @@ public class OWSHeadlessClient implements Observer {
 			break;
 		}
 		case RUNNING: {
-			OWSLogger.USER.info(Translations.getString("HeadlessRunning", connManager.getListeningAddress()));
+			OWSLogger.USER.info(Translations.getString("HeadlessRunning", connManager.getListeningAddress())); //$NON-NLS-1$
 			break;
 		}
 		default: {
-			String message = Translations.getString("OWSHeadlessClient.headlessStatus", connEvent.status);
+			String message = Translations.getString("OWSHeadlessClient.headlessStatus", connEvent.status); //$NON-NLS-1$
 			OWSLogger.USER.info(message);
 			break;
 		}
@@ -148,7 +148,7 @@ public class OWSHeadlessClient implements Observer {
 							iter.previous();
 						}
 					} else {
-						param.performAction("", client);
+						param.performAction("", client); //$NON-NLS-1$
 					}
 				}
 			}
@@ -170,7 +170,7 @@ public class OWSHeadlessClient implements Observer {
 	}
 
 	private static void usage(String error) {
-		String usage = Translations.getString("OWSHeadlessClient.usage", error);
+		String usage = Translations.getString("OWSHeadlessClient.usage", error); //$NON-NLS-1$
 		OWSLogger.USER.info(usage);
 	}
 

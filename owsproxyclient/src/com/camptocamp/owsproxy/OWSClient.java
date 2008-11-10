@@ -32,10 +32,10 @@ import com.camptocamp.owsproxy.logging.OWSLogger;
 import com.camptocamp.owsproxy.parameters.ConnectionParameters;
 
 public class OWSClient implements Observer {
-    public static final ProxyState      DEFAULT_PROXY_SETTINGS    = new ProxyState("http://", "3218", false, "",
+    public static final ProxyState      DEFAULT_PROXY_SETTINGS    = new ProxyState("http://", "3218", false, "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                                                           new char[0]);
-    public static final SecurityState   DEFAULT_SECURITY_SETTINGS = new SecurityState(System.getProperty("user.home")
-                                                                          + "/.secureows/keystore", "changeit".toCharArray(), false);
+    public static final SecurityState   DEFAULT_SECURITY_SETTINGS = new SecurityState(System.getProperty("user.home") //$NON-NLS-1$
+                                                                          + "/.secureows/keystore", "changeit".toCharArray(), false); //$NON-NLS-1$ //$NON-NLS-2$
 
     ConnectionManager                   connManager;
     private owsproxyclient.OWSClientGUI client;
@@ -71,79 +71,79 @@ public class OWSClient implements Observer {
             return;
         ConnectionEvent connEvent = (ConnectionEvent) arg;
 
-        OWSLogger.DEV.finer("Got event: " + connEvent);
+        OWSLogger.DEV.finer("Got event: " + connEvent); //$NON-NLS-1$
 
-        client.proxyURL.setText("");
+        client.proxyURL.setText(""); //$NON-NLS-1$
         // resets state
         if (textColor == null)
             textColor = client.statusLabel.getForeground();
         client.statusLabel.setForeground(textColor);
 
-        client.statusLabel2.setText(" ");
+        client.statusLabel2.setText(" "); //$NON-NLS-1$
 
         String msg;
 
         switch (connEvent.status) {
         case IDLE:
             showConnected(false);
-            msg = Translations.getString("OWSProxy_not_connected");
+            msg = Translations.getString("OWSProxy_not_connected"); //$NON-NLS-1$
 
             break;
         case CONNECTING:
             showConnected(true);
-            msg = Translations.getString("Connecting...");
+            msg = Translations.getString("Connecting"); //$NON-NLS-1$
             break;
         case RUNNING:
             showConnected(true);
 
             client.statusLabel.setForeground(new Color(0, 128, 0));
-            msg = Translations.getString("Connected");
+            msg = Translations.getString("Connected"); //$NON-NLS-1$
             client.proxyURL.setText(connManager.getListeningAddress());
             break;
 
         case UNAUTHORIZED:
             showConnected(status!=ConnectionStatus.CONNECTING);
             client.statusLabel.setForeground(Color.RED);
-            msg = Translations.getString("Unauthorized");
+            msg = Translations.getString("Unauthorized"); //$NON-NLS-1$
             client.statusLabel2.setText(connEvent.message);
             break;
 
         case ERROR:
             showConnected(status!=ConnectionStatus.CONNECTING);
             client.statusLabel.setForeground(Color.RED);
-            msg = Translations.getString("Error");
+            msg = Translations.getString("Error"); //$NON-NLS-1$
             client.statusLabel2.setText(connEvent.message);
             break;
         case KEYSTORE_PASSWORD:
             showConnected(status!=ConnectionStatus.CONNECTING);
             client.statusLabel.setForeground(Color.RED);
-            msg = Translations.getString("Error");
+            msg = Translations.getString("Error"); //$NON-NLS-1$
             client.statusLabel2.setText(connEvent.message);
-            client.openSettings(1, "Password is incorrect");
+            client.openSettings(1, Translations.getString("OWSClient.wrongPassword")); //$NON-NLS-1$
             break;
         case NO_KEYSTORE:
             showConnected(status!=ConnectionStatus.CONNECTING);
             client.statusLabel.setForeground(Color.RED);
-            msg = Translations.getString("Error");
+            msg = Translations.getString("Error"); //$NON-NLS-1$
             client.statusLabel2.setText(connEvent.message);
-            client.openSettings(1, "Keystore does not exist");
+            client.openSettings(1, Translations.getString("OWSClient.noKeystore")); //$NON-NLS-1$
             break;
 
         case PROXY_AUTH_REQUIRED:
             showConnected(status!=ConnectionStatus.CONNECTING);
             client.statusLabel.setForeground(Color.RED);
-            msg = Translations.getString("Proxy_Auth");
+            msg = Translations.getString("Proxy_Auth"); //$NON-NLS-1$
             client.statusLabel2.setText(connEvent.message);
             break;
 
         default:
-            throw new RuntimeException("Should not happen: " + connEvent);
+            throw new RuntimeException("Should not happen: " + connEvent); //$NON-NLS-1$
         }
         status = connEvent.status;
 
         client.statusLabel.setText(msg);
 
-        OWSLogger.DEV.info("Event " + arg);
+        OWSLogger.DEV.info("Event " + arg); //$NON-NLS-1$
         if (OWSLogger.DEV.isLoggable(Level.FINER))
             client.errorDetail.setText(arg.toString());
     }
@@ -166,15 +166,15 @@ public class OWSClient implements Observer {
         defaultSettings.add(DEFAULT_PROXY_SETTINGS);
         defaultSettings.add(DEFAULT_SECURITY_SETTINGS);
         client.setSettings(defaultSettings);
-        String title = client.getTitle() + " - " + Translations.getString("version");
+        String title = client.getTitle() + " - " + "REPLACE_WITH_VERSION"; //$NON-NLS-1$ //$NON-NLS-2$
         client.setTitle(title);
         client.setVisible(true);
         client.errorDetail.setVisible(OWSLogger.DEV.isLoggable(Level.FINER));
 
         if (OWSLogger.DEV.isLoggable(Level.FINER)) {
-            client.serviceURL.setText("http://localhost");
-            client.usernameField.setText("tomcat");
-            client.passwordField.setText("tomcat");
+            client.serviceURL.setText("http://localhost"); //$NON-NLS-1$
+            client.usernameField.setText("tomcat"); //$NON-NLS-1$
+            client.passwordField.setText("tomcat"); //$NON-NLS-1$
         }
 
         client.connectButton.addActionListener(new ActionListener() {
@@ -200,9 +200,9 @@ public class OWSClient implements Observer {
                 ProxyState pSettings = (ProxyState) allSettings.get(0);
                 String proxyHost = pSettings.url;
                 int proxyPort;
-                String proxyUser = "";
-                String proxyPass = "";
-                if (proxyHost.length() == 0 || proxyHost.equals("http://")) {
+                String proxyUser = ""; //$NON-NLS-1$
+                String proxyPass = ""; //$NON-NLS-1$
+                if (proxyHost.length() == 0 || proxyHost.equals("http://")) { //$NON-NLS-1$
                     proxyHost = proxyUser = proxyPass = null;
                     proxyPort = -1;
                 } else {
@@ -218,7 +218,7 @@ public class OWSClient implements Observer {
                 char[] keyStorePass = sSettings.password;
 
                 if (keyStorePass == null || keyStorePass.length == 0) {
-                    client.openSettings(1, "Keystore password is required");
+                    client.openSettings(1, Translations.getString("OWSClient.requirePassword")); //$NON-NLS-1$
                     return null;
                 }
 
@@ -228,19 +228,19 @@ public class OWSClient implements Observer {
             }
         });
 
-        client.validationLabel.setText(" ");
+        client.validationLabel.setText(" "); //$NON-NLS-1$
         client.serviceURL.addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyTyped(KeyEvent event) {
                 String host = client.serviceURL.getText();
-                client.validationLabel.setText(" ");
+                client.validationLabel.setText(" "); //$NON-NLS-1$
                 client.connectButton.setEnabled(true);
                 try {
                     new URL(host);
                 } catch (MalformedURLException e) {
                     client.connectButton.setEnabled(false);
-                    String invalidURLMsg = Translations.getString("Invalid_URL");
+                    String invalidURLMsg = Translations.getString("Invalid_URL"); //$NON-NLS-1$
                     client.validationLabel.setText(invalidURLMsg);
                 }
             }

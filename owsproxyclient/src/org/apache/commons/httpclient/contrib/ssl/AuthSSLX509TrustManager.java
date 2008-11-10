@@ -50,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 import owsproxyclient.ExamineCertPanel.AddCert;
 
 import com.camptocamp.owsproxy.ErrorReporter;
+import com.camptocamp.owsproxy.Translations;
 import com.camptocamp.owsproxy.logging.OWSLogger;
 
 /**
@@ -99,7 +100,7 @@ public class AuthSSLX509TrustManager implements X509TrustManager
             String storePassword, ErrorReporter errorReporter, Collection<X509Certificate> sessionCertificates, boolean readonlyKeystore) {
         super();
         if (defaultTrustManager == null) {
-            throw new IllegalArgumentException("Trust manager may not be null");
+            throw new IllegalArgumentException("Trust manager may not be null"); //$NON-NLS-1$
         }
         _defaultTrustManager = defaultTrustManager;
         _keystore=keystore;
@@ -117,12 +118,12 @@ public class AuthSSLX509TrustManager implements X509TrustManager
         if (LOG.isInfoEnabled() && certificates != null) {
             for (int c = 0; c < certificates.length; c++) {
                 X509Certificate cert = certificates[c];
-                LOG.info(" Client certificate " + (c + 1) + ":");
-                LOG.info("  Subject DN: " + cert.getSubjectDN());
-                LOG.info("  Signature Algorithm: " + cert.getSigAlgName());
-                LOG.info("  Valid from: " + cert.getNotBefore() );
-                LOG.info("  Valid until: " + cert.getNotAfter());
-                LOG.info("  Issuer: " + cert.getIssuerDN());
+                LOG.info(" Client certificate " + (c + 1) + ":"); //$NON-NLS-1$ //$NON-NLS-2$
+                LOG.info("  Subject DN: " + cert.getSubjectDN()); //$NON-NLS-1$
+                LOG.info("  Signature Algorithm: " + cert.getSigAlgName()); //$NON-NLS-1$
+                LOG.info("  Valid from: " + cert.getNotBefore() ); //$NON-NLS-1$
+                LOG.info("  Valid until: " + cert.getNotAfter()); //$NON-NLS-1$
+                LOG.info("  Issuer: " + cert.getIssuerDN()); //$NON-NLS-1$
             }
         }
     	_defaultTrustManager.checkClientTrusted(certificates,authType);
@@ -136,12 +137,12 @@ public class AuthSSLX509TrustManager implements X509TrustManager
         if (LOG.isInfoEnabled() && certificates != null) {
             for (int c = 0; c < certificates.length; c++) {
                 X509Certificate cert = certificates[c];
-                OWSLogger.DEV.info(" Server certificate " + (c + 1) + ":");
-                OWSLogger.DEV.info("  Subject DN: " + cert.getSubjectDN());
-                OWSLogger.DEV.info("  Signature Algorithm: " + cert.getSigAlgName());
-                OWSLogger.DEV.info("  Valid from: " + cert.getNotBefore() );
-                OWSLogger.DEV.info("  Valid until: " + cert.getNotAfter());
-                OWSLogger.DEV.info("  Issuer: " + cert.getIssuerDN());
+                OWSLogger.DEV.info(Translations.getString("AuthSSLX509TrustManager.certificate") + (c + 1) + ":"); //$NON-NLS-1$ //$NON-NLS-2$
+                OWSLogger.DEV.info(Translations.getString("AuthSSLX509TrustManager.subject") + cert.getSubjectDN()); //$NON-NLS-1$
+                OWSLogger.DEV.info(Translations.getString("AuthSSLX509TrustManager.algorithm") + cert.getSigAlgName()); //$NON-NLS-1$
+                OWSLogger.DEV.info(Translations.getString("AuthSSLX509TrustManager.validFrom") + cert.getNotBefore() ); //$NON-NLS-1$
+                OWSLogger.DEV.info(Translations.getString("AuthSSLX509TrustManager.validUntil") + cert.getNotAfter()); //$NON-NLS-1$
+                OWSLogger.DEV.info(Translations.getString("AuthSSLX509TrustManager.Issuer") + cert.getIssuerDN()); //$NON-NLS-1$
             }
         }
 
@@ -152,12 +153,12 @@ public class AuthSSLX509TrustManager implements X509TrustManager
     		PrintStream s = new PrintStream(out);
     		for (int c = 0; c < certificates.length; c++) {
                 X509Certificate cert = certificates[c];
-                s.println(" Client certificate " + (c + 1) + ":");
-                s.println("  Subject DN: " + cert.getSubjectDN());
-                s.println("  Signature Algorithm: " + cert.getSigAlgName());
-                s.println("  Valid from: " + cert.getNotBefore() );
-                s.println("  Valid until: " + cert.getNotAfter());
-                s.println("  Issuer: " + cert.getIssuerDN());
+                s.println(Translations.getString("AuthSSLX509TrustManager.certificate") + (c + 1) + ":"); //$NON-NLS-1$ //$NON-NLS-2$
+                s.println(Translations.getString("AuthSSLX509TrustManager.subject") + cert.getSubjectDN()); //$NON-NLS-1$
+                s.println(Translations.getString("AuthSSLX509TrustManager.algorithm") + cert.getSigAlgName()); //$NON-NLS-1$
+                s.println(Translations.getString("AuthSSLX509TrustManager.validFrom") + cert.getNotBefore() ); //$NON-NLS-1$
+                s.println(Translations.getString("AuthSSLX509TrustManager.validUntil") + cert.getNotAfter()); //$NON-NLS-1$
+                s.println(Translations.getString("AuthSSLX509TrustManager.Issuer") + cert.getIssuerDN()); //$NON-NLS-1$
     		}
 
     		AddCert howToHandle = _errorReporter.certificateValidationFailure(_readonlyKeystore, e.getLocalizedMessage(), out.toString());
@@ -170,7 +171,7 @@ public class AuthSSLX509TrustManager implements X509TrustManager
 				break;
 
 			default:
-    			throw new CertificateException("Certificate could not be validated");
+    			throw new CertificateException(Translations.getString("AuthSSLX509TrustManager.notTrusted")); //$NON-NLS-1$
 			}
     	}
     }

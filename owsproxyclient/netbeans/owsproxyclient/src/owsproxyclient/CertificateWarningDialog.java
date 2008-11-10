@@ -11,8 +11,8 @@
 
 package owsproxyclient;
 
-import java.awt.Component;
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -65,14 +65,14 @@ public class CertificateWarningDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        cancel.setText(translations.getString("cancelButton")); // NOI18N
+        cancel.setText(translations.getString("doNotAcceptButton")); // NOI18N
         cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 18));
         jLabel1.setText(translations.getString("failedMsg")); // NOI18N
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/owsproxyclient/important.png"))); // NOI18N
@@ -194,7 +194,7 @@ public class CertificateWarningDialog extends javax.swing.JDialog {
                 .add(examinePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        
+
         pack();
 
     }

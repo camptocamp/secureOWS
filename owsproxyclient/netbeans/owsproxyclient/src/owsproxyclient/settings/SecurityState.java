@@ -5,11 +5,14 @@
 
 package owsproxyclient.settings;
 
+import java.util.ResourceBundle;
+
 /**
  * Encapsulates the security settings
  * @author jeichar
  */
 public class SecurityState {
+    private static final ResourceBundle translations = ResourceBundle.getBundle("owsproxyclient/translations");
     public final String keystore;
     public final char[] password;
     public final boolean readonly;

@@ -13,6 +13,7 @@ package owsproxyclient.settings;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ResourceBundle;
 import owsproxyclient.OWSClientGUI;
 
 /**
@@ -20,6 +21,7 @@ import owsproxyclient.OWSClientGUI;
  * @author jeichar
  */
 public class SettingsDialog extends javax.swing.JDialog {
+    private static final ResourceBundle translations = ResourceBundle.getBundle("owsproxyclient/translations");
 
     private Result _result;
 
@@ -76,10 +78,10 @@ public class SettingsDialog extends javax.swing.JDialog {
             SettingsPanel panel = (SettingsPanel) jTabbedPane1.getComponentAt(i);
             final String msg = panel.getErrorMessage();
             if (msg != null) {
-                jTabbedPane1.setTitleAt(i, "*");
+                jTabbedPane1.setTitleAt(i,"*"); // NOI18N
                 failure = true;
             } else {
-                jTabbedPane1.setTitleAt(i, "");
+                jTabbedPane1.setTitleAt(i, ""); // NOI18N
             }
             if (i == jTabbedPane1.getSelectedIndex()) {
                 if (msg == null) {
@@ -143,14 +145,14 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("", new javax.swing.ImageIcon(getClass().getResource("/owsproxyclient/kgpg.png")), jPanel2); // NOI18N
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(translations.getString("Cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
 
-        okButton.setText("OK");
+        okButton.setText(translations.getString("OK")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
@@ -170,14 +172,13 @@ public class SettingsDialog extends javax.swing.JDialog {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
-                        .add(messages, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                        .add(messages, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(okButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,  org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(cancelButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,  org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .add(cancelButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -186,11 +187,12 @@ public class SettingsDialog extends javax.swing.JDialog {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(messages, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, cancelButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, okButton)))
+                    .add(cancelButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(okButton))
                 .addContainerGap())
         );
+
+        layout.linkSize(new java.awt.Component[] {cancelButton, okButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
