@@ -1,16 +1,13 @@
-package org.secureows.deploy
+package org.secureows.deploy.validation
 
 import scala.xml._
 import java.io.{File,PrintStream}
 
-abstract class Result{val msg:String;val id:Int}
-case class Error(msg:String) extends Result{val id=0}
-case class Warning(msg:String) extends Result{val id=1}
-object Good extends Result{val msg="good";val id=2}
-
-object Validation {
-  var log:PrintStream = System.out
-
+class SecOwsValidator extends Validator {
+  def validFor(dir:File):Boolean={
+    return dir.getName() == "owsproxyserver"
+  }
+  
   // returns errors,warnings
   def validate(webapp:File):Seq[Result]={
     val webinf = new File(webapp,"WEB-INF")

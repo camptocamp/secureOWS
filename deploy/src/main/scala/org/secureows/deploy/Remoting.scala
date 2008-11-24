@@ -1,4 +1,6 @@
 package org.secureows.deploy
+
+import org.secureows.deploy.validation._
 import scalax.io.InputStreamResource
 
 object Remoting {

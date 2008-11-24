@@ -3,6 +3,7 @@ import java.io.{FileInputStream,File}
 import java.net.{URL,InetAddress}
 import scalax.io.Implicits._
 import java.text.MessageFormat.format
+import org.secureows.deploy.validation.Validator
 
 class Configuration(val configFile:File, val deployApp:File) {
   
@@ -18,6 +19,22 @@ class Configuration(val configFile:File, val deployApp:File) {
     if( backups.toInt < 0 ) throw new IllegalArgumentException("maxBackups must be a positive number")
     backups.toInt
   } 
+  def alias(alias:String) = Alias(alias, 
+                                  url(alias),
+                                  configSvnApp(alias),
+                                  configSvnConf(alias),
+                                  downloadUrl(alias),
+                                  installWebapp(alias),
+                                  installConfig(alias),
+                                  tmpDir(alias),
+                                  backupDir(alias),
+                                  username(alias),
+                                  tmpAppDir(alias),
+                                  tmpWar(alias),
+                                  tmpWebapp(alias),
+                                  tmpConfigDir(alias),
+                                  this)
+  
   def asURL(name:String) = new URL("http://"+aliases(name))
 
   def configSvnApp(alias:String):String = find(alias, "configSvnApp")
@@ -36,7 +53,19 @@ class Configuration(val configFile:File, val deployApp:File) {
 
   
   def isLocalhost(alias:String) = localhost.contains(alias)
-
+  
+  lazy val validators:Seq[Validator] = {
+    val asString = elements("validators")
+    if( asString.trim().isEmpty ){
+      Seq[Validator]()
+    } else {
+      val classNames = asString.split(",").map( _.trim )
+      for( name <- classNames ) yield {
+        val c = classOf[Configuration].getClassLoader.loadClass( name )
+        c.newInstance().asInstanceOf[Validator]
+      }
+    }
+  }
   
   // ---- End of API
     private[this] def findLocalHost() = {
@@ -66,10 +95,31 @@ class Configuration(val configFile:File, val deployApp:File) {
   }
   
   private[this] def loadProperties = {
+    
+    import scala.collection.jcl.Conversions.convertMap
     val props = new java.util.Properties()
     props.load(new FileInputStream(configFile))
     
-    import scala.collection.jcl.Conversions.convertMap
+    def resolve:Boolean = {
+	    val replacePattern = java.util.regex.Pattern.compile(".*\\$\\{([^\\}]+)\\}.*" )
+	    def needSubstitution( key:Object ):Boolean = {props.getProperty(key.asInstanceOf[String]).contains("${") }
+	    val result = for( key <- props.filterKeys( needSubstitution _) ) yield {
+	            val string = key.asInstanceOf[String]
+	            var property = System.getProperty(string)
+	            val matcher = replacePattern.matcher( property )
+	
+	            if( matcher.matches ){
+	              val substitute = props.getProperty( matcher.group(1) )
+	              property = property.replace( "${"+matcher.group(1)+"}", substitute )
+	              props.setProperty( string, property )
+	            }
+	             needSubstitution(key)
+	      }
+	    result.size > 0
+	  }
+    
+    while (resolve){}
+    
     for( (key,value) <- convertMap(props) ) yield {
       ( key.asInstanceOf[String], value.asInstanceOf[String])
     }

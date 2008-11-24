@@ -1,4 +1,6 @@
 package org.secureows.deploy
+
+import org.secureows.deploy.validation._
 import scalax.io.{CommandLineParser,InputStreamResource}
 import scalax.data.Positive
 import java.text.MessageFormat.format
@@ -57,7 +59,11 @@ object ValidateOp {
         case ValType.install => config.installWebapp(alias)
         case ValType.tmp => config.tmpWebapp(alias)
       }
-      Validation.validate(new File(dir) )
+      validate(config.alias(alias), new File(dir))
+    }
+    
+    def validate(alias:Alias, dir:File) = { 
+      alias.validators.filter( _.validFor(dir) ).flatMap( _.validate(dir) )
     }
 
 }

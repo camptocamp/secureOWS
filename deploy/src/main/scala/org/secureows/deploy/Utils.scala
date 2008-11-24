@@ -200,7 +200,7 @@ class DynamicObject(target:AnyRef){
           }
         ) 
         method match {
-          case Some(m) => Some(m.invoke(target, scala.Array[Object]()).asInstanceOf[R])
+          case Some(m) => Some(m.invoke(target).asInstanceOf[R])
           case None => None
         }
     }
@@ -216,8 +216,8 @@ class DynamicObject(target:AnyRef){
       val params = scala.Array(arg)++args
       val paramTypes = params.map( p => p.getClass )
       try{
-        val method = target.getClass.getDeclaredMethod( methodName, paramTypes.toArray) 
-        Some(method.invoke(target, params).asInstanceOf[R])
+        val method = target.getClass.getDeclaredMethod( methodName, paramTypes:_*) 
+        Some(method.invoke(target, params:_*).asInstanceOf[R])
       }catch{
         case _:NoSuchMethodException => None
       }

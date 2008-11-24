@@ -1,4 +1,6 @@
 package org.secureows.deploy
+
+import org.secureows.deploy.validation._
 import java.io.{File,InputStream}
 import java.text.MessageFormat.format
 import scalax.io.{InputStreamResource}
@@ -95,8 +97,8 @@ object PushOp {
         |scp -r {3} {0}:{5}
         |scp -r {4} {0}:{6}""".stripMargin
     
-    val scpScript = format( pattern, Array(login, destWebAppDir.getPath, destConfig.getPath, sourceWebAppDir, 
-                                           sourceConfig, destWebAppDir.getParent, destConfig.getParent))
+    val scpScript = format( pattern, login, destWebAppDir.getPath, destConfig.getPath, sourceWebAppDir, 
+                                           sourceConfig, destWebAppDir.getParent, destConfig.getParent)
     
     var error = false
     def errors(in:InputStreamResource[InputStream]){
