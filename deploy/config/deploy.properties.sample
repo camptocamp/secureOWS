@@ -1,6 +1,15 @@
 # maximum number of backups to keep
 maxBackups = 2
 
+# the classes used to validate the installation
+validators = org.secureows.deploy.validation.SecOwsValidator
+
+# the webapplications in the installWebapp directory that will be copied and built
+# Comma separated if there are multiple applications
+apps=owsproxyserver
+
+# the strategy to use to download the application(s) to be configured and installed  
+fetchStrategy=org.secureows.deploy.fetch.OwsProxyServerWarStrategy
 
 ###################################################################################################
 # Start of alias declaration and associated data
@@ -35,7 +44,7 @@ aliases =  kogis04 -> kogis04,\
 # Username to use when logging into each of the systems
 # if the username is the same for all a default can be set by
 # uncommented by:
-# 		username = camptocamp
+# username = camptocamp
 
 # The default is overridden by prefixing Username with the alias 
 # that the username applies to	     
@@ -44,7 +53,7 @@ abUsername = geodata
 prodUsername = geodata
 
 # the directory the web application is saved in
-installWebapp = /var/www/tomcat/stable/webapps/owsproxyserver
+installWebapp = /var/www/tomcat/stable/webapps/
 
 # the directory the tomcat configuratin is saved in
 installConfig = /var/www/tomcat/stable/conf
@@ -66,6 +75,3 @@ configSvnConf = http://svn.swisstopogeodata.ch/secureowsconfig/tag/1.0/conf
 # this file is downloaded, decompressed and has the configuration
 # files from configSvn added to it (only the WEB-INF configuration files) 
 downloadUrl = http://www.secureows.org/securewms/war/20080609/owsproxyserver.war
-
-# the classes used to validate the installation
-validators = org.secureows.deploy.validation.SecOwsValidator

@@ -31,9 +31,10 @@ object ValidateOp {
       
       Remoting.distributeJars(aliases,config)
       
-      val results = for( alias <- aliases ) yield { 
-        val validationResult = if( config.isLocalhost(alias)) localValidate(valType,alias,config)
-                               else remoteValidate(valType,alias,config)
+      val results = for( aliasName <- aliases ) yield {
+        val alias = config.alias(aliasName) 
+        val validationResult = if( alias.isLocalhost) localValidate(valType,alias)
+                               else remoteValidate(valType,aliasName,config)
         validationResult.toList.sort( (l,r)=> l.id<r.id).head match {
           case Error(s) => s
           case _ => println("Validation successful");""
@@ -52,18 +53,22 @@ object ValidateOp {
       Remoting.runRemote(alias,javaCMD,config)
     }
     
-    def localValidate(valType:ValType.Value,alias:String,config:Configuration)={
-      
+    def localValidate(valType:ValType.Value,alias:Alias)={
       println("\nVALIDATING: "+alias)
-      val dir = valType match {
-        case ValType.install => config.installWebapp(alias)
-        case ValType.tmp => config.tmpWebapp(alias)
+      val dirs = valType match {
+        case ValType.install => alias.webapps.map ( _ + alias.installWebappBaseDir)
+        case ValType.tmp => alias.webapps.map ( _+alias.tmpWebappBaseDir)
       }
-      validate(config.alias(alias), new File(dir))
+      val results = for ( dir <- dirs ) yield {
+        validate(alias, new File(dir))
+      }
+      results.flatMap(r => r)
     }
     
     def validate(alias:Alias, dir:File) = { 
-      alias.validators.filter( _.validFor(dir) ).flatMap( _.validate(dir) )
+      val result = alias.validators.filter( _.validFor(dir) ).flatMap( _.validate(dir) )
+      if (result.isEmpty) Array(Good)
+      else result
     }
 
 }

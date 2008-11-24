@@ -6,85 +6,69 @@ import java.text.MessageFormat.format
 import java.io.File
 
 object FetchOp {
-  val TMP_APP = "owsproxyserver"
   val TMP_CONF = "conf"
+  val TMP_APPS = "apps"
   
   def run(args:Seq[String], config:Configuration):Option[String]={
       if(args.length != 1) throw new IllegalArgumentException("fetch requires exactly one argument, the alias. Arguments passed to program were: "+args.mkString(","))
 
-      val alias = args(0)
-
-      if( !config.aliases.contains(alias) ) throw new IllegalArgumentException("Alias "+alias+" is not defined in the configuration file")
-      if(!config.isLocalhost(alias) ) throw new IllegalArgumentException("Alias "+alias+" is not on the localhost")
+      val alias = config.alias(args(0)) 
       
+      if(!alias.isLocalhost ) throw new IllegalArgumentException("Alias "+alias.name+" is not on the localhost")
       
-      val appRemoteUrl = appFetchUrl(alias,config)
-      val localAppDir = new File(config.tmpAppDir(alias))
-      val localConfDir = new File(config.tmpConfigDir(alias))
-      val localWar = new File(config.tmpWar(alias))
-      val webapp = new File(config.tmpWebapp(alias))
+      val localAppDir = new File(alias.tmpAppDir)
+      val localConfDir = new File(alias.tmpConfigDir)
+      val webapp = new File(alias.tmpWebappBaseDir)
       val configDir = localAppDir/"configuration"
       
-      val changes = checkConfigModifications(alias,config)
+      val changes = checkConfigModifications(alias)
       if( changes.isDefined ) return changes
 
       if(webapp.exists)      webapp.deleteRecursively
       assert( webapp.mkdirs, "Unable to make directory: "+webapp+" forced to abort")
       
-      println("Downloading "+appRemoteUrl)
-      InputStreamResource(appRemoteUrl.openStream).pumpTo(localWar.outputStream.buffered )
+      alias.fetchStrategy.downloadApp(alias)
 
-      println("decompressing "+localWar.getName)
-      ProcessRunner("unzip",localWar.getAbsolutePath, "-d", webapp.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
-  
-      checkoutConfigFiles(alias,configDir,config)
+      checkoutConfigFiles(alias.name,configDir,config)
       
-      if( (configDir/TMP_CONF).listFiles.isEmpty ){
-        print("There are no configuration files for the web server.\nCheck "+config.configSvnConf(alias)+"\nAre you sure you want to continue?(y/n) ")
+      if( (configDir/TMP_CONF).listFiles.length == 0 ){
+        print("There are no configuration files for the web server.\nCheck "+alias.configSvnConf+"\nAre you sure you want to continue?(y/n) ")
         if( readChar != 'y'  ) return Some("Cancelled by user")
       }
-      if( (configDir/TMP_APP).listFiles.isEmpty ){
-        print("There are no configuration files for the owsproxyserver.\nCheck "+config.configSvnApp(alias)+"\nAre you sure you want to continue?(y/n) ")
-        if( readChar != 'y' ) return Some("Cancelled by user")
-      }
-
-      (webapp/"WEB-INF").listFiles.filter( _.isFile).filter( _.getName.endsWith(".xml")).foreach( _.delete)
-      
       Utils.replaceTree(configDir/TMP_CONF, localConfDir)
-      Utils.replaceTree(configDir/TMP_APP, webapp)
-      
-      generateWebXml(webapp)
-      
-      InstallOp.run(Array(alias),config)
-    }
-  
-  def generateWebXml(webapp:File){
-    ProcessRunner("java","-cp","WEB-INF/classes","OwsAdmin", "./WEB-INF/").dir(webapp).run
-  }
 
-    private def checkoutConfigFiles(alias:String, configDir:File,config:Configuration) = {
-      println("Checking out configuration files")
-
-      def doCheckout(dir:File, url:String){
-          assert (dir.deleteRecursively, "unable to delete directory "+dir+" forced to abort")
-          assert (dir.mkdirs, "unable to make directory "+dir+" forced to abort")
-	      ProcessRunner("svn","co",url,dir.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
+      for( app <- alias.webapps; configFiles=configDir/TMP_APPS/app; if (configFiles.exists) ) {
+        if( configFiles.listFiles.length==0 ){
+          print("There are no configuration files for the owsproxyserver.\nCheck "+alias.configSvnApp+"\nAre you sure you want to continue?(y/n) ")
+          if( readChar != 'y' ) return Some("Cancelled by user")
+        }
+        Utils.replaceTree(configDir/TMP_APPS/app, webapp/app)
       }
       
-      doCheckout(configDir/TMP_CONF,config.configSvnConf(alias))
-      doCheckout(configDir/TMP_APP,config.configSvnApp(alias))
+      alias.fetchStrategy.finalConfiguration(alias)
+      
+      InstallOp.run(Array(alias.name),config)
+  }
+  
+
+    private def checkoutConfigFiles(aliasName:String, configDir:File,config:Configuration) = {
+      println("Checking out configuration files")
+      
+      Utils.doCheckout(configDir/TMP_CONF,config.configSvnConf(aliasName))
+      Utils.doCheckout(configDir/TMP_APPS,config.configSvnApp(aliasName))
     }
     
-    private def checkConfigModifications(alias:String, config:Configuration):Option[String] = {
-            
-      val configurationDirs = Array(config.installWebapp(alias)+"WEB-INF", config.installConfig(alias))
-      val processArgs:Seq[String] = Array("svn","st")++configurationDirs.filter(_.length>0)
+    private def checkConfigModifications(alias:Alias):Option[String] = {
+      val webappBase = alias.installWebappBaseDir
+      val configurationDirs = alias.webapps.map( webappBase+_ ) ++ Array(alias.installConfig)
+      val processArgs:Seq[String] = Array("svn","st")++configurationDirs.toArray.filter(_.length>0)
       
       var modified = false
       
       def handler(stdOut:InputStreamResource[java.io.InputStream]){
         val test = (line:String) => {
-          (line.contains(".xml") && !line.contains("services_test.xml")) && 
+          (line.contains(".xml") && !line.contains("tomcat-users.xml") &&
+          !line.contains("services_test.xml")) && 
             (  line.contains("M ") || 
                line.contains("? ") || 
                line.contains("A ") || 
@@ -112,6 +96,4 @@ object FetchOp {
         } else None
       } else None
     } 
-    private def appFetchUrl(alias:String, config:Configuration) = new java.net.URL(config.downloadUrl(alias))
-
 }

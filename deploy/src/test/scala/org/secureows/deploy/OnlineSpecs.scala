@@ -22,15 +22,19 @@ object OnlineSpecs extends Specification{
   }
    
   "can run validate on a remote computer" in {
-    Main.main(Array("-v","-j","target/deploy-1.0-SNAPSHOT/lib/deploy.jar","-c","testing.properties","install","website"))
+    Main.main(Array("-v","-j","target/deploy-1.1/lib/deploy.jar","-c","testing.properties","install","website"))
   }
 
-  "fetch" in {
-    Main.main(Array("-f","-j","target/deploy-1.0-SNAPSHOT/lib/deploy.jar","-c","testing.properties","home"))
+   * "can run validate on local computer" in {
+    Main.main(Array("-v","-j","target/deploy-1.1/lib/deploy.jar","-c","testing.properties","install","home"))
+  }
+
+  "push" in {
+    Main.main(Array("-p","-j","target/deploy-1.1/lib/deploy.jar","-c","testing.properties","home","website"))
   }
 */
-  
-  "push" in {
-    Main.main(Array("-p","-j","target/deploy-1.0-SNAPSHOT/lib/deploy.jar","-c","geonetwork.properties","from","to"))
+
+ "fetch" in {
+    Main.main(Array("-f","-j","target/deploy-1.1/lib/deploy.jar","-c","geonetwork.properties","from"))
   }
 }

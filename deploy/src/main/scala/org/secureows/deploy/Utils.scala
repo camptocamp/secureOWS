@@ -231,48 +231,56 @@ object DynamicObject {
 }
 
 object Utils {
-    import DynamicObject._
-    def setExecutable(file:File)={
-        val windows = System.getProperty("os.name").contains("win")
+  import DynamicObject._
+  def setExecutable(file:File)={
+    val windows = System.getProperty("os.name").contains("win")
     
-	    file ~> ("setExecutable",java.lang.Boolean.TRUE) match {
-	      case None if( !windows) => ProcessRunner("chmod", "+x", file.getName).run
-	      case _ => 
-	    }
+    file ~> ("setExecutable",java.lang.Boolean.TRUE) match {
+      case None if( !windows) => ProcessRunner("chmod", "+x", file.getAbsolutePath).run
+      case _ => 
     }
-  	def relative( root:File, file:File ):String = {
-		file.getPath.drop(root.getPath.length)
-	}
-	def copyTree(from:File, to:File):Int = {
-	  copyTree(from,to, (s,d)=>s.lastModified>d.lastModified)
-	}
-	def replaceTree(from:File, to:File):Int = {
-	  copyTree(from,to, (s,d)=>true)
-	}
-	def copyTree(from:File, to:File, replace:(File,File)=>Boolean):Int = {
-		from.tree.projection.foldLeft(0)( (count,f) => {
-			val dest = new File(to, relative(from,f))
-			if(f.isDirectory) dest.mkdirs
-			else if(!dest.exists || replace(f,dest) ) f.copyTo(dest)
-   
-			if(f.isFile && (f ~> "canExecute").getOrElse(false).asInstanceOf[Boolean] ) setExecutable(dest)
-			count + 1
-		})
-	}
-    def zipDir(source:File, to:File){
+  }
+  def relative( root:File, file:File ):String = {
+    file.getPath.drop(root.getPath.length)
+  }
+  def copyTree(from:File, to:File):Int = {
+    copyTree(from,to, (s,d)=>s.lastModified>d.lastModified)
+  }
+  def replaceTree(from:File, to:File):Int = {
+    copyTree(from,to, (s,d)=>true)
+  }
+  def copyTree(from:File, to:File, replace:(File,File)=>Boolean):Int = {
+    from.tree.projection.foldLeft(0)( (count,f) => {
+      val dest = new File(to, relative(from,f))
+      if(f.isDirectory) dest.mkdirs
+      else if(!dest.exists || replace(f,dest) ) {
+        dest.delete()
+        f.copyTo(dest)
+      }
+      
+      if(f.isFile && (f ~> "canExecute").getOrElse(false).asInstanceOf[Boolean] ) setExecutable(dest)
+      count + 1
+    })
+  }
+  def zipDir(source:File, to:File){
     import java.util.zip._
-	val stream=OutputStreamResource(new ZipOutputStream(new java.io.FileOutputStream(to)))
-	stream.acquireFor { out =>
-		for( f <- source.tree; if f.isFile ){
-			val entry = new ZipEntry( relative(source,f) )
-			
-			out.putNextEntry(entry)
-			if( f.isFile ) {
-				val bytes = f.inputStream.buffered.slurp
-				out.write( bytes, 0, bytes.length)
-			}
-			out.closeEntry()
-		}
-	}
-}
+    val stream=OutputStreamResource(new ZipOutputStream(new java.io.FileOutputStream(to)))
+    stream.acquireFor { out =>
+      for( f <- source.tree; if f.isFile ){
+        val entry = new ZipEntry( relative(source,f) )
+        
+        out.putNextEntry(entry)
+        if( f.isFile ) {
+          val bytes = f.inputStream.buffered.slurp
+          out.write( bytes, 0, bytes.length)
+        }
+        out.closeEntry()
+      }
+    }	
+  }	
+  def doCheckout(dir:File, url:String){
+    assert (!dir.exists || dir.deleteRecursively, "unable to delete directory "+dir+" forced to abort")
+    assert (dir.mkdirs, "unable to make directory "+dir+" forced to abort")
+    ProcessRunner("svn","co",url,dir.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
+  }		
 }

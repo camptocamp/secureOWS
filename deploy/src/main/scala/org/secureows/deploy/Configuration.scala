@@ -4,6 +4,7 @@ import java.net.{URL,InetAddress}
 import scalax.io.Implicits._
 import java.text.MessageFormat.format
 import org.secureows.deploy.validation.Validator
+import org.secureows.deploy.fetch.FetchStrategy
 
 class Configuration(val configFile:File, val deployApp:File) {
   
@@ -19,21 +20,15 @@ class Configuration(val configFile:File, val deployApp:File) {
     if( backups.toInt < 0 ) throw new IllegalArgumentException("maxBackups must be a positive number")
     backups.toInt
   } 
-  def alias(alias:String) = Alias(alias, 
-                                  url(alias),
-                                  configSvnApp(alias),
-                                  configSvnConf(alias),
-                                  downloadUrl(alias),
-                                  installWebapp(alias),
-                                  installConfig(alias),
-                                  tmpDir(alias),
-                                  backupDir(alias),
-                                  username(alias),
-                                  tmpAppDir(alias),
-                                  tmpWar(alias),
-                                  tmpWebapp(alias),
-                                  tmpConfigDir(alias),
-                                  this)
+  
+  def alias(alias:String) = {
+    if( !aliases.contains(alias) ) throw new IllegalArgumentException("Alias "+alias+" is not defined in the configuration file")
+
+    Alias(alias, url(alias), configSvnApp(alias), configSvnConf(alias), downloadUrl(alias),
+          installWebappBaseDir(alias), webapps, installConfig(alias), tmpDir(alias),
+          backupDir(alias), username(alias), tmpAppDir(alias), tmpWebappBaseDir(alias),
+          tmpConfigDir(alias), this)
+  }
   
   def asURL(name:String) = new URL("http://"+aliases(name))
 
@@ -41,22 +36,24 @@ class Configuration(val configFile:File, val deployApp:File) {
   def configSvnConf(alias:String):String = find(alias, "configSvnConf")
   def downloadUrl(alias:String):String = find(alias,"downloadUrl")
   def url(name:String):String = aliases(name)
-  def installWebapp(alias:String):String = assureDir( find(alias,"installWebapp") )
   def installConfig(alias:String):String = assureDir( find(alias,"installConfig") )
   def tmpDir(alias:String):String = assureDir( find(alias,"tmpDir") )
   def backupDir(alias:String):String = assureDir( find(alias,"backupDir") )
   def username(alias:String):String = find(alias,"username")
   def tmpAppDir(alias:String) = tmpDir(alias) + "server/"
-  def tmpWar(alias:String):String = tmpAppDir(alias) + "owsproxyserver.war"
-  def tmpWebapp(alias:String):String = tmpAppDir(alias) + "tomcat/webapps/owsproxyserver/"
+  def tmpWebappBaseDir(alias:String):String = assureDir(tmpAppDir(alias) + "tomcat/webapps/")
   def tmpConfigDir(alias:String):String = tmpAppDir(alias) + "tomcat/conf/"
-
-  
+  def installWebappBaseDir(alias:String):String = assureDir( find(alias,"installWebapp") )
+  def webapps:Iterable[String] =  {
+    val decl = elements("apps")
+    assert (decl != null, "the configurations file must declare a 'apps' property")
+    decl.split(",")
+  }
   def isLocalhost(alias:String) = localhost.contains(alias)
   
   lazy val validators:Seq[Validator] = {
     val asString = elements("validators")
-    if( asString.trim().isEmpty ){
+    if( asString == null || asString.trim().length==0 ){
       Seq[Validator]()
     } else {
       val classNames = asString.split(",").map( _.trim )
@@ -65,6 +62,13 @@ class Configuration(val configFile:File, val deployApp:File) {
         c.newInstance().asInstanceOf[Validator]
       }
     }
+  }
+  
+  lazy val fetchStrategy:FetchStrategy = {
+    val asString = elements("fetchStrategy")
+    assert( asString != null && asString.trim().length>0, "the 'fetchStrategy' property is not defined" )
+      val c = classOf[Configuration].getClassLoader.loadClass( asString )
+      c.newInstance().asInstanceOf[FetchStrategy]
   }
   
   // ---- End of API
@@ -96,33 +100,32 @@ class Configuration(val configFile:File, val deployApp:File) {
   
   private[this] def loadProperties = {
     
-    import scala.collection.jcl.Conversions.convertMap
+    def resolve(map:Map[String,String]):Map[String,String] = {
+        val patternString = ".*\\$\\{([^\\}]+)\\}.*"
+	    val replacePattern = java.util.regex.Pattern.compile(patternString)
+	    val result = for( (key,value) <- map ) yield {
+	            val matcher = replacePattern.matcher( value )
+	
+	            if( matcher.matches ){
+	              val substitute = map( matcher.group(1) )
+	              val newVal = value.replace( "${"+matcher.group(1)+"}", substitute )
+	              (key, newVal)
+	            }else{
+	              (key,value)
+	            }
+	            
+	      }
+        if( result.exists( e=> e._2.matches(patternString)) ) resolve(Map(result.toSeq:_*))
+        else Map(result.toSeq:_*)
+	    
+	  }
+    
+    import scala.collection.jcl.Conversions._
     val props = new java.util.Properties()
     props.load(new FileInputStream(configFile))
     
-    def resolve:Boolean = {
-	    val replacePattern = java.util.regex.Pattern.compile(".*\\$\\{([^\\}]+)\\}.*" )
-	    def needSubstitution( key:Object ):Boolean = {props.getProperty(key.asInstanceOf[String]).contains("${") }
-	    val result = for( key <- props.filterKeys( needSubstitution _) ) yield {
-	            val string = key.asInstanceOf[String]
-	            var property = System.getProperty(string)
-	            val matcher = replacePattern.matcher( property )
-	
-	            if( matcher.matches ){
-	              val substitute = props.getProperty( matcher.group(1) )
-	              property = property.replace( "${"+matcher.group(1)+"}", substitute )
-	              props.setProperty( string, property )
-	            }
-	             needSubstitution(key)
-	      }
-	    result.size > 0
-	  }
     
-    while (resolve){}
-    
-    for( (key,value) <- convertMap(props) ) yield {
-      ( key.asInstanceOf[String], value.asInstanceOf[String])
-    }
+    resolve(Map(props.map( e=> (e._1.asInstanceOf[String],e._2.asInstanceOf[String])).toSeq:_*) )
   }
   
   private[this] def assureDir(dir:String) = if(dir.endsWith("/")||dir.length==0) dir else dir+"/"
