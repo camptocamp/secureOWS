@@ -37,33 +37,45 @@ object InstallOp {
     val fromAppBaseDir = new File(alias.tmpWebappBaseDir)
     val installAppsBaseDir=new File(alias.installWebappBaseDir)
     val installConf = new File(alias.installConfig)
-    val bin = installConf / "../bin"
-    val env = Map("JAVA_HOME"->System.getProperty("java.home"))
     
     println( "Backing up old version" )
     BackupOp.run( Array(alias.name),config )
-    println("Shutting down server")
-    try{
-      ProcessRunner(bin.getAbsolutePath+"/shutdown.sh").error(_.lines.toList).output(_.lines.toList).env(env).run
-    }catch{
-      case _ => // ignore
-    }
-    Thread.sleep(3000)
     
     Utils.replaceTree(tmpConf,installConf)
     
     for( app <- alias.webapps ) {
       println("Copying temporary "+app+" installation to active installation")
       val appDir = installAppsBaseDir/app
-      appDir.deleteRecursively
-      Utils.replaceTree(fromAppBaseDir/app,appDir)
+      val warFile = installAppsBaseDir/(app+".war")
+      appDir.deleteRecursively()
+      warFile.delete()
+      
+      Utils.zipDir(fromAppBaseDir/app, warFile)
     }	
+
+    startServer(alias)
+    None
+  }
+
+  lazy val env = Map("JAVA_HOME"->System.getProperty("java.home"))
+ 
+  def stopServer(alias:Alias){
+    println("Shutting down server")
+    try{
+      ProcessRunner(alias.shutdown).error(_.lines.toList).output(_.lines.toList).env(env).run
+    }catch{
+      case _ => // ignore
+    }
+    Thread.sleep(3000)
+    
+  }
+  
+  def startServer(alias:Alias){
     println("Starting server")
     try{
-      ProcessRunner(bin.getAbsolutePath+"/startup.sh").env(env).run
+      ProcessRunner(alias.startup).error(_.lines.toList).output(_.lines.toList).env(env).run
     }catch{
       case _ => println("WARNING:  There was an error starting the server, you may be required to do so manually" )
     }
-    None
-  } 		
+  }
 }	

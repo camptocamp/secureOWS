@@ -27,7 +27,7 @@ class Configuration(val configFile:File, val deployApp:File) {
     Alias(alias, url(alias), configSvnApp(alias), configSvnConf(alias), downloadUrl(alias),
           installWebappBaseDir(alias), webapps, installConfig(alias), tmpDir(alias),
           backupDir(alias), username(alias), tmpAppDir(alias), tmpWebappBaseDir(alias),
-          tmpConfigDir(alias), this)
+          tmpConfigDir(alias), shutdown(alias), startup(alias),this)
   }
   
   def asURL(name:String) = new URL("http://"+aliases(name))
@@ -44,6 +44,9 @@ class Configuration(val configFile:File, val deployApp:File) {
   def tmpWebappBaseDir(alias:String):String = assureDir(tmpAppDir(alias) + "tomcat/webapps/")
   def tmpConfigDir(alias:String):String = tmpAppDir(alias) + "tomcat/conf/"
   def installWebappBaseDir(alias:String):String = assureDir( find(alias,"installWebapp") )
+  def shutdown(alias:String) = find(alias,"shutdown")
+  def startup(alias:String) = find(alias,"startup")
+  
   def webapps:Iterable[String] =  {
     val decl = elements("apps")
     assert (decl != null, "the configurations file must declare a 'apps' property")
@@ -107,7 +110,15 @@ class Configuration(val configFile:File, val deployApp:File) {
 	            val matcher = replacePattern.matcher( value )
 	
 	            if( matcher.matches ){
-	              val substitute = map( matcher.group(1) )
+	              val substitute = map.getOrElse( matcher.group(1), 
+                         {
+                            throw new IllegalArgumentException(
+                              "Property "+key+
+                                " contains ${"+matcher.group(1)+
+                                "} which cannot be resolved")
+                            ""
+                         } )
+               
 	              val newVal = value.replace( "${"+matcher.group(1)+"}", substitute )
 	              (key, newVal)
 	            }else{
@@ -138,7 +149,7 @@ class Configuration(val configFile:File, val deployApp:File) {
     
     if( elements.contains(alias+extensionKey)) elements(alias+extensionKey)
     else if(elements.contains(defaultKey)) elements(defaultKey)
-    else throw new IllegalArgumentException("There is no default value for "+defaultKey+" in the configuration file")
+    else throw new IllegalArgumentException("There is no value for "+defaultKey+" or "+alias+extensionKey+" in the configuration file")
   }
 
 }

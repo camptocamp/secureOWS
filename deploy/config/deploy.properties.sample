@@ -75,3 +75,9 @@ configSvnConf = http://svn.swisstopogeodata.ch/secureowsconfig/tag/1.0/conf
 # this file is downloaded, decompressed and has the configuration
 # files from configSvn added to it (only the WEB-INF configuration files) 
 downloadUrl = http://www.secureows.org/securewms/war/20080609/owsproxyserver.war
+
+# the command to shutdown the server.  This is executed in a shell
+shutdown = ${installWebapp}/../bin/shutdown.sh
+
+# the command to startup the server.  This is executed in a shell
+startup = ${installWebapp}/../bin/startup.sh

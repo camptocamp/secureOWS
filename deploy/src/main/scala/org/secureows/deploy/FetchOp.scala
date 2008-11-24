@@ -63,12 +63,16 @@ object FetchOp {
       val configurationDirs = alias.webapps.map( webappBase+_ ) ++ Array(alias.installConfig)
       val processArgs:Seq[String] = Array("svn","st")++configurationDirs.toArray.filter(_.length>0)
       
+      println("checking for uncommitted modifications in the configurations");
+
       var modified = false
       
       def handler(stdOut:InputStreamResource[java.io.InputStream]){
         val test = (line:String) => {
-          (line.contains(".xml") && !line.contains("tomcat-users.xml") &&
-          !line.contains("services_test.xml")) && 
+          (line.contains(".xml") && 
+             !line.contains("tomcat-users.xml") &&
+             !line.contains("WEB-INF/web.xml") &&
+             !line.contains("services_test.xml")) && 
             (  line.contains("M ") || 
                line.contains("? ") || 
                line.contains("A ") || 

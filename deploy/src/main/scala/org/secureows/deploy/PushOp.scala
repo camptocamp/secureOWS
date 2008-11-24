@@ -75,17 +75,27 @@ object PushOp {
   def pushLocal(from:Alias,to:Alias,config:Configuration) = {
     BackupOp.run(Array(to.name), config)
     val baseFrom = from.installWebappBaseDir 
-    val baseTo = from.installWebappBaseDir 
-
+    val baseTo = to.installWebappBaseDir 
+    
+    InstallOp.stopServer(to);
+    
     val results = for( app <- from.webapps ) yield {
       val fromDir = new File(baseFrom+app)
       val toDir = new File(baseTo+app)
-      toDir.deleteRecursively
-      Utils.copyTree(fromDir,toDir)
+      val warFile = new File(baseTo+app+".war")
+      
+      println( "Pushing '"+app+"' to '"+from.name+"'")
+      toDir.deleteRecursively()
+      warFile.delete()
+      
+      Utils.zipDir(fromDir, warFile)
       None
     }
 
-    Utils.copyTree(new File(from.installConfig),new File(to.installConfig))
+    Utils.replaceTree(new File(from.installConfig),new File(to.installConfig))
+    
+    InstallOp.startServer(to);
+    
     results.find( _.isDefined ).getOrElse( None )
   }
   def pushRemote(sourceAlias:String,remoteAlias:String,config:Configuration) = {
@@ -117,12 +127,18 @@ object PushOp {
     
     for( app <- config.webapps; if(!error) ) {
       val sourceWebAppDir = new File(sourceWebAppBaseDir,app)
+      val sourceZip = new File(sourceWebAppBaseDir,app+".zip")
       val destWebAppDir = new File(destWebAppBaseDir,app)
+      val destZip = new File(destWebAppBaseDir,app+".zip")
       
       println("  Webapp from "+sourceWebAppDir+" to "+destWebAppDir)
-      val scpScript = format( pattern, login, destWebAppDir.getPath, sourceWebAppDir, 
-                              destWebAppDir.getParent)
-      ProcessRunner("").error(errors _ ).output(output _).script("/bin/sh",scpScript)
+      Utils.zipDir(sourceWebAppDir, sourceZip)
+      val scpScript = format( pattern, login, destWebAppDir, sourceZip, 
+                              destWebAppBaseDir)
+      val unzipScript = format("ssh {0} \"unzip -o {1} -d {2} \"\n", login, destZip,destWebAppDir )
+      println ( scpScript+unzipScript )
+      ProcessRunner("").error(errors _ ).output(output _).script("/bin/sh", scpScript+unzipScript)
+      sourceZip.delete()
     }
 
     if( error ){

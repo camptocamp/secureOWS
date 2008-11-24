@@ -29,12 +29,12 @@ object OnlineSpecs extends Specification{
     Main.main(Array("-v","-j","target/deploy-1.1/lib/deploy.jar","-c","testing.properties","install","home"))
   }
 
-  "push" in {
-    Main.main(Array("-p","-j","target/deploy-1.1/lib/deploy.jar","-c","testing.properties","home","website"))
+ "fetch" in {
+    Main.main(Array("-f","-j","target/deploy-1.1/lib/deploy.jar","-c","geonetwork.properties","from"))
   }
 */
 
- "fetch" in {
-    Main.main(Array("-f","-j","target/deploy-1.1/lib/deploy.jar","-c","geonetwork.properties","from"))
+  "push" in {
+    Main.main(Array("-p","-j","target/deploy-1.1/lib/deploy.jar","-c","geonetwork.properties","from","francois"))
   }
 }

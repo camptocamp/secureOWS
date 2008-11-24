@@ -241,7 +241,7 @@ object Utils {
     }
   }
   def relative( root:File, file:File ):String = {
-    file.getPath.drop(root.getPath.length)
+    file.getPath.drop(root.getPath.length+1)
   }
   def copyTree(from:File, to:File):Int = {
     copyTree(from,to, (s,d)=>s.lastModified>d.lastModified)

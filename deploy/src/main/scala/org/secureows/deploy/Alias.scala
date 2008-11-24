@@ -18,6 +18,8 @@ case class Alias( name:String,
                   tmpAppDir:String,
                   tmpWebappBaseDir:String,
                   tmpConfigDir:String,
+                  shutdown:String,
+                  startup:String,
                   config:Configuration         
 ) {
   def asURL = new URL("http://"+url)
