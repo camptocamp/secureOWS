@@ -250,7 +250,8 @@ object Utils {
     copyTree(from,to, (s,d)=>true)
   }
   def copyTree(from:File, to:File, replace:(File,File)=>Boolean):Int = {
-    from.tree.projection.foldLeft(0)( (count,f) => {
+    val files = from.tree
+    files.foldLeft(0)( (count,f) => {
       val dest = new File(to, relative(from,f))
       if(f.isDirectory) dest.mkdirs
       else if(!dest.exists || replace(f,dest) ) {
@@ -266,8 +267,9 @@ object Utils {
     import java.util.zip._
     val stream=OutputStreamResource(new ZipOutputStream(new java.io.FileOutputStream(to)))
     stream.acquireFor { out =>
-      for( f <- source.tree; if f.isFile ){
-        val entry = new ZipEntry( relative(source,f) )
+      for( f <- source.tree){
+        val name = relative(source, f) + (if( f.isFile ) "" else "/")
+        val entry = new ZipEntry( name )
         
         out.putNextEntry(entry)
         if( f.isFile ) {

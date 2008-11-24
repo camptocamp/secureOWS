@@ -49,7 +49,7 @@ object InstallOp {
       val warFile = installAppsBaseDir/(app+".war")
       appDir.deleteRecursively()
       warFile.delete()
-      
+
       Utils.zipDir(fromAppBaseDir/app, warFile)
     }	
 

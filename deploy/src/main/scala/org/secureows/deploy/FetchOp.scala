@@ -42,7 +42,8 @@ object FetchOp {
           print("There are no configuration files for the owsproxyserver.\nCheck "+alias.configSvnApp+"\nAre you sure you want to continue?(y/n) ")
           if( readChar != 'y' ) return Some("Cancelled by user")
         }
-        Utils.replaceTree(configDir/TMP_APPS/app, webapp/app)
+        (webapp/app).deleteRecursively()
+        println(Utils.replaceTree(configDir/TMP_APPS/app, webapp/app)+" files configuration files were copied for the "+app+" web application")
       }
       
       alias.fetchStrategy.finalConfiguration(alias)
@@ -95,7 +96,7 @@ object FetchOp {
       if( modified ) {
         print ("Do you want to overwrite changes?(y/n) ")
         val result = readChar
-        if( result.toLowerCase == 'n'){
+        if( result.toLowerCase != 'y'){
           return Some("There are uncommitted changes in the installation directory")
         } else None
       } else None
