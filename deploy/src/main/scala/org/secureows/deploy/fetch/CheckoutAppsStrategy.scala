@@ -15,9 +15,9 @@ class CheckoutAppsStrategy extends FetchStrategy {
     val localAppDir = new File(alias.tmpAppDir)
     val configDir = localAppDir/"configuration/.checkoutApp"
     
-    println( "Checking out: " +alias.configSvnApp)
-//    configDir.deleteRecursively
-//    Utils.doCheckout(configDir, alias.configSvnApp)
+    println( "Checking out: " +alias.downloadUrl)
+    configDir.deleteRecursively
+    Utils.doCheckout(configDir, alias.downloadUrl)
     
     build(configDir/"jeeves/build.xml")
     build(configDir/"build.xml")
