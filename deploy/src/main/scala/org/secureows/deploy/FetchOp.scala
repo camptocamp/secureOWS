@@ -42,7 +42,6 @@ object FetchOp {
           print("There are no configuration files for the owsproxyserver.\nCheck "+alias.configSvnApp+"\nAre you sure you want to continue?(y/n) ")
           if( readChar != 'y' ) return Some("Cancelled by user")
         }
-        (webapp/app).deleteRecursively()
         println(Utils.replaceTree(configDir/TMP_APPS/app, webapp/app)+" files configuration files were copied for the "+app+" web application")
       }
       

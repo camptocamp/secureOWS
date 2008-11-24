@@ -40,6 +40,7 @@ object InstallOp {
     
     println( "Backing up old version" )
     BackupOp.run( Array(alias.name),config )
+    stopServer(alias)
     
     Utils.replaceTree(tmpConf,installConf)
     
