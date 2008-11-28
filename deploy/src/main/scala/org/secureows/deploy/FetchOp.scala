@@ -37,8 +37,9 @@ object FetchOp {
       }
       Utils.replaceTree(configDir/TMP_CONF, localConfDir)
 
+      val showMissingConfigQuery = "true".equals(alias.findOrElse("warnWhenMissingConfFiles", {"true"}))
       for( app <- alias.webapps; configFiles=configDir/TMP_APPS/app; if (configFiles.exists) ) {
-        if( configFiles.listFiles.length==0 ){
+        if( showMissingConfigQuery && configFiles.listFiles.length==0 ){
           print("There are no configuration files for the owsproxyserver.\nCheck "+alias.configSvnApp+"\nAre you sure you want to continue?(y/n) ")
           if( readChar != 'y' ) return Some("Cancelled by user")
         }

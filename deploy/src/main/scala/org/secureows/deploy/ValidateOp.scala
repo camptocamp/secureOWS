@@ -50,7 +50,7 @@ object ValidateOp {
       val appJar = config.tmpDir(alias)+config.deployApp.getName
       val configFile = config.tmpDir(alias)+config.configFile.getName
       val javaCMD = "java -cp "+appJar+" org.secureows.deploy.Main -v -c "+configFile+" -j "+appJar+" "+valType+" "+alias
-      Remoting.runRemote(alias,javaCMD,config)
+      Remoting.runRemote(config.alias(alias),javaCMD)
     }
     
     def localValidate(valType:ValType.Value,alias:Alias)={

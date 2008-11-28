@@ -8,174 +8,125 @@ import scalax.io.Implicits._
 
 object PushOp {
 
-  def run(args:Seq[String],config:Configuration):Option[String]={
-    assert( args.length > 1 && args.length < 4, "Two parameters required: <from> <to>" )
-    val sourceAlias = args(0)
-    val remoteAlias = args(1)
-    val force = args.length>2 && args(2).equals("force")
+    def run(args:Seq[String],config:Configuration):Option[String]={
+        assert( args.length > 1 && args.length < 4, "Two parameters required: <from> <to>" )
+        val sourceAlias = args(0)
+        val remoteAlias = args(1)
+        val force = args.length>2 && args(2).equals("force")
     
-    if( config.isLocalhost(sourceAlias)) doPush(sourceAlias, remoteAlias, force, config) 
-    else runRemote(sourceAlias, remoteAlias, config)
-  }
+        if( config.isLocalhost(sourceAlias)) doPush(sourceAlias, remoteAlias, force, config)
+        else runRemote(sourceAlias, remoteAlias, config)
+    }
   
-  def runRemote(sourceAlias:String, remoteAlias:String, config:Configuration):Option[String]={
+    def runRemote(sourceAlias:String, remoteAlias:String, config:Configuration):Option[String]={
     
-    def run = {
-	    val appJar = config.tmpDir(sourceAlias)+config.deployApp.getName
-	    val configFile = config.tmpDir(sourceAlias)+config.configFile.getName
-	    val cmd= "java -cp "+appJar+" org.secureows.deploy.Main -p -c "+configFile+" -j "+appJar+" "+sourceAlias+" "+remoteAlias+" force"
+        def run = {
+            val appJar = config.tmpDir(sourceAlias)+config.deployApp.getName
+            val configFile = config.tmpDir(sourceAlias)+config.configFile.getName
+            val cmd= "java -cp "+appJar+" org.secureows.deploy.Main -p -c "+configFile+" -j "+appJar+" "+sourceAlias+" "+remoteAlias+" force"
 	      
-	    val results = Remoting.runRemote(sourceAlias,cmd,config)
-	    results.toList.sort( (l,r)=> l.id<r.id).head match {
-	      case Error(s) => Some(s)
-	      case _ => None
-	    }
-    }
-    
-     val results = ValidateOp.remoteValidate(ValType.install,sourceAlias,config) 
-        
-      results.toList.sort( (l,r)=> l.id<r.id).head match {
-	  case Error(s) => Some(s)
-	  case Warning(s)  => {
-	      print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
-          if ( readChar == 'y'){
-            run
-          }else{
-            Some("Aborted by user")
-          }
-	  }
-      case _ => run
-      }
-    
-  }
-  
-  def doPush(sourceAlias:String, remoteAlias:String, force:Boolean,config:Configuration):Option[String]={
-    def run = if(config.isLocalhost(remoteAlias)) pushLocal(config.alias(sourceAlias),config.alias(remoteAlias),config)
-	          else pushRemote(sourceAlias,remoteAlias,config)
-    
-    if( force ) run
-    else {
-     val results = ValidateOp.localValidate(ValType.install,config.alias(sourceAlias)) 
-        
-      results.toList.sort( (l,r)=> l.id<r.id).head match {
-	  case Error(s) => Some(s)
-	  case Warning(s)  => {
-	      print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
-          if ( readChar == 'y'){
-            run
-          }else{
-            Some("Aborted by user")
-          }
-	  }
-      case _ => run
-      }
-    }
-  }
-  
-  def pushLocal(from:Alias,to:Alias,config:Configuration) = {
-    BackupOp.run(Array(to.name), config)
-    val baseFrom = from.installWebappBaseDir 
-    val baseTo = to.installWebappBaseDir 
-    
-    InstallOp.stopServer(to);
-    
-    val results = for( app <- from.webapps ) yield {
-      val fromDir = new File(baseFrom+app)
-      val toDir = new File(baseTo+app)
-      val warFile = new File(baseTo+app+".war")
-      
-      println( "Pushing '"+app+"' to '"+from.name+"'")
-      toDir.deleteRecursively()
-      warFile.delete()
-      
-      Utils.zipDir(fromDir, warFile)
-      None
-    }
-
-    Utils.replaceTree(new File(from.installConfig),new File(to.installConfig))
-    
-    InstallOp.startServer(to);
-    
-    results.find( _.isDefined ).getOrElse( None )
-  }
-  def pushRemote(sourceAlias:String,remoteAlias:String,config:Configuration) = {
-    val sourceWebAppBaseDir = config.installWebappBaseDir(sourceAlias)
-    val sourceConfig = config.installConfig(sourceAlias)
-    
-    val destWebAppBaseDir = new File(config.tmpWebappBaseDir(remoteAlias))
-    val destConfig = new File(config.tmpConfigDir(remoteAlias))
-    
-    val login = config.username(remoteAlias)+"@"+config.url(remoteAlias)
-    println("Starting to copy the application to the remote server")
-    
-    
-    val pattern =  
-      """ssh {0} "rm -rf {1}"
-        |ssh {0} "mkdir -p {1}"
-        |scp -r {2} {0}:{3}
-""".stripMargin
-        
-    var error = false
-    def errors(in:InputStreamResource[InputStream]){
-      val lines = in.lines.toList
-      error = !lines.isEmpty
-      if(!lines.isEmpty) System.err.println(lines.mkString("\n"))
-    }
-    def output(in:InputStreamResource[InputStream]){
-      in.lines.foreach(l=>print("."))
-    }
-    
-    for( app <- config.webapps; if(!error) ) {
-      val sourceWebAppDir = new File(sourceWebAppBaseDir,app)
-      val sourceZip = new File(sourceWebAppBaseDir,app+".zip")
-      val destWebAppDir = new File(destWebAppBaseDir,app)
-      val destZip = new File(destWebAppBaseDir,app+".zip")
-      
-      println("  Webapp from "+sourceWebAppDir+" to "+destWebAppDir)
-      Utils.zipDir(sourceWebAppDir, sourceZip)
-      val scpScript = format( pattern, login, destWebAppDir, sourceZip, 
-                              destWebAppBaseDir)
-      val unzipScript = format("ssh {0} \"unzip -o {1} -d {2} \"\n", login, destZip,destWebAppDir )
-      println ( scpScript+unzipScript )
-      ProcessRunner("").error(errors _ ).output(output _).script("/bin/sh", scpScript+unzipScript)
-      sourceZip.delete()
-    }
-
-    if( error ){
-      Some("Error occurred while copying files to remote server:"+remoteAlias)
-    } else{
-      println("  Tomcat config from "+sourceConfig+" to "+destConfig)
-      val copyConfigScript = format( pattern, login, destConfig.getPath, 
-                                     sourceConfig, destConfig.getParent)
-
-      ProcessRunner("").error(errors _ ).output(output _).script("/bin/sh",copyConfigScript)
-      if( error ){
-        Some("Error occurred while copying files to remote server:"+remoteAlias)
-      }else{
-        println ("Done copying to remote server... starting to validate the remote server")
-        Remoting.distributeJars(Array(remoteAlias),config)
-        
-        val results = ValidateOp.remoteValidate(ValType.tmp,remoteAlias,config)   
-        results.toList.sort( (l,r)=> l.id<r.id).head match {
-          case Error(s) => Some("Error validating configuration copied to remote server: \n  "+s) 
-          case _ => installRemote(remoteAlias,config)
+            val results = Remoting.runRemote(config.alias(sourceAlias),cmd)
+            results.toList.sort( (l,r)=> l.id<r.id).head match {
+                case Error(s) => Some(s)
+                case _ => None
+            }
         }
-      }
+    
+        val results = ValidateOp.remoteValidate(ValType.install,sourceAlias,config)
+        
+        results.toList.sort( (l,r)=> l.id<r.id).head match {
+            case Error(s) => Some(s)
+            case Warning(s)  => {
+                    print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
+                    if ( readChar == 'y'){
+                        run
+                    }else{
+                        Some("Aborted by user")
+                    }
+                }
+            case _ => run
+        }
+    
     }
-  }
   
-  def installRemote(remoteAlias:String,config:Configuration) = {
-      println("Validation passed.  Backing up and installing copied application")
-      println("Final installation directory is: "+config.installWebappBaseDir(remoteAlias))
-      println(" and "+config.installConfig(remoteAlias))
-      val appJar = config.tmpDir(remoteAlias)+config.deployApp.getName
-      val configFile = config.tmpDir(remoteAlias)+config.configFile.getName
-      val javaCMD = "java -cp "+appJar+" org.secureows.deploy.Main -i -c "+configFile+" -j "+appJar+" "+remoteAlias+" remote"
-      val results = Remoting.runRemote(remoteAlias, javaCMD,config)
-      results.toList.sort( (l,r)=> l.id<r.id).head match {
-        case Error(s) => Some(s) 
-        case _ => println("Installation succeeded"); None
-      }
-  }
+    def doPush(sourceAlias:String, remoteAlias:String, force:Boolean,config:Configuration):Option[String]={
+        val source = config.alias(sourceAlias)
+        val remote = config.alias(remoteAlias)
+        def run = if(config.isLocalhost(remoteAlias)) pushLocal(source,remote,config)
+        else pushRemote(source,remote, config)
+    
+        if( force ) run
+        else {
+            val results = ValidateOp.localValidate(ValType.install,config.alias(sourceAlias))
+        
+            results.toList.sort( (l,r)=> l.id<r.id).head match {
+                case Error(s) => Some(s)
+                case Warning(s)  => {
+                        print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
+                        if ( readChar == 'y'){
+                            run
+                        }else{
+                            Some("Aborted by user")
+                        }
+                    }
+                case _ => run
+            }
+        }
+    }
   
+    def pushLocal(from:Alias,to:Alias,config:Configuration) = {
+        BackupOp.run(Array(to.name), config)
+        val baseFrom = from.installWebappBaseDir
+        val baseTo = to.installWebappBaseDir
+    
+        InstallOp.stopServer(to);
+    
+        val results = for( app <- from.webapps ) yield {
+            val fromDir = new File(baseFrom+app)
+            val toDir = new File(baseTo+app)
+            val warFile = new File(baseTo+app+".war")
+      
+            println( "Pushing '"+app+"' to '"+from.name+"'")
+            toDir.deleteRecursively()
+            warFile.delete()
+      
+            Utils.zipDir(fromDir, warFile)
+            None
+        }
+
+        Utils.replaceTree(new File(from.installConfig),new File(to.installConfig))
+    
+        InstallOp.startServer(to);
+    
+        results.find( _.isDefined ).getOrElse( None )
+    }
+
+    def pushRemote(sourceAlias:Alias,remoteAlias:Alias,config:Configuration):Option[String] = {
+        InstallOp.stopServer(remoteAlias)
+
+        val result = run(remoteAlias,sourceAlias.installConfig,remoteAlias.installConfig)
+        if( result.isDefined) return result
+
+        for{app <- config.webapps}
+        {
+            Remoting.runRemote(remoteAlias, "rm -rf "+remoteAlias.installWebappBaseDir+app)
+            Remoting.runRemote(remoteAlias, "rm -rf "+remoteAlias.installWebappBaseDir+app+".war")
+            val result = run(remoteAlias,sourceAlias.installWebappBaseDir+app+".war",remoteAlias.installWebappBaseDir)
+            if( result.isDefined) return result
+        }
+        println("Starting to copy the application to the remote server")
+        InstallOp.startServer(remoteAlias)
+        None
+    }
+
+     private[this] def run(alias:Alias,from:String,to:String)={
+        import Remoting.{handleErrors,error}
+        error = null
+        val login = alias.username+"@"+alias.url
+        val params = Array("scp","-r",from,login+":"+to)
+        val outputHandler = (stream:InputStreamResource[InputStream])=>println (stream.lines.filter(_.trim().length>0).mkString("\n"))
+        ProcessRunner(params:_*).error( handleErrors _ ).output( outputHandler ).log.run
+        if( error!=null ) Some(error)
+        else None
+     }
 }

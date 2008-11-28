@@ -8,7 +8,7 @@ import org.secureows.deploy.fetch.FetchStrategy
 
 class Configuration(val configFile:File, val deployApp:File) {
   
-  private[this] val elements = Map[String,String]( loadProperties.toSeq:_* )
+  private[deploy] val elements = Map[String,String]( loadProperties.toSeq:_* )
   val aliases = createAliases()
   private[this] val localhost = findLocalHost()
   // ----  End of construction ----
@@ -66,14 +66,27 @@ class Configuration(val configFile:File, val deployApp:File) {
       }
     }
   }
-  
+
   lazy val fetchStrategy:FetchStrategy = {
     val asString = elements("fetchStrategy")
     assert( asString != null && asString.trim().length>0, "the 'fetchStrategy' property is not defined" )
       val c = classOf[Configuration].getClassLoader.loadClass( asString )
       c.newInstance().asInstanceOf[FetchStrategy]
   }
-  
+
+  lazy val postAction:Option[Function[Alias,Option[String]]] = function("postAction")
+
+  def function(name:String):Option[Function[Alias,Option[String]]] = {
+    if( elements.contains(name)){
+        val asString = elements(name)
+        assert( asString.trim().length>0, "the '"+name+"' property is defined but empty" )
+        val c = classOf[Configuration].getClassLoader.loadClass( asString )
+
+     Some(c.newInstance().asInstanceOf[Function[Alias,Option[String]]])
+    }
+    else None
+  }
+
   // ---- End of API
     private[this] def findLocalHost() = {
     val local = new URL("http://"+InetAddress.getLocalHost().getHostName())
@@ -139,9 +152,9 @@ class Configuration(val configFile:File, val deployApp:File) {
     resolve(Map(props.map( e=> (e._1.asInstanceOf[String],e._2.asInstanceOf[String])).toSeq:_*) )
   }
   
-  private[this] def assureDir(dir:String) = if(dir.endsWith("/")||dir.length==0) dir else dir+"/"
+  private[deploy] def assureDir(dir:String) = if(dir.endsWith("/")||dir.length==0) dir else dir+"/"
   
-  private[this] def find(alias:String,base:String) = {
+  private[deploy] def find(alias:String,base:String) = {
     if(!aliases.contains(alias)) throw new IllegalArgumentException(alias+" is not a listed alias in the configuration file")
     
     val defaultKey = base.take(1).toLowerCase+base.drop(1)

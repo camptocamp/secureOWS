@@ -22,11 +22,20 @@ case class Alias( name:String,
                   startup:String,
                   config:Configuration         
 ) {
+  def apply(key:String) = config.find(name,key)
+  def findOrElse(key:String,elseAction: =>String):String={
+    try{
+        apply(key)
+    }catch{
+        case e:IllegalArgumentException => elseAction
+    }
+  }
   def asURL = new URL("http://"+url)
   def isLocalhost = config.isLocalhost(name)
   val maxBackups:Int = config.maxBackups
   lazy val validators:Seq[Validator] = config.validators
   lazy val fetchStrategy:FetchStrategy = config.fetchStrategy
+  lazy val postAction:Option[Function[Alias,Option[String]]] = config.postAction
   
   override def toString = name
 }

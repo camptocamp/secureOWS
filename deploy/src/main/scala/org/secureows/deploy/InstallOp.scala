@@ -1,5 +1,7 @@
 package org.secureows.deploy
 
+
+import Remoting.{handleErrors,error}
 import org.secureows.deploy.validation._
 import scalax.io.{CommandLineParser,InputStreamResource}
 import scalax.io.Implicits._
@@ -9,74 +11,92 @@ import java.io.File
 
 object InstallOp {
 
-  // args is just an alias if local if remote there must be a second arg that is remote.  This is
-  // to determine if there should be interaction
-  def run(args:Seq[String], config:Configuration):Option[String] = {
-    val alias = config.alias(args(0))
-    val remote = args.length==2 && args(1)=="remote"
+    // args is just an alias if local if remote there must be a second arg that is remote.  This is
+    // to determine if there should be interaction
+    def run(args:Seq[String], config:Configuration):Option[String] = {
+        val alias = config.alias(args(0))
+        val remote = args.length==2 && args(1)=="remote"
     
-    val tmpConf = new File(alias.tmpConfigDir)
-    val results = ValidateOp.localValidate( ValType.install, alias )
+        val tmpConf = new File(alias.tmpConfigDir)
+        val results = ValidateOp.localValidate( ValType.install, alias )
         println( "Validating the new configuration" )
         val mostSevere = results.toList.sort( (l,r)=> l.id<r.id).head
         mostSevere match {
-    	  case Error(s) => Some(s)
-    	  case Warning(s) if(!remote)=> {
-    	      print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
-              if ( readChar == 'y'){
-                doInstall(alias, tmpConf,config)
-              }else{
-                Some("Aborted by user")
-              }
-    	  }
-          case _ => doInstall(alias, tmpConf,config)
+            case Error(s) => Some(s)
+            case Warning(s) if(!remote)=> {
+                    print("There were warnings in the configuration.  Do you wish to install?(y/n) ")
+                    if ( readChar == 'y'){
+                        doInstall(alias, tmpConf,config)
+                    }else{
+                        Some("Aborted by user")
+                    }
+                }
+            case _ => doInstall(alias, tmpConf,config)
         }
-  }
-  private def doInstall(alias:Alias, tmpConf:File,config:Configuration):Option[String]={
+    }
+    private def doInstall(alias:Alias, tmpConf:File,config:Configuration):Option[String]={
     
-    val fromAppBaseDir = new File(alias.tmpWebappBaseDir)
-    val installAppsBaseDir=new File(alias.installWebappBaseDir)
-    val installConf = new File(alias.installConfig)
+        val fromAppBaseDir = new File(alias.tmpWebappBaseDir)
+        val installAppsBaseDir=new File(alias.installWebappBaseDir)
+        val installConf = new File(alias.installConfig)
     
-    println( "Backing up old version" )
-    BackupOp.run( Array(alias.name),config )
-    stopServer(alias)
+        println( "Backing up old version" )
+        BackupOp.run( Array(alias.name),config )
+        stopServer(alias)
     
-    Utils.replaceTree(tmpConf,installConf)
+        Utils.replaceTree(tmpConf,installConf)
     
-    for( app <- alias.webapps ) {
-      println("Copying temporary "+app+" installation to active installation")
-      val appDir = installAppsBaseDir/app
-      val warFile = installAppsBaseDir/(app+".war")
-      appDir.deleteRecursively()
-      warFile.delete()
+        for( app <- alias.webapps ) {
+            println("Copying temporary "+app+" installation to active installation")
+            val appDir = installAppsBaseDir/app
+            val warFile = installAppsBaseDir/(app+".war")
+            appDir.deleteRecursively()
+            warFile.delete()
 
-      Utils.zipDir(fromAppBaseDir/app, warFile)
-    }	
+            Utils.zipDir(fromAppBaseDir/app, warFile)
+        }
 
-    startServer(alias)
-    None
-  }
+        startServer(alias)
 
-  lazy val env = Map("JAVA_HOME"->System.getProperty("java.home"))
+        performPostActions(alias)
+    }
+
+    def performPostActions(alias:Alias):Option[String]={
+        if( alias.postAction.isDefined) (alias.postAction.get)(alias)
+        else None
+    }
+
+    lazy val env = Map("JAVA_HOME"->System.getProperty("java.home"))
  
-  def stopServer(alias:Alias){
-    println("Shutting down server")
-    try{
-      ProcessRunner(alias.shutdown).error(_.lines.toList).output(_.lines.toList).env(env).run
-    }catch{
-      case _ => // ignore
+    def stopServer(alias:Alias) {
+        println("Shutting down server")
+        controlServer(alias, alias.shutdown)
+        Thread.sleep(10000)
     }
-    Thread.sleep(3000)
+
+    private[this] def controlServer(alias:Alias, cmd:String):Option[String] ={
+        error = null
+        try{
+            val runner = ProcessRunner().error(handleErrors _).log
+            val params = if( alias.isLocalhost ) cmd.split(" ")
+            else{
+                val login = alias.username+"@"+alias.url
+                Array("ssh",login)++cmd.split(" ")
+            }
+            if (runner(params:_*) != 0 ){
+                error = "Unexpected error occurred while running: "+params.mkString(", ")
+            }
+        }catch{
+            case e => error = "Unexpected error occurred while running: "+cmd+": "+e
+        }
     
-  }
-  
-  def startServer(alias:Alias){
-    println("Starting server")
-    try{
-      ProcessRunner(alias.startup).error(_.lines.toList).output(_.lines.toList).env(env).run
-    }catch{
-      case _ => println("WARNING:  There was an error starting the server, you may be required to do so manually" )
+        if(error!=null) Some(error)
+        else None
+
     }
-  }
+  
+    def startServer(alias:Alias):Option[String]={
+        println("Starting server")
+        controlServer(alias, alias.startup)
+    }
 }	

@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.secureows</groupId>
 	<artifactId>deploy</artifactId>
 	<version>1.1</version>
+	<name>deployTool</name>
 	<inceptionYear>2008</inceptionYear>
 	<properties>
 		<scala.version>2.7.2</scala.version>
@@ -17,7 +18,6 @@
 		</repository>
 		<repository>
 			<snapshots>
-				<enabled>true</enabled>
 			</snapshots>
 			<id>Camptocamp</id>
 			<name>Camptocamp repository</name>
@@ -150,22 +150,20 @@
 								<arg>-target:jvm-1.5</arg>
 							</args>
 
-							<script>
-<![CDATA[
-	import java.io.File
+							<script>import java.io.File
 	import scalax.io.Implicits._
 	
 	def relative( root:File, file:File ):String = {
 		file.getPath.drop(root.getPath.length+1)
 	}
 	
-	val none = (file:File)=>true
+	val none = (file:File)=&gt;true
 	
-	def copyTree(from:File, to:File, filter:(File)=>Boolean) = {
-		from.tree.projection.filter( filter ).foldLeft(0)( (count,f) => {
+	def copyTree(from:File, to:File, filter:(File)=&gt;Boolean) = {
+		from.tree.projection.filter( filter ).foldLeft(0)( (count,f) =&gt; {
 			val dest = new File(to, relative(from,f))
 			if(f.isDirectory) dest.mkdirs
-			else if(!dest.exists || f.lastModified() > dest.lastModified() ) f.copyTo(dest)
+			else if(!dest.exists || f.lastModified() &gt; dest.lastModified() ) f.copyTo(dest)
 			
 			if( f.canExecute ) dest.setExecutable(true)
 			count + 1
@@ -187,7 +185,7 @@
 	println( copyTree(classes,jarDir,none)+" files copied")
 	
 	val dependencies = new File(target,"dependency")
-	for( f <- dependencies.listFiles ){
+	for( f &lt;- dependencies.listFiles ){
 		val to = new File(workingDir,f.getName)
 		if(to.exists) to.deleteRecursively
 		to.mkdirs()
@@ -200,7 +198,7 @@
 		import java.util.zip._
 		val zip=new ZipOutputStream(new java.io.FileOutputStream(dest))
 		try{		
-			for( f <- src.tree; if f.isFile ){
+			for( f &lt;- src.tree; if f.isFile ){
 				val entry = new ZipEntry( relative(root,f) )
 				
 				zip.putNextEntry(entry)
@@ -234,10 +232,7 @@
 	}
 
 	val cmd = "zip -r "+appDir.getName+".zip "+appDir.getName	
-	Runtime.getRuntime.exec(cmd, Array[String](), appDir.getParentFile )
-
-]]>
-							</script>
+	Runtime.getRuntime.exec(cmd, Array[String](), appDir.getParentFile )</script>
 
 						</configuration>
 					</plugin>
