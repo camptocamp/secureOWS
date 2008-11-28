@@ -31,15 +31,15 @@ object FetchOp {
 
       checkoutConfigFiles(alias.name,configDir,config)
       
-      if( (configDir/TMP_CONF).listFiles.length == 0 ){
+      val showMissingConfigQuery = "true".equals(alias.findOrElse("warnWhenMissingConfFiles", {"true"}))
+      if( showMissingConfigQuery && (configDir/TMP_CONF).listFiles.length == 0 ){
         print("There are no configuration files for the web server.\nCheck "+alias.configSvnConf+"\nAre you sure you want to continue?(y/n) ")
         if( readChar != 'y'  ) return Some("Cancelled by user")
       }
       Utils.replaceTree(configDir/TMP_CONF, localConfDir)
 
-      val showMissingConfigQuery = "true".equals(alias.findOrElse("warnWhenMissingConfFiles", {"true"}))
       for( app <- alias.webapps; configFiles=configDir/TMP_APPS/app; if (configFiles.exists) ) {
-        if( showMissingConfigQuery && configFiles.listFiles.length==0 ){
+        if( configFiles.listFiles.length==0 ){
           print("There are no configuration files for the owsproxyserver.\nCheck "+alias.configSvnApp+"\nAre you sure you want to continue?(y/n) ")
           if( readChar != 'y' ) return Some("Cancelled by user")
         }
