@@ -5,7 +5,7 @@ import scalax.io.InputStreamResource
 
 object Remoting {
     def distributeJars(destinations:Iterable[String],config:Configuration) {
-        val destAliases = destinations.filter( alias => (!config.isLocalhost(alias) &&  config.aliases.keys.contains(alias)))
+        val destAliases = destinations.filter( alias => (!config.isLocalhost(alias)))
         if( !destAliases.isEmpty ){
             val script = destAliases.flatMap[String] (a=> copyJarScript(a,config) ).mkString("\n")
             ProcessRunner.script("/bin/sh",script)

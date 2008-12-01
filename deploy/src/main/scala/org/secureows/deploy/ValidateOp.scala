@@ -25,10 +25,6 @@ object ValidateOp {
       
       if( aliases.isEmpty ) throw new IllegalArgumentException("Validate requires at least one alias to validate")
       
-      val nonAliases = aliases.filter( arg => !(config.aliases.contains(arg)) )
-      
-      if( !nonAliases.isEmpty ) throw new IllegalArgumentException("The following aliases are not defined in the configuration file: "+nonAliases.mkString)
-      
       Remoting.distributeJars(aliases,config)
       
       val results = for( aliasName <- aliases ) yield {
