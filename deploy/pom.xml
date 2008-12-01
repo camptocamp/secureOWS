@@ -226,9 +226,9 @@
 		else if( file.getName == ".svn" ) 	false
 		else 								svnDir(root)(file.getParentFile)
 	} 
-	val bin = new File("${project.basedir}/bin")
+	val bin = new File("${project.basedir}/src/packaging/bin")
 	copyTree(bin,appDir / "bin", svnDir(bin)_)
-	val config = new File("${project.basedir}/config")
+	val config = new File("${project.basedir}/src/packaging/config")
 	copyTree(config,appDir / "config", svnDir(config)_)
 
 	def run( command:String ):Seq[String] = {
