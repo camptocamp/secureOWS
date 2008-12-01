@@ -48,11 +48,7 @@ class Configuration(val configFile:File, val deployApp:File) {
     def shutdown(alias:String) = find(alias,"shutdown")
     def startup(alias:String) = find(alias,"startup")
   
-    def webapps:Iterable[String] =  {
-        val decl = config.getString("apps")
-        assert (decl.isDefined, "the configurations file must declare a 'apps' property")
-        decl.get.split(",")
-    }
+    def webapps:Iterable[String] =  config.getList("apps")
 
     def isLocalhost(alias:String) = localhosts.contains(alias)
   

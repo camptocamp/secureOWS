@@ -8,6 +8,7 @@ import scalax.io.Implicits.fileExtras
 import scalax.io.InputStreamResource
 import scant.Ant
 import scala.xml.XML
+import java.net.URLClassLoader
 
 class CheckoutAppsStrategy extends FetchStrategy {
     def downloadApp(alias:Alias){
@@ -21,12 +22,16 @@ class CheckoutAppsStrategy extends FetchStrategy {
         }else{
             Utils.doCheckout(configDir, alias.downloadUrl)
         }
+        
         build(configDir/"jeeves/build.xml")
         build(configDir/"build.xml")
-    
+
+        runGast(alias, configDir)
+
         val webAppDir = new File(alias.tmpWebappBaseDir)
     
         for( app <- alias.webapps; path = webAppDir/app ){
+            println(app)
             path.deleteRecursively
             path.mkdirs
             val built = configDir/"web"/app
@@ -35,6 +40,21 @@ class CheckoutAppsStrategy extends FetchStrategy {
       
             Utils.copyTree(built, path)
         }
+    }
+
+    def runGast(alias:Alias, configDir:File){
+        InstallOp.stopServer(alias)
+        val urls = Array((configDir/"gast/gast.jar").toURI.toURL)
+        val loader = URLClassLoader.newInstance(urls, getClass.getClassLoader)
+        System.setProperty("GEONETWORK_HOME",configDir.getAbsolutePath)
+        System.setProperty("java.awt.headless","true")
+        val gast = loader.loadClass("org.fao.gast.Gast")
+        val constructor = gast.getMethod("main",classOf[Array[String]])
+        println("Running gast -setup")
+        constructor.invoke(null, Array(Array("-setup")):_*)
+        println("Running gast -setupdb")
+        constructor.invoke(null, Array(Array("-setupdb")):_*)
+        System.setProperty("java.awt.headless","false")
     }
   
     def build( buildFile:File) {
