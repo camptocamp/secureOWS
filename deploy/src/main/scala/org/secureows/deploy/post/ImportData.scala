@@ -86,7 +86,6 @@ class ImportData extends Function1[Alias,Option[String]] {
     }
 
     def request[T](address:String, xml:Option[scala.xml.Elem], cookie:String, logger:Logger, run:(java.net.URLConnection) => T) = {
-        println("request to "+address)
         logger.debug("Making URL request: %s with cookie: %s and XML: \n%s", address, cookie,xml)
         val url = new URL(address)
         val conn = url.openConnection()
