@@ -38,4 +38,12 @@ case class Alias( name:String,
   lazy val postAction:Option[Function[Alias,Option[String]]] = config.postAction
   
   override def toString = name
+
+  val logger ={
+      val logConfig =config.config.configMap("aliases."+name+".log")
+      println(logConfig)
+      val file = new java.io.File(logConfig("filename"))
+      file.getParentFile.mkdirs
+      net.lag.logging.Logger.configure(logConfig, false, false)
+  }
 }

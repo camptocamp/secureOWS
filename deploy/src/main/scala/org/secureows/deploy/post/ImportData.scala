@@ -11,6 +11,8 @@ import java.io._
 import java.net._
 import scalax.io._
 import scala.xml._
+import net.lag.logging.Logger
+
 class ImportData extends Function1[Alias,Option[String]] {
     def apply(alias:Alias):Option[String]={
         Thread.sleep(10000)
@@ -23,33 +25,34 @@ class ImportData extends Function1[Alias,Option[String]] {
                      </request>
 
         val index = <request>
-            <dir>{alias("testdata")}</dir>
+            <dir>{alias("ImportData.testdata")}</dir>
             <category>_none_</category>
             <schema>iso19139.che</schema>
             <group>2</group>
             <styleSheet>GM03-to-ISO19139CHE.xsl</styleSheet>
-        </request>
+                    </request>
 
+        val port = alias.findOrElse("ImportData.port", "8080")
+        val root ="http://"+alias.url+":"+port+"/geonetwork/srv/eng/"
+        val cookie = request(root+"user.login", login, null, alias.logger)
+        request(root+"util.import", index, cookie, alias.logger)
 
-        val cookie = request("http://"+alias.url+":8080/geonetwork/srv/eng/user.login", login, null)
-        request("http://"+alias.url+":8080/geonetwork/srv/eng/util.import", index, cookie)
-
-        setPriveleges(cookie, alias)
+        setPriveleges(root, cookie, alias)
         None
     }
 
-    def setPriveleges(cookie:String, alias:Alias){
+    def setPriveleges(rootURL:String, cookie:String, alias:Alias){
 
         println("Making all metadata public")
 
-        val root = request("http://"+alias.url+":8080/geonetwork/srv/eng/xml.search",None,cookie,(conn) =>{
+        val root = request(rootURL+"xml.search",None,cookie, alias.logger, (conn) =>{
                 XML.load(conn.getInputStream)
             })
 
         val results = root \\ "metadata"
         for{ metadata <- results
             id = metadata \\ "id"
-         }{
+        }{
             val xml = <request>
                 {id}
                 <_0_6>on</_0_6>
@@ -64,25 +67,27 @@ class ImportData extends Function1[Alias,Option[String]] {
                 <_2_3>on</_2_3>
                 <_2_1>on</_2_1>
                 <_2_0>on</_2_0>
-              </request>
+                      </request>
 
-            val address = "http://"+alias.url+":8080/geonetwork/srv/eng/metadata.admin"
+            val address = rootURL+"/metadata.admin"
 
-            request(address,xml,cookie)
+            request(address,xml,cookie, alias.logger)
 
         }
     }
 
-    def request(address:String, xml:scala.xml.Elem, cookie:String) = {
-        request[String](address,Some(xml), cookie, (conn:java.net.URLConnection) => {
-            val in = InputStreamResource(conn.getInputStream())
-            in.lines.mkString("\n")
-            conn.getHeaderField("Set-Cookie")
-        })
+    def request(address:String, xml:scala.xml.Elem, cookie:String,logger:Logger) = {
+        request[String](address,Some(xml), cookie, logger, (conn:java.net.URLConnection) => {
+                val in = InputStreamResource(conn.getInputStream())
+                in.lines.mkString("\n")
+                conn.getHeaderField("Set-Cookie")
+            })
 
     }
 
-    def request[T](address:String, xml:Option[scala.xml.Elem], cookie:String, run:(java.net.URLConnection) => T) = {
+    def request[T](address:String, xml:Option[scala.xml.Elem], cookie:String, logger:Logger, run:(java.net.URLConnection) => T) = {
+        println("request to "+address)
+        logger.debug("Making URL request: %s with cookie: %s and XML: \n%s", address, cookie,xml)
         val url = new URL(address)
         val conn = url.openConnection()
         if( cookie!=null ){

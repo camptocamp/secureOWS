@@ -74,7 +74,7 @@ class Configuration(val configFile:File, val deployApp:File) {
         c.newInstance().asInstanceOf[FetchStrategy]
     }
 
-    lazy val postAction:Option[Function[Alias,Option[String]]] = function("tool_config.postAction")
+    lazy val postAction:Option[Function[Alias,Option[String]]] = function("postAction")
 
     def function(name:String):Option[Function[Alias,Option[String]]] = {
         val asString = config.getString("tool_config."+name)

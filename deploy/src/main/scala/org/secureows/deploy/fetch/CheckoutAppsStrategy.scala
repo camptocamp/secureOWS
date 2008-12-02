@@ -31,7 +31,6 @@ class CheckoutAppsStrategy extends FetchStrategy {
         val webAppDir = new File(alias.tmpWebappBaseDir)
     
         for( app <- alias.webapps; path = webAppDir/app ){
-            println(app)
             path.deleteRecursively
             path.mkdirs
             val built = configDir/"web"/app
@@ -39,6 +38,7 @@ class CheckoutAppsStrategy extends FetchStrategy {
             built.tree.filter( _.getName.equals(".svn") ).foreach( file => if (file.exists) file.deleteRecursively )
       
             Utils.copyTree(built, path)
+            println(app+" webapp has been built")
         }
     }
 

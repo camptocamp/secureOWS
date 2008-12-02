@@ -99,4 +99,4 @@ object InstallOp {
         println("Starting server")
         controlServer(alias, alias.startup)
     }
-}	
+}
