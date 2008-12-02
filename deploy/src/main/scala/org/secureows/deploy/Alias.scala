@@ -43,7 +43,6 @@ case class Alias( name:String,
 
     lazy val logger:Logger = {
         val logConfig =config.config.configMap("aliases."+name+".log")
-        println(logConfig)
         val file = new java.io.File(logConfig("filename"))
         file.getParentFile.mkdirs
         Logger.configure(logConfig, false, false)
