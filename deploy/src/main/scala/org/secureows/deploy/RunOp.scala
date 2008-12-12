@@ -9,6 +9,6 @@ package org.secureows.deploy
 
 object RunOp {
     def run(args:Seq[String], config:Configuration):Option[String] = {
-        (config.function(args(0)).get)(config.alias(args(1)))
+        (config.function(config.config(args(0))))(config.alias(args(1)))
     }
 }

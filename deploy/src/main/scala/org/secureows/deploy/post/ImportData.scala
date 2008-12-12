@@ -15,7 +15,6 @@ import net.lag.logging.Logger
 
 class ImportData extends Function1[Alias,Option[String]] {
     def apply(alias:Alias):Option[String]={
-        Thread.sleep(10000)
 
         println("Importing and indexing test data")
         

@@ -264,7 +264,7 @@ object Utils {
                     f.copyTo(dest)
                 }
       
-                if(f.isFile && (f ~> "canExecute").getOrElse(false).asInstanceOf[Boolean] ) setExecutable(dest)
+                if(f.isFile && f.canExecute ) dest.setExecutable(true)
                 count + 1
             })
     }

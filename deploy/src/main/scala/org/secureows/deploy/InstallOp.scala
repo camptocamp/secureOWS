@@ -50,8 +50,8 @@ object InstallOp {
             println("Copying temporary "+app+" installation to active installation")
             val appDir = installAppsBaseDir/app
             val warFile = installAppsBaseDir/(app+".war")
-            appDir.deleteRecursively()
-            warFile.delete()
+            assert (!appDir.exists || appDir.deleteRecursively(), "unable to delete"+warFile)
+            assert (!warFile.exists || warFile.delete(), "unable to delete "+warFile)
 
             Utils.zipDir(fromAppBaseDir/app, warFile)
         }
@@ -62,8 +62,15 @@ object InstallOp {
     }
 
     def performPostActions(alias:Alias):Option[String]={
-        if( alias.postAction.isDefined) (alias.postAction.get)(alias)
-        else None
+        alias.logger.debug("postActions to run: "+alias.postAction.mkString)
+        alias.postAction.foldLeft(None:Option[String]){
+            (error,func) =>
+                error match {
+
+                case None =>alias.logger.debug("Running postAction function "+func);func(alias)
+                case some => some
+            }
+        }
     }
 
     lazy val env = Map("JAVA_HOME"->System.getProperty("java.home"))
@@ -71,7 +78,7 @@ object InstallOp {
     def stopServer(alias:Alias) {
         println("Shutting down server")
         controlServer(alias, alias.shutdown)
-        Thread.sleep(10000)
+        Thread.sleep(alias.findOrElse("serverShutdownWait", "10000").toInt)
     }
 
     private[this] def controlServer(alias:Alias, cmd:String):Option[String] ={
@@ -97,6 +104,9 @@ object InstallOp {
   
     def startServer(alias:Alias):Option[String]={
         println("Starting server")
-        controlServer(alias, alias.startup)
+        val ret=controlServer(alias, alias.startup)
+        Thread.sleep(alias.findOrElse("serverStartupWait", "10000").toInt)
+
+        ret
     }
 }

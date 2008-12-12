@@ -34,11 +34,12 @@ object ConfigurationSpec extends Specification{
 
     "all required elements are available" in {
         println(config.asMap.mkString(","))
+        config.getBool("aliases.local.innerGroup.innerprop", false) mustBe true
         val toolConfig = config.getConfigMap("tool_config")
         toolConfig must beSome[ConfigMap]
         println(toolConfig.elements.mkString("[",",","]"))
         config.getString("tool_config.fetchStrategy") must beA("fetcher")
-        config.getString("tool_config.postAction") must beA("postAction")
+        config.getList("tool_config.postAction") must containInOrder( List("postAction","second") )
         config.getString("tool_config.validators.validator.class") must beA("validator")
         config.getBool("aliases.default.warnWhenMissingConfFiles") must beSome[Boolean].which( _ == false )
     }

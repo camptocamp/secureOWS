@@ -32,12 +32,20 @@ case class Alias( name:String,
             case e:IllegalArgumentException => elseAction
         }
     }
+    def getListOrElse(key:String, elseAction: =>Seq[String]):Seq[String] = {
+        val fullKey = "aliases."+name+"."+key
+        logger.debug("searching for property: %s", fullKey)
+        config.config.getList(fullKey) match {
+            case l if( l.isEmpty ) => elseAction
+            case l => l
+        }
+    }
     def asURL = new URL("http://"+url)
     def isLocalhost = config.isLocalhost(name)
     val maxBackups:Int = config.maxBackups
     lazy val validators:Seq[Validator] = config.validators
     lazy val fetchStrategy:FetchStrategy = config.fetchStrategy
-    lazy val postAction:Option[Function[Alias,Option[String]]] = config.postAction
+    lazy val postAction:Seq[Function[Alias,Option[String]]] = config.postAction
   
     override def toString = name
 

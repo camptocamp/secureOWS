@@ -14,26 +14,26 @@ class CheckoutAppsStrategy extends FetchStrategy {
     def downloadApp(alias:Alias){
 
         val localAppDir = new File(alias.tmpAppDir)
-        val configDir = localAppDir/"configuration/.checkoutApp"
+        val buildDir = localAppDir/"configuration/.checkoutApp"
 
         println( "Checking out: " +alias.downloadUrl)
-        if( configDir.exists ){
-            ProcessRunner("svn","update",configDir.getAbsolutePath).output( _.lines.toList).error( _.lines.toList).run
+        if( buildDir.exists && "true".equals(alias.findOrElse("CheckoutAppsStrategy.doUpdate", "false")) ){
+            ProcessRunner("svn","update",buildDir.getAbsolutePath).run
         }else{
-            Utils.doCheckout(configDir, alias.downloadUrl)
+            Utils.doCheckout(buildDir, alias.downloadUrl)
         }
         
-        build(configDir/"jeeves/build.xml")
-        build(configDir/"build.xml")
+        build(buildDir/"jeeves/build.xml")
+        build(buildDir/"build.xml")
 
-        runGast(alias, configDir)
+        runGast(alias, buildDir)
 
         val webAppDir = new File(alias.tmpWebappBaseDir)
     
         for( app <- alias.webapps; path = webAppDir/app ){
             path.deleteRecursively
             path.mkdirs
-            val built = configDir/"web"/app
+            val built = buildDir/"web"/app
       
             built.tree.filter( _.getName.equals(".svn") ).foreach( file => if (file.exists) file.deleteRecursively )
       
@@ -42,18 +42,19 @@ class CheckoutAppsStrategy extends FetchStrategy {
         }
     }
 
-    def runGast(alias:Alias, configDir:File){
+    def runGast(alias:Alias, buildDir:File){
         InstallOp.stopServer(alias)
-        val urls = Array((configDir/"gast/gast.jar").toURI.toURL)
+        val urls = Array((buildDir/"gast/gast.jar").toURI.toURL)
         val loader = URLClassLoader.newInstance(urls, getClass.getClassLoader)
-        System.setProperty("GEONETWORK_HOME",configDir.getAbsolutePath)
+        System.setProperty("GEONETWORK_HOME",buildDir.getAbsolutePath)
         System.setProperty("java.awt.headless","true")
         val gast = loader.loadClass("org.fao.gast.Gast")
         val constructor = gast.getMethod("main",classOf[Array[String]])
-        println("Running gast -setup")
-        constructor.invoke(null, Array(Array("-setup")):_*)
-        println("Running gast -setupdb")
-        constructor.invoke(null, Array(Array("-setupdb")):_*)
+
+        for( cmd <- alias.getListOrElse("CheckoutAppsStrategy.gastCmds", {List("-setup","-sampleData")}) ){
+            println("Running gast "+cmd)
+            constructor.invoke(null, Array(Array(cmd)):_*)
+        }
         System.setProperty("java.awt.headless","false")
     }
   

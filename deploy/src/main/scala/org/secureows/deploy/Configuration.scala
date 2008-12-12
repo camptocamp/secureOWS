@@ -74,17 +74,15 @@ class Configuration(val configFile:File, val deployApp:File) {
         c.newInstance().asInstanceOf[FetchStrategy]
     }
 
-    lazy val postAction:Option[Function[Alias,Option[String]]] = function("postAction")
+    lazy val postAction:Seq[Function[Alias,Option[String]]] = {
+        println ( )
+        for( action <- config.getList("tool_config.postAction") )
+        yield function(action)
+    }
 
-    def function(name:String):Option[Function[Alias,Option[String]]] = {
-        val asString = config.getString("tool_config."+name)
-        if( asString.isDefined){
-            assert( asString.get.trim().length>0, "the '"+name+"' property is defined but empty" )
-            val c = classOf[Configuration].getClassLoader.loadClass( asString.get )
-
-            Some(c.newInstance().asInstanceOf[Function[Alias,Option[String]]])
-        }
-        else None
+    def function(name:String):Function[Alias,Option[String]] = {
+        val c = classOf[Configuration].getClassLoader.loadClass( name )
+        c.newInstance().asInstanceOf[Function[Alias,Option[String]]]
     }
 
     // ---- End of API
