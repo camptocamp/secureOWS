@@ -22,7 +22,8 @@ class CheckoutAppsStrategy extends FetchStrategy {
         }else{
             Utils.doCheckout(buildDir, alias.downloadUrl)
         }
-        
+        println("Copying Geocat private files")
+        Utils.copyTree(new File(alias("CheckoutAppsStrategy.privateFiles")), buildDir)
         build(buildDir/"jeeves/build.xml")
         build(buildDir/"build.xml")
 
