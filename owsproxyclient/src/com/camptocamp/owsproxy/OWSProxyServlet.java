@@ -92,18 +92,15 @@ public class OWSProxyServlet extends HttpServlet {
             Header[] headers = method.getResponseHeaders();
             for (Header h : headers) {
                 // XXX override some headers?
+            	if("Transfer-Encoding".equalsIgnoreCase(h.getName()) && "chunked".equalsIgnoreCase(h.getValue()))
+            		continue;
                 if (!ieBugCausingHeader(h)) {
                     response.setHeader(h.getName(), h.getValue());
                 }
             }
 
-            byte[] cache = new byte[response.getBufferSize()];
-            InputStream in = method.getResponseBodyAsStream();
-            ServletOutputStream out = response.getOutputStream();
-            for (int read = in.read(cache); read > 0; read = in.read(cache)) {
-                out.write(cache, 0, read);
-            }
-
+            efficientWrite(response, method);
+            
             if (statusCode != HttpStatus.SC_OK) {
                 handleError(method, statusCode, method.getResponseBody());
                 return;
@@ -126,6 +123,26 @@ public class OWSProxyServlet extends HttpServlet {
             reporter.reportError(ConnectionStatus.ERROR, e.getLocalizedMessage());
         }
     }
+
+	private void efficientWrite(HttpServletResponse response, HttpMethod method)
+			throws IOException {
+		byte[] cache = new byte[response.getBufferSize()];
+
+		InputStream in = method.getResponseBodyAsStream();
+		ServletOutputStream out = response.getOutputStream();
+
+		try {
+		    for (int read = in.read(cache); read > 0; read = in.read(cache)) {
+		        out.write(cache, 0, read);
+		    }
+		} finally {
+			try {
+				in.close();
+			}finally {
+				out.close();
+			}
+		}
+	}
 
     private void configureSSH() throws MalformedURLException {
         
