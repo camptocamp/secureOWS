@@ -1,0 +1,32 @@
+#!/bin/sh
+PRG="$0"
+while [ -h "$PRG" ]; do
+	ls=`ls -ld "$PRG"`
+	link=`expr "$ls" : '.*-> \(.*\)$'`
+	if expr "$link" : '/.*' > /dev/null; then
+		PRG="$link"
+	else
+		PRG=`dirname "$PRG"`/"$link"
+	fi
+done
+
+# Get standard environment variables
+PRGDIR=`dirname "$PRG"`
+DATA_ARG=false
+
+for ARG in $@ 
+do
+	if [ $ARG = "-c" ]; then DATA_ARG=true; fi
+	if [ $ARG = "-config" ]; then DATA_ARG=true; fi
+done
+
+JAR=$PRGDIR/../lib/deploy.jar
+CMD_ARGS="-v -j $JAR install"
+
+if $DATA_ARG; then 
+	CMD="java -cp $JAR org.secureows.deploy.Main $CMD_ARGS $@"
+else
+	CMD="java -cp $JAR org.secureows.deploy.Main $CMD_ARGS -c $PRGDIR/../config/deploy.properties $@"
+fi
+
+exec $CMD

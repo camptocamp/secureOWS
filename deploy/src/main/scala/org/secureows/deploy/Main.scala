@@ -17,8 +17,7 @@ object Parser extends CommandLineParser {
   val backup = addOp('b',"backup","Indicates that the push behaviour will be performed", BackupOp.run _)
   val validate = addOp('v',"validate","Indicates that the validate behaviour will be performed",ValidateOp.run _)
   val fetch = addOp('f',"fetch","Indicates that the fetch behaviour will be performed", FetchOp.run _)
-  val clean = addOp('C',"clean","cleans out the last install", CleanOp.run _)
-  val run = addOp('R',"run", "Run a function defined in the properties.  The first parameter must be the name of the property which identifies a Function[Alias,Option[String]]", RunOp.run _)
+  
   
   def addOp(short:Char, long:String, desc:String, op:(Seq[String],Configuration)=>Option[String]) = {
     val flag = new Flag( short,long,desc ) with AllowAllButSelf

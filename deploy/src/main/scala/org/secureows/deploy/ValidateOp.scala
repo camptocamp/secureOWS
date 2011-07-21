@@ -1,6 +1,4 @@
 package org.secureows.deploy
-
-import org.secureows.deploy.validation._
 import scalax.io.{CommandLineParser,InputStreamResource}
 import scalax.data.Positive
 import java.text.MessageFormat.format
@@ -25,12 +23,15 @@ object ValidateOp {
       
       if( aliases.isEmpty ) throw new IllegalArgumentException("Validate requires at least one alias to validate")
       
+      val nonAliases = aliases.filter( arg => !(config.aliases.contains(arg)) )
+      
+      if( !nonAliases.isEmpty ) throw new IllegalArgumentException("The following aliases are not defined in the configuration file: "+nonAliases.mkString)
+      
       Remoting.distributeJars(aliases,config)
       
-      val results = for( aliasName <- aliases ) yield {
-        val alias = config.alias(aliasName) 
-        val validationResult = if( alias.isLocalhost) localValidate(valType,alias)
-                               else remoteValidate(valType,aliasName,config)
+      val results = for( alias <- aliases ) yield { 
+        val validationResult = if( config.isLocalhost(alias)) localValidate(valType,alias,config)
+                               else remoteValidate(valType,alias,config)
         validationResult.toList.sort( (l,r)=> l.id<r.id).head match {
           case Error(s) => s
           case _ => println("Validation successful");""
@@ -46,25 +47,17 @@ object ValidateOp {
       val appJar = config.tmpDir(alias)+config.deployApp.getName
       val configFile = config.tmpDir(alias)+config.configFile.getName
       val javaCMD = "java -cp "+appJar+" org.secureows.deploy.Main -v -c "+configFile+" -j "+appJar+" "+valType+" "+alias
-      Remoting.runRemote(config.alias(alias),javaCMD)
+      Remoting.runRemote(alias,javaCMD,config)
     }
     
-    def localValidate(valType:ValType.Value,alias:Alias)={
+    def localValidate(valType:ValType.Value,alias:String,config:Configuration)={
+      
       println("\nVALIDATING: "+alias)
-      val dirs = valType match {
-        case ValType.install => alias.webapps.map ( _ + alias.installWebappBaseDir)
-        case ValType.tmp => alias.webapps.map ( _+alias.tmpWebappBaseDir)
+      val dir = valType match {
+        case ValType.install => config.installWebapp(alias)
+        case ValType.tmp => config.tmpWebapp(alias)
       }
-      val results = for ( dir <- dirs ) yield {
-        validate(alias, new File(dir))
-      }
-      results.flatMap(r => r)
-    }
-    
-    def validate(alias:Alias, dir:File) = { 
-      val result = alias.validators.filter( _.validFor(dir) ).flatMap( _.validate(dir) )
-      if (result.isEmpty) Array(Good)
-      else result
+      Validation.validate(new File(dir) )
     }
 
 }

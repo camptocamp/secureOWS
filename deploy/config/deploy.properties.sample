@@ -1,0 +1,68 @@
+# maximum number of backups to keep
+maxBackups = 2
+
+
+###################################################################################################
+# Start of alias declaration and associated data
+###################################################################################################
+
+# 'aliases' is the list of all the aliases and the URL of the system associated with each alias. 
+# An alias is a key to all the information for a installation.  Using an alias it is possible
+# to obtain the connection information for that server, the temporary working directory, the 
+# installation directory, access to the configuration files etc...
+#
+# 
+# If desired a single server may have multiple aliases.  For example
+# one may wish to have multiple versions on the same server.  This can
+# be accomplished by having an alias for each version on each server
+aliases =  kogis04 -> kogis04,\
+  	       ab -> ab.swisstopogeodata.ch, \
+	       prod -> prod.swisstopogeodata.ch,
+
+
+###################################################################################################
+# The following section all follow the same format.  We will use username as an example here.
+#
+# A default username can be specified by declaring the 'username' property
+# The default username can be overridden for an alias by declaring a property with the following
+# pattern:
+#		<alias>username = ...
+# where <alias> is the alias that the username applies to
+#
+# This same pattern applies to all the following properties.
+###################################################################################################
+
+# Username to use when logging into each of the systems
+# if the username is the same for all a default can be set by
+# uncommented by:
+# 		username = camptocamp
+
+# The default is overridden by prefixing Username with the alias 
+# that the username applies to	     
+kogis04Username = geodata
+abUsername = geodata
+prodUsername = geodata
+
+# the directory the web application is saved in
+installWebapp = /var/www/tomcat/stable/webapps/owsproxyserver
+
+# the directory the tomcat configuratin is saved in
+installConfig = /var/www/tomcat/stable/conf
+
+# definition of temporary working directory
+tmpDir = /tmp/
+
+# definition of backup directory
+backupDir = /var/backup/
+
+# configuration svn server URL of the of the web application
+configSvnApp = http://svn.swisstopogeodata.ch/secureowsconfig/tag/1.0/owsproxyserver
+
+# configuration svn server URL of the of the server's configuration files
+# in the case of tomcat this will be the contents of the conf directory
+configSvnConf = http://svn.swisstopogeodata.ch/secureowsconfig/tag/1.0/conf
+
+# The url of the built war file of the web application
+# this file is downloaded, decompressed and has the configuration
+# files from configSvn added to it (only the WEB-INF configuration files) 
+downloadUrl = http://www.secureows.org/securewms/war/20080609/owsproxyserver.war
